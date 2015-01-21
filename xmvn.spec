@@ -4,7 +4,7 @@
 
 Name:           xmvn
 Version:        2.1.1
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Local Extensions for Apache Maven
 License:        ASL 2.0
 URL:            http://mizdebsk.fedorapeople.org/xmvn
@@ -20,6 +20,7 @@ BuildRequires:  maven-dependency-plugin
 BuildRequires:  maven-plugin-build-helper
 BuildRequires:  maven-assembly-plugin
 BuildRequires:  maven-invoker-plugin
+BuildRequires:  maven-site-plugin
 BuildRequires:  objectweb-asm
 BuildRequires:  modello
 BuildRequires:  xmlunit
@@ -289,6 +290,10 @@ end
 %doc LICENSE NOTICE
 
 %changelog
+* Wed Jan 21 2015 Mikolaj Izdebski <mizdebsk@redhat.com> - 2.1.1-2
+- Add BR on maven-site-plugin
+- Resolves: rhbz#1184608
+
 * Mon Jan  5 2015 Mikolaj Izdebski <mizdebsk@redhat.com> - 2.1.1-1
 - Update to upstream version 2.1.1
 
