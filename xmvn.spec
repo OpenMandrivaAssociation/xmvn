@@ -3,8 +3,8 @@
 %global __requires_exclude %{?__requires_exclude:%__requires_exclude|}^osgi\\($
 
 Name:           xmvn
-Version:        2.1.1
-Release:        2%{?dist}
+Version:        2.2.0
+Release:        1%{?dist}
 Summary:        Local Extensions for Apache Maven
 License:        ASL 2.0
 URL:            http://mizdebsk.fedorapeople.org/xmvn
@@ -27,7 +27,7 @@ BuildRequires:  xmlunit
 BuildRequires:  apache-ivy
 BuildRequires:  sisu-mojos
 BuildRequires:  junit
-BuildRequires:  gradle
+BuildRequires:  gradle >= 2.2.1-2
 
 Requires:       maven >= 3.2.2
 Requires:       xmvn-api = %{version}-%{release}
@@ -77,6 +77,14 @@ This package provides XMvn Connector for Eclipse Aether, which
 provides integration of Eclipse Aether with XMvn.  It provides an
 adapter which allows XMvn resolver to be used as Aether workspace
 reader.
+
+%package        connector-gradle
+Summary:        XMvn Connector for Gradle
+
+%description    connector-gradle
+This package provides XMvn Connector for Gradle, which provides
+integration of Gradle with XMvn.  It provides an adapter which allows
+XMvn resolver to be used as Gradle resolver.
 
 %package        connector-ivy
 Summary:        XMvn Connector for Apache Ivy
@@ -251,6 +259,8 @@ end
 
 %files connector-aether -f .mfiles-xmvn-connector-aether
 
+%files connector-gradle -f .mfiles-xmvn-connector-gradle
+
 %files connector-ivy -f .mfiles-xmvn-connector-ivy
 %dir %{_datadir}/%{name}/lib
 %{_datadir}/%{name}/lib/ivy
@@ -291,6 +301,10 @@ end
 %doc LICENSE NOTICE
 
 %changelog
+* Fri Jan 23 2015 Mikolaj Izdebski <mizdebsk@redhat.com> - 2.2.0-1
+- Update to upstream version 2.2.0
+- Add connector-gradle subpackage
+
 * Wed Jan 21 2015 Mikolaj Izdebski <mizdebsk@redhat.com> - 2.1.1-2
 - Add BR on maven-site-plugin
 - Resolves: rhbz#1184608
