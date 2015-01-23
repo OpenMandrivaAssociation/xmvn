@@ -27,6 +27,7 @@ BuildRequires:  xmlunit
 BuildRequires:  apache-ivy
 BuildRequires:  sisu-mojos
 BuildRequires:  junit
+BuildRequires:  gradle
 
 Requires:       maven >= 3.2.2
 Requires:       xmvn-api = %{version}-%{release}
