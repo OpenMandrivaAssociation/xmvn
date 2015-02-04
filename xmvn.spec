@@ -3,7 +3,7 @@
 %global __requires_exclude %{?__requires_exclude:%__requires_exclude|}^osgi\\($
 
 Name:           xmvn
-Version:        2.2.0
+Version:        2.2.1
 Release:        1%{?dist}
 Summary:        Local Extensions for Apache Maven
 License:        ASL 2.0
@@ -301,6 +301,9 @@ end
 %doc LICENSE NOTICE
 
 %changelog
+* Wed Feb  4 2015 Mikolaj Izdebski <mizdebsk@redhat.com> - 2.2.1-1
+- Update to upstream version 2.2.1
+
 * Fri Jan 23 2015 Mikolaj Izdebski <mizdebsk@redhat.com> - 2.2.0-1
 - Update to upstream version 2.2.0
 - Add connector-gradle subpackage
