@@ -3,7 +3,7 @@
 %global __requires_exclude %{?__requires_exclude:%__requires_exclude|}^osgi\\($
 
 Name:           xmvn
-Version:        2.3.0
+Version:        2.3.1
 Release:        1%{?dist}
 Summary:        Local Extensions for Apache Maven
 License:        ASL 2.0
@@ -301,6 +301,9 @@ end
 %doc LICENSE NOTICE
 
 %changelog
+* Fri Feb 13 2015 Mikolaj Izdebski <mizdebsk@redhat.com> - 2.3.1-1
+- Update to upstream version 2.3.1
+
 * Wed Feb 11 2015 Mikolaj Izdebski <mizdebsk@redhat.com> - 2.3.0-1
 - Update to upstream version 2.3.0
 
