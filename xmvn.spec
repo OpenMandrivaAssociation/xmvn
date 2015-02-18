@@ -4,7 +4,7 @@
 
 Name:           xmvn
 Version:        2.3.1
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Local Extensions for Apache Maven
 License:        ASL 2.0
 URL:            http://mizdebsk.fedorapeople.org/xmvn
@@ -191,6 +191,11 @@ ln -sf %{_datadir}/maven/bin/mvn %{buildroot}%{_datadir}/%{name}/bin/mvn
 ln -sf %{_datadir}/maven/bin/mvnDebug %{buildroot}%{_datadir}/%{name}/bin/mvnDebug
 ln -sf %{_datadir}/maven/bin/mvnyjp %{buildroot}%{_datadir}/%{name}/bin/mvnyjp
 
+# XXX temp
+ln -s /usr/share/java/objectweb-asm/asm.jar %{buildroot}%{_datadir}/%{name}/lib/
+ln -s /usr/share/java/objectweb-asm/asm.jar %{buildroot}%{_datadir}/%{name}/lib/installer/
+ln -s /usr/share/java/objectweb-asm/asm.jar %{buildroot}%{_datadir}/%{name}/lib/resolver/
+ln -s /usr/share/java/objectweb-asm/asm.jar %{buildroot}%{_datadir}/%{name}/lib/subst/
 
 # helper scripts
 install -d -m 755 %{buildroot}%{_bindir}
@@ -301,6 +306,9 @@ end
 %doc LICENSE NOTICE
 
 %changelog
+* Wed Feb 18 2015 Mikolaj Izdebski <mizdebsk@redhat.com> - 2.3.1-2
+- Temporarly add explicit symlinks to ASM
+
 * Fri Feb 13 2015 Mikolaj Izdebski <mizdebsk@redhat.com> - 2.3.1-1
 - Update to upstream version 2.3.1
 
