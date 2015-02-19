@@ -4,7 +4,7 @@
 
 Name:           xmvn
 Version:        2.3.1
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary:        Local Extensions for Apache Maven
 License:        ASL 2.0
 URL:            http://mizdebsk.fedorapeople.org/xmvn
@@ -12,7 +12,7 @@ BuildArch:      noarch
 
 Source0:        https://fedorahosted.org/released/%{name}/%{name}-%{version}.tar.xz
 
-BuildRequires:  maven >= 3.2.1-10
+BuildRequires:  maven >= 3.2.5-2
 BuildRequires:  maven-local
 BuildRequires:  beust-jcommander
 BuildRequires:  cglib
@@ -29,7 +29,7 @@ BuildRequires:  sisu-mojos
 BuildRequires:  junit
 BuildRequires:  gradle >= 2.2.1-2
 
-Requires:       maven >= 3.2.2
+Requires:       maven >= 3.2.5-2
 Requires:       xmvn-api = %{version}-%{release}
 Requires:       xmvn-connector-aether = %{version}-%{release}
 Requires:       xmvn-core = %{version}-%{release}
@@ -191,12 +191,6 @@ ln -sf %{_datadir}/maven/bin/mvn %{buildroot}%{_datadir}/%{name}/bin/mvn
 ln -sf %{_datadir}/maven/bin/mvnDebug %{buildroot}%{_datadir}/%{name}/bin/mvnDebug
 ln -sf %{_datadir}/maven/bin/mvnyjp %{buildroot}%{_datadir}/%{name}/bin/mvnyjp
 
-# XXX temp
-ln -s /usr/share/java/objectweb-asm/asm.jar %{buildroot}%{_datadir}/%{name}/lib/
-ln -s /usr/share/java/objectweb-asm/asm.jar %{buildroot}%{_datadir}/%{name}/lib/installer/
-ln -s /usr/share/java/objectweb-asm/asm.jar %{buildroot}%{_datadir}/%{name}/lib/resolver/
-ln -s /usr/share/java/objectweb-asm/asm.jar %{buildroot}%{_datadir}/%{name}/lib/subst/
-
 # helper scripts
 install -d -m 755 %{buildroot}%{_bindir}
 for tool in subst resolve bisect install;do
@@ -306,6 +300,9 @@ end
 %doc LICENSE NOTICE
 
 %changelog
+* Thu Feb 19 2015 Mikolaj Izdebski <mizdebsk@redhat.com> - 2.3.1-3
+- Remove temporary explicit ASM symlinks
+
 * Wed Feb 18 2015 Mikolaj Izdebski <mizdebsk@redhat.com> - 2.3.1-2
 - Temporarly add explicit symlinks to ASM
 
