@@ -4,7 +4,7 @@
 
 Name:           xmvn
 Version:        2.3.1
-Release:        3%{?dist}
+Release:        4%{?dist}
 Summary:        Local Extensions for Apache Maven
 License:        ASL 2.0
 URL:            http://mizdebsk.fedorapeople.org/xmvn
@@ -300,6 +300,9 @@ end
 %doc LICENSE NOTICE
 
 %changelog
+* Fri Mar 06 2015 Michal Srb <msrb@redhat.com> - 2.3.1-4
+- Rebuild to fix symlinks in lib/core
+
 * Thu Feb 19 2015 Mikolaj Izdebski <mizdebsk@redhat.com> - 2.3.1-3
 - Remove temporary explicit ASM symlinks
 
