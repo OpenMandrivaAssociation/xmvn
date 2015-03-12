@@ -3,8 +3,8 @@
 %global __requires_exclude %{?__requires_exclude:%__requires_exclude|}^osgi\\($
 
 Name:           xmvn
-Version:        2.3.1
-Release:        4%{?dist}
+Version:        2.3.2
+Release:        1%{?dist}
 Summary:        Local Extensions for Apache Maven
 License:        ASL 2.0
 URL:            http://mizdebsk.fedorapeople.org/xmvn
@@ -300,6 +300,9 @@ end
 %doc LICENSE NOTICE
 
 %changelog
+* Thu Mar 12 2015 Mikolaj Izdebski <mizdebsk@redhat.com> - 2.3.2-1
+- Update to upstream version 2.3.2
+
 * Fri Mar 06 2015 Michal Srb <msrb@redhat.com> - 2.3.1-4
 - Rebuild to fix symlinks in lib/core
 
