@@ -4,7 +4,7 @@
 
 Name:           xmvn
 Version:        2.3.2
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary:        Local Extensions for Apache Maven
 License:        ASL 2.0
 URL:            http://mizdebsk.fedorapeople.org/xmvn
@@ -12,7 +12,7 @@ BuildArch:      noarch
 
 Source0:        https://fedorahosted.org/released/%{name}/%{name}-%{version}.tar.xz
 
-BuildRequires:  maven >= 3.2.5-2
+BuildRequires:  maven >= 3.3
 BuildRequires:  maven-local
 BuildRequires:  beust-jcommander
 BuildRequires:  cglib
@@ -207,9 +207,6 @@ cp -r %{_datadir}/maven/lib/* %{buildroot}%{_datadir}/%{name}/lib/
 # possibly recreate symlinks that can be automated with xmvn-subst
 %{name}-subst %{buildroot}%{_datadir}/%{name}/
 
-# XXX temp symlink needed for update to Maven >= 3.3.0
-ln -s %{_javadir}/maven/maven-builder-support.jar %{buildroot}%{_datadir}/%{name}/lib/
-
 # /usr/bin/xmvn script
 cat <<EOF >%{buildroot}%{_bindir}/%{name}
 #!/bin/sh -e
@@ -303,6 +300,9 @@ end
 %doc LICENSE NOTICE
 
 %changelog
+* Mon Mar 16 2015 Mikolaj Izdebski <mizdebsk@redhat.com> - 2.3.2-3
+- Build with Maven 3.3.0
+
 * Mon Mar 16 2015 Mikolaj Izdebski <mizdebsk@redhat.com> - 2.3.2-2
 - Add temporary explicit maven-builder-support.jar symlink
 
