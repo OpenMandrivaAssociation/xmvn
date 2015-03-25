@@ -4,7 +4,7 @@
 
 Name:           xmvn
 Version:        2.3.2
-Release:        4%{?dist}
+Release:        5%{?dist}
 Summary:        Local Extensions for Apache Maven
 License:        ASL 2.0
 URL:            http://mizdebsk.fedorapeople.org/xmvn
@@ -222,15 +222,6 @@ install -d -m 755 %{buildroot}%{_datadir}/%{name}/conf/
 cp -P %{_datadir}/maven/conf/settings.xml %{buildroot}%{_datadir}/%{name}/conf/
 cp -P %{_datadir}/maven/bin/m2.conf %{buildroot}%{_datadir}/%{name}/bin/
 
-%pretrans -p <lua>
--- we changed symlink to dir in 0.5.0-1, workaround RPM issues
-for key, dir in pairs({"conf", "conf/logging", "boot"}) do
-    path = "%{_datadir}/%{name}/" .. dir
-    if posix.readlink(path) then
-       os.remove(path)
-    end
-end
-
 %files
 %attr(755,-,-) %{_bindir}/%{name}
 %dir %{_datadir}/%{name}/bin
@@ -303,6 +294,9 @@ end
 %doc LICENSE NOTICE
 
 %changelog
+* Wed Mar 25 2015 Mikolaj Izdebski <mizdebsk@redhat.com> - 2.3.2-5
+- Remove workarunds for RPM bug #646523
+
 * Wed Mar 25 2015 Mikolaj Izdebski <mizdebsk@redhat.com> - 2.3.2-4
 - Port to Gradle 2.3
 
