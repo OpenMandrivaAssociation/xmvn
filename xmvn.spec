@@ -4,13 +4,15 @@
 
 Name:           xmvn
 Version:        2.3.2
-Release:        3%{?dist}
+Release:        4%{?dist}
 Summary:        Local Extensions for Apache Maven
 License:        ASL 2.0
 URL:            http://mizdebsk.fedorapeople.org/xmvn
 BuildArch:      noarch
 
 Source0:        https://fedorahosted.org/released/%{name}/%{name}-%{version}.tar.xz
+
+Patch0:         0001-Port-to-Gradle-2.3.patch
 
 BuildRequires:  maven >= 3.3
 BuildRequires:  maven-local
@@ -27,7 +29,7 @@ BuildRequires:  xmlunit
 BuildRequires:  apache-ivy
 BuildRequires:  sisu-mojos
 BuildRequires:  junit
-BuildRequires:  gradle >= 2.2.1-2
+BuildRequires:  gradle >= 2.3
 
 Requires:       maven >= 3.2.5-2
 Requires:       xmvn-api = %{version}-%{release}
@@ -150,6 +152,7 @@ This package provides %{summary}.
 
 %prep
 %setup -q
+%patch0 -p1
 
 %mvn_package :xmvn __noinstall
 
@@ -300,6 +303,9 @@ end
 %doc LICENSE NOTICE
 
 %changelog
+* Wed Mar 25 2015 Mikolaj Izdebski <mizdebsk@redhat.com> - 2.3.2-4
+- Port to Gradle 2.3
+
 * Mon Mar 16 2015 Mikolaj Izdebski <mizdebsk@redhat.com> - 2.3.2-3
 - Build with Maven 3.3.0
 

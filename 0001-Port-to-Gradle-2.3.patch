@@ -1,0 +1,47 @@
+From bccb95235f4d177552820f752f20e44b4a00b91b Mon Sep 17 00:00:00 2001
+From: Mikolaj Izdebski <mizdebsk@redhat.com>
+Date: Wed, 25 Mar 2015 10:23:13 +0100
+Subject: [PATCH] Port to Gradle 2.3
+
+---
+ .../java/org/fedoraproject/xmvn/connector/gradle/GradleResolver.java   | 3 ++-
+ xmvn-parent/pom.xml                                                    | 2 +-
+ 2 files changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/xmvn-connector-gradle/src/main/java/org/fedoraproject/xmvn/connector/gradle/GradleResolver.java b/xmvn-connector-gradle/src/main/java/org/fedoraproject/xmvn/connector/gradle/GradleResolver.java
+index af4d068..94a6119 100644
+--- a/xmvn-connector-gradle/src/main/java/org/fedoraproject/xmvn/connector/gradle/GradleResolver.java
++++ b/xmvn-connector-gradle/src/main/java/org/fedoraproject/xmvn/connector/gradle/GradleResolver.java
+@@ -36,6 +36,7 @@ import org.gradle.api.internal.artifacts.ivyservice.ivyresolve.ModuleComponentRe
+ import org.gradle.api.internal.artifacts.ivyservice.ivyresolve.parser.DescriptorParseContext;
+ import org.gradle.api.internal.artifacts.ivyservice.ivyresolve.parser.GradlePomModuleDescriptorParser;
+ import org.gradle.api.internal.artifacts.ivyservice.ivyresolve.parser.MetaDataParser;
++import org.gradle.api.internal.artifacts.ivyservice.ivyresolve.strategy.DefaultVersionSelectorScheme;
+ import org.gradle.api.internal.artifacts.repositories.ResolutionAwareRepository;
+ import org.gradle.api.internal.component.ArtifactType;
+ import org.gradle.internal.component.external.model.DefaultMavenModuleResolveMetaData;
+@@ -207,7 +208,7 @@ public class GradleResolver
+             Path fakePom = fakePom( pomPath, id );
+             logger.debug( "Created fake POM: {}", fakePom );
+ 
+-            MetaDataParser parser = new GradlePomModuleDescriptorParser();
++            MetaDataParser parser = new GradlePomModuleDescriptorParser( new DefaultVersionSelectorScheme() );
+             MutableModuleComponentResolveMetaData metaData = parser.parseMetaData( this, fakePom.toFile() );
+ 
+             result.resolved( metaData );
+diff --git a/xmvn-parent/pom.xml b/xmvn-parent/pom.xml
+index 294d0ce..d971817 100644
+--- a/xmvn-parent/pom.xml
++++ b/xmvn-parent/pom.xml
+@@ -79,7 +79,7 @@
+     <atinjectVersion>1</atinjectVersion>
+     <ivyVersion>2.4.0</ivyVersion>
+     <jcommanderVersion>1.47</jcommanderVersion>
+-    <gradleVersion>2.2.1</gradleVersion>
++    <gradleVersion>2.3</gradleVersion>
+     <guiceVersion>3.2.5</guiceVersion>
+     <guavaVersion>18.0</guavaVersion>
+     <mavenInvokerVersion>2.1.1</mavenInvokerVersion>
+-- 
+2.1.0
+
