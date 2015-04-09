@@ -4,7 +4,7 @@
 
 Name:           xmvn
 Version:        2.3.2
-Release:        5%{?dist}
+Release:        6%{?dist}
 Summary:        Local Extensions for Apache Maven
 License:        ASL 2.0
 URL:            http://mizdebsk.fedorapeople.org/xmvn
@@ -217,6 +217,9 @@ export M2_HOME="\${M2_HOME:-%{_datadir}/%{name}}"
 exec mvn "\${@}"
 EOF
 
+# mvn-local symlink
+ln -s %{_bindir}/%{name} %{buildroot}%{_bindir}/mvn-local
+
 # make sure our conf is identical to maven so yum won't freak out
 install -d -m 755 %{buildroot}%{_datadir}/%{name}/conf/
 cp -P %{_datadir}/maven/conf/settings.xml %{buildroot}%{_datadir}/%{name}/conf/
@@ -224,6 +227,7 @@ cp -P %{_datadir}/maven/bin/m2.conf %{buildroot}%{_datadir}/%{name}/bin/
 
 %files
 %attr(755,-,-) %{_bindir}/%{name}
+%attr(755,-,-) %{_bindir}/mvn-local
 %dir %{_datadir}/%{name}/bin
 %dir %{_datadir}/%{name}/lib
 %{_datadir}/%{name}/lib/*.jar
@@ -294,6 +298,9 @@ cp -P %{_datadir}/maven/bin/m2.conf %{buildroot}%{_datadir}/%{name}/bin/
 %doc LICENSE NOTICE
 
 %changelog
+* Thu Apr  9 2015 Mikolaj Izdebski <mizdebsk@redhat.com> - 2.3.2-6
+- Install mvn-local symlink
+
 * Wed Mar 25 2015 Mikolaj Izdebski <mizdebsk@redhat.com> - 2.3.2-5
 - Remove workarunds for RPM bug #646523
 
