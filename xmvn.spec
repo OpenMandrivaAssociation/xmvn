@@ -218,7 +218,7 @@ exec mvn "\${@}"
 EOF
 
 # mvn-local symlink
-ln -s %{_bindir}/%{name} %{buildroot}%{_bindir}/mvn-local
+ln -s %{name} %{buildroot}%{_bindir}/mvn-local
 
 # make sure our conf is identical to maven so yum won't freak out
 install -d -m 755 %{buildroot}%{_datadir}/%{name}/conf/
