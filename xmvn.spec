@@ -179,7 +179,7 @@ sed -i 's|generated-site/resources/xsd/config|generated-site/xsd/config|' xmvn-c
 
 %build
 # XXX some tests fail on ARM for unknown reason, see why
-%mvn_build -s -f
+%mvn_build -s -f -j
 
 tar --delay-directory-restore -xvf target/*tar.bz2
 chmod -R +rwX %{name}-%{version}*
@@ -296,7 +296,7 @@ cp -P %{_datadir}/maven/bin/m2.conf %{buildroot}%{_datadir}/%{name}/bin/
 %{_datadir}/%{name}/bin/%{name}-install
 %{_datadir}/%{name}/lib/installer
 
-%files javadoc -f .mfiles-javadoc
+%files javadoc
 %doc LICENSE NOTICE
 
 %changelog
