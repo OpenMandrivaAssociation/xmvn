@@ -1,7 +1,7 @@
-From bccb95235f4d177552820f752f20e44b4a00b91b Mon Sep 17 00:00:00 2001
+From cc15d824e5138d1985f8a02ba7104fba339a7aef Mon Sep 17 00:00:00 2001
 From: Mikolaj Izdebski <mizdebsk@redhat.com>
 Date: Wed, 25 Mar 2015 10:23:13 +0100
-Subject: [PATCH] Port to Gradle 2.3
+Subject: [PATCH 1/2] Port to Gradle 2.3
 
 ---
  .../java/org/fedoraproject/xmvn/connector/gradle/GradleResolver.java   | 3 ++-
@@ -30,7 +30,7 @@ index af4d068..94a6119 100644
  
              result.resolved( metaData );
 diff --git a/xmvn-parent/pom.xml b/xmvn-parent/pom.xml
-index 294d0ce..d971817 100644
+index 041215a..c15dd86 100644
 --- a/xmvn-parent/pom.xml
 +++ b/xmvn-parent/pom.xml
 @@ -79,7 +79,7 @@
