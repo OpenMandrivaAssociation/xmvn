@@ -1,4 +1,4 @@
-From 0f2c0581f4a22a1ec60b1926e07d6baddb22d4bc Mon Sep 17 00:00:00 2001
+From 7b3a4ec319073d106ccaf7f29cf7aff4b0d62802 Mon Sep 17 00:00:00 2001
 From: Mikolaj Izdebski <mizdebsk@redhat.com>
 Date: Thu, 16 Apr 2015 10:18:25 +0200
 Subject: [PATCH 2/2] Disable doclint in javadoc:aggregate MOJO executions

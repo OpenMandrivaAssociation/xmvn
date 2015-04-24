@@ -4,7 +4,7 @@
 
 Name:           xmvn
 Version:        2.3.2
-Release:        7%{?dist}
+Release:        8%{?dist}
 Summary:        Local Extensions for Apache Maven
 License:        ASL 2.0
 URL:            http://mizdebsk.fedorapeople.org/xmvn
@@ -12,7 +12,7 @@ BuildArch:      noarch
 
 Source0:        https://fedorahosted.org/released/%{name}/%{name}-%{version}.tar.xz
 
-Patch0:         0001-Port-to-Gradle-2.3.patch
+Patch0:         0001-Port-to-Gradle-2.4-rc-1.patch
 Patch1:         0002-Disable-doclint-in-javadoc-aggregate-MOJO-executions.patch
 
 BuildRequires:  maven >= 3.3
@@ -30,7 +30,7 @@ BuildRequires:  xmlunit
 BuildRequires:  apache-ivy
 BuildRequires:  sisu-mojos
 BuildRequires:  junit
-BuildRequires:  gradle >= 2.3
+BuildRequires:  gradle >= 2.4
 
 Requires:       maven >= 3.2.5-2
 Requires:       xmvn-api = %{version}-%{release}
@@ -300,6 +300,9 @@ cp -P %{_datadir}/maven/bin/m2.conf %{buildroot}%{_datadir}/%{name}/bin/
 %doc LICENSE NOTICE
 
 %changelog
+* Fri Apr 24 2015 Mikolaj Izdebski <mizdebsk@redhat.com> - 2.3.2-8
+- Port to Gradle 2.4-rc-1
+
 * Thu Apr 16 2015 Mikolaj Izdebski <mizdebsk@redhat.com> - 2.3.2-7
 - Disable doclint in javadoc:aggregate MOJO executions
 
