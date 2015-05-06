@@ -151,7 +151,7 @@ This package provides %{summary}.
 %prep
 %setup -q
 
-%mvn_package :xmvn __noinstall
+%mvn_package ":xmvn{,-it}" __noinstall
 
 # In XMvn 2.x xmvn-connector was renamed to xmvn-connector-aether
 %mvn_alias :xmvn-connector-aether :xmvn-connector
