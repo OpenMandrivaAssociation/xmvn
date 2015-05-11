@@ -1,0 +1,27 @@
+From 21eef845a4b7873946c71f1fd1880c5e4cad1111 Mon Sep 17 00:00:00 2001
+From: Mikolaj Izdebski <mizdebsk@redhat.com>
+Date: Mon, 11 May 2015 16:05:16 +0200
+Subject: [PATCH 2/2] Prevent slashes from sneaking into artifact filename
+
+---
+ .../org/fedoraproject/xmvn/resolver/impl/EffectivePomGenerator.java   | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/xmvn-core/src/main/java/org/fedoraproject/xmvn/resolver/impl/EffectivePomGenerator.java b/xmvn-core/src/main/java/org/fedoraproject/xmvn/resolver/impl/EffectivePomGenerator.java
+index 4fdab3a..ffc67ed 100644
+--- a/xmvn-core/src/main/java/org/fedoraproject/xmvn/resolver/impl/EffectivePomGenerator.java
++++ b/xmvn-core/src/main/java/org/fedoraproject/xmvn/resolver/impl/EffectivePomGenerator.java
+@@ -116,7 +116,9 @@ class EffectivePomGenerator
+     public Path generateEffectivePom( ArtifactMetadata metadata, Artifact artifact )
+         throws IOException
+     {
+-        String artifactFileName = artifact.getArtifactId() + "-" + artifact.getVersion() + ".pom";
++        String artifactIdNormalized = artifact.getArtifactId().replace( '/', '.' );
++        String versionNormalized = artifact.getVersion().replace( '/', '.' );
++        String artifactFileName = artifactIdNormalized + "-" + versionNormalized + ".pom";
+         Path pomDir = TempManager.createTempDirectory( "xmvn-" + metadata.getUuid() );
+         Path pomPath = pomDir.resolve( artifactFileName );
+ 
+-- 
+2.1.0
+
