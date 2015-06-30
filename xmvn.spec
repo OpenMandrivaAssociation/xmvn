@@ -4,7 +4,7 @@
 
 Name:           xmvn
 Version:        2.4.0
-Release:        3%{?dist}
+Release:        4%{?dist}
 Summary:        Local Extensions for Apache Maven
 License:        ASL 2.0
 URL:            http://mizdebsk.fedorapeople.org/xmvn
@@ -14,6 +14,7 @@ Source0:        https://fedorahosted.org/released/%{name}/%{name}-%{version}.tar
 
 Patch0:         0001-Fix-NPE-in-DefaultResolver.patch
 Patch1:         0002-Prevent-slashes-from-sneaking-into-artifact-filename.patch
+Patch2:         0003-Port-to-Gradle-2.5-rc-1.patch
 
 BuildRequires:  maven >= 3.3
 BuildRequires:  maven-local
@@ -30,7 +31,7 @@ BuildRequires:  xmlunit
 BuildRequires:  apache-ivy
 BuildRequires:  sisu-mojos
 BuildRequires:  junit
-BuildRequires:  gradle >= 2.4
+BuildRequires:  gradle >= 2.5
 
 Requires:       maven >= 3.2.5-2
 Requires:       xmvn-api = %{version}-%{release}
@@ -155,6 +156,7 @@ This package provides %{summary}.
 %setup -q
 %patch0 -p1
 %patch1 -p1
+%patch2 -p1
 
 %mvn_package ":xmvn{,-it}" __noinstall
 
@@ -300,6 +302,9 @@ cp -P %{_datadir}/maven/bin/m2.conf %{buildroot}%{_datadir}/%{name}/bin/
 %doc LICENSE NOTICE
 
 %changelog
+* Tue Jun 30 2015 Mikolaj Izdebski <mizdebsk@redhat.com> - 2.4.0-4
+- Port to Gradle 2.5-rc-1
+
 * Fri Jun 19 2015 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 2.4.0-3
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_23_Mass_Rebuild
 

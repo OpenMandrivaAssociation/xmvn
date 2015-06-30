@@ -1,0 +1,93 @@
+From a6079e71c3913ff6f947dd80e6498832efb1f4d5 Mon Sep 17 00:00:00 2001
+From: Mikolaj Izdebski <mizdebsk@redhat.com>
+Date: Tue, 30 Jun 2015 20:10:18 +0200
+Subject: [PATCH 3/3] Port to Gradle 2.5-rc-1
+
+---
+ .../xmvn/connector/gradle/GradleResolver.java          | 18 ++++++++++--------
+ xmvn-parent/pom.xml                                    |  2 +-
+ 2 files changed, 11 insertions(+), 9 deletions(-)
+
+diff --git a/xmvn-connector-gradle/src/main/java/org/fedoraproject/xmvn/connector/gradle/GradleResolver.java b/xmvn-connector-gradle/src/main/java/org/fedoraproject/xmvn/connector/gradle/GradleResolver.java
+index 5fa7996..6fe4340 100644
+--- a/xmvn-connector-gradle/src/main/java/org/fedoraproject/xmvn/connector/gradle/GradleResolver.java
++++ b/xmvn-connector-gradle/src/main/java/org/fedoraproject/xmvn/connector/gradle/GradleResolver.java
+@@ -37,6 +37,7 @@ import org.gradle.internal.component.external.model.DefaultModuleComponentArtifa
+ import org.gradle.internal.component.external.model.ModuleComponentResolveMetaData;
+ import org.gradle.internal.component.external.model.MutableModuleComponentResolveMetaData;
+ import org.gradle.internal.component.model.ComponentArtifactMetaData;
++import org.gradle.internal.component.model.ComponentOverrideMetadata;
+ import org.gradle.internal.component.model.ComponentResolveMetaData;
+ import org.gradle.internal.component.model.ComponentUsage;
+ import org.gradle.internal.component.model.DefaultIvyArtifactName;
+@@ -184,7 +185,7 @@ public class GradleResolver
+     }
+ 
+     @Override
+-    public void resolveComponentMetaData( DependencyMetaData dependency, ModuleComponentIdentifier id,
++    public void resolveComponentMetaData( ModuleComponentIdentifier id, ComponentOverrideMetadata request,
+                                           BuildableModuleComponentMetaDataResolveResult result )
+     {
+         logger.debug( "Trying to resolve model for {}:{}:{}", id.getGroup(), id.getModule(), id.getVersion() );
+@@ -206,7 +207,7 @@ public class GradleResolver
+         else
+         {
+             logger.debug( "POM not found, trying non-POM artifacts" );
+-            for ( IvyArtifactName artifact : getDependencyArtifactNames( dependency ) )
++            for ( IvyArtifactName artifact : getDependencyArtifactNames( request ) )
+             {
+                 String groupId = id.getGroup();
+                 String artifactId = artifact.getName();
+@@ -220,7 +221,8 @@ public class GradleResolver
+                 if ( path != null )
+                 {
+                     logger.debug( "Artifact {} found, returning minimal model", artifact3 );
+-                    MutableModuleComponentResolveMetaData metaData = new DefaultMavenModuleResolveMetaData( dependency );
++                    MutableModuleComponentResolveMetaData metaData =
++                        new DefaultMavenModuleResolveMetaData( id, request.getArtifacts() );
+                     result.resolved( metaData );
+                     return;
+                 }
+@@ -231,11 +233,11 @@ public class GradleResolver
+         result.failed( new ModuleVersionResolveException( id, "XMvn was unable to resolve artifact " + artifact2 ) );
+     }
+ 
+-    private Set<IvyArtifactName> getDependencyArtifactNames( DependencyMetaData dependency )
++    private Set<IvyArtifactName> getDependencyArtifactNames( ComponentOverrideMetadata request )
+     {
+-        String moduleName = dependency.getRequested().getName();
++        String moduleName = request.getClientModule().getName();
+         Set<IvyArtifactName> artifactSet = new LinkedHashSet<>();
+-        artifactSet.addAll( dependency.getArtifacts() );
++        artifactSet.addAll( request.getArtifacts() );
+ 
+         if ( artifactSet.isEmpty() )
+         {
+@@ -273,9 +275,9 @@ public class GradleResolver
+     }
+ 
+     @Override
+-    public LocallyAvailableExternalResource getMetaDataArtifact( ModuleVersionIdentifier id, ArtifactType type )
++    public LocallyAvailableExternalResource getMetaDataArtifact( ModuleComponentIdentifier id, ArtifactType type )
+     {
+-        Path pomPath = resolve( new DefaultArtifact( id.getGroup(), id.getName(), "pom", id.getVersion() ) );
++        Path pomPath = resolve( new DefaultArtifact( id.getGroup(), id.getModule(), "pom", id.getVersion() ) );
+ 
+         if ( pomPath == null )
+             return null;
+diff --git a/xmvn-parent/pom.xml b/xmvn-parent/pom.xml
+index 251d696..047665e 100644
+--- a/xmvn-parent/pom.xml
++++ b/xmvn-parent/pom.xml
+@@ -79,7 +79,7 @@
+     <atinjectVersion>1</atinjectVersion>
+     <ivyVersion>2.4.0</ivyVersion>
+     <jcommanderVersion>1.48</jcommanderVersion>
+-    <gradleVersion>2.4-rc-1</gradleVersion>
++    <gradleVersion>2.5-rc-1</gradleVersion>
+     <guiceVersion>3.2.5</guiceVersion>
+     <guavaVersion>18.0</guavaVersion>
+     <mavenInvokerVersion>2.2</mavenInvokerVersion>
+-- 
+2.1.0
+
