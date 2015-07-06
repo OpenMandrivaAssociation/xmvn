@@ -1,15 +1,15 @@
-From a6079e71c3913ff6f947dd80e6498832efb1f4d5 Mon Sep 17 00:00:00 2001
+From 5c535ce7077d063115165e528d1b0a3eb7d12677 Mon Sep 17 00:00:00 2001
 From: Mikolaj Izdebski <mizdebsk@redhat.com>
 Date: Tue, 30 Jun 2015 20:10:18 +0200
 Subject: [PATCH 3/3] Port to Gradle 2.5-rc-1
 
 ---
- .../xmvn/connector/gradle/GradleResolver.java          | 18 ++++++++++--------
- xmvn-parent/pom.xml                                    |  2 +-
- 2 files changed, 11 insertions(+), 9 deletions(-)
+ .../xmvn/connector/gradle/GradleResolver.java        | 20 +++++++++++---------
+ xmvn-parent/pom.xml                                  |  2 +-
+ 2 files changed, 12 insertions(+), 10 deletions(-)
 
 diff --git a/xmvn-connector-gradle/src/main/java/org/fedoraproject/xmvn/connector/gradle/GradleResolver.java b/xmvn-connector-gradle/src/main/java/org/fedoraproject/xmvn/connector/gradle/GradleResolver.java
-index 5fa7996..6fe4340 100644
+index 5fa7996..bf4aaff 100644
 --- a/xmvn-connector-gradle/src/main/java/org/fedoraproject/xmvn/connector/gradle/GradleResolver.java
 +++ b/xmvn-connector-gradle/src/main/java/org/fedoraproject/xmvn/connector/gradle/GradleResolver.java
 @@ -37,6 +37,7 @@ import org.gradle.internal.component.external.model.DefaultModuleComponentArtifa
@@ -34,7 +34,7 @@ index 5fa7996..6fe4340 100644
          {
              logger.debug( "POM not found, trying non-POM artifacts" );
 -            for ( IvyArtifactName artifact : getDependencyArtifactNames( dependency ) )
-+            for ( IvyArtifactName artifact : getDependencyArtifactNames( request ) )
++            for ( IvyArtifactName artifact : getDependencyArtifactNames( id, request ) )
              {
                  String groupId = id.getGroup();
                  String artifactId = artifact.getName();
@@ -48,21 +48,26 @@ index 5fa7996..6fe4340 100644
                      result.resolved( metaData );
                      return;
                  }
-@@ -231,11 +233,11 @@ public class GradleResolver
+@@ -231,15 +233,15 @@ public class GradleResolver
          result.failed( new ModuleVersionResolveException( id, "XMvn was unable to resolve artifact " + artifact2 ) );
      }
  
 -    private Set<IvyArtifactName> getDependencyArtifactNames( DependencyMetaData dependency )
-+    private Set<IvyArtifactName> getDependencyArtifactNames( ComponentOverrideMetadata request )
++    private Set<IvyArtifactName> getDependencyArtifactNames( ModuleComponentIdentifier id,
++                                                             ComponentOverrideMetadata request )
      {
 -        String moduleName = dependency.getRequested().getName();
-+        String moduleName = request.getClientModule().getName();
          Set<IvyArtifactName> artifactSet = new LinkedHashSet<>();
 -        artifactSet.addAll( dependency.getArtifacts() );
 +        artifactSet.addAll( request.getArtifacts() );
  
          if ( artifactSet.isEmpty() )
          {
+-            artifactSet.add( new DefaultIvyArtifactName( moduleName, "jar", "jar",
++            artifactSet.add( new DefaultIvyArtifactName( id.getModule(), "jar", "jar",
+                                                          Collections.<String, String> emptyMap() ) );
+         }
+ 
 @@ -273,9 +275,9 @@ public class GradleResolver
      }
  
