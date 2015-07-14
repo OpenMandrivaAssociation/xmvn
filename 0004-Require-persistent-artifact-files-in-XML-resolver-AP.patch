@@ -1,0 +1,24 @@
+From 0fe0c958cc53958f00097a3c8f2994e7e718ab83 Mon Sep 17 00:00:00 2001
+From: Mikolaj Izdebski <mizdebsk@redhat.com>
+Date: Tue, 14 Jul 2015 17:32:42 +0200
+Subject: [PATCH 4/4] Require persistent artifact files in XML resolver API
+
+---
+ .../org/fedoraproject/xmvn/tools/resolve/xml/ResolutionRequestBean.java  | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/xmvn-tools/xmvn-resolve/src/main/java/org/fedoraproject/xmvn/tools/resolve/xml/ResolutionRequestBean.java b/xmvn-tools/xmvn-resolve/src/main/java/org/fedoraproject/xmvn/tools/resolve/xml/ResolutionRequestBean.java
+index 56de47d..0393dcc 100644
+--- a/xmvn-tools/xmvn-resolve/src/main/java/org/fedoraproject/xmvn/tools/resolve/xml/ResolutionRequestBean.java
++++ b/xmvn-tools/xmvn-resolve/src/main/java/org/fedoraproject/xmvn/tools/resolve/xml/ResolutionRequestBean.java
+@@ -71,6 +71,7 @@ public class ResolutionRequestBean
+ 
+             request.setArtifact( bean.getArtifact() );
+             request.setProviderNeeded( bean.isProviderNeeded() );
++            request.setPersistentFileNeeded( true );
+ 
+             return request;
+         }
+-- 
+2.1.0
+

@@ -1,7 +1,7 @@
 From 9d9057fb17aa05bcf7df5717b1594eb14cb201e0 Mon Sep 17 00:00:00 2001
 From: Mikolaj Izdebski <mizdebsk@redhat.com>
 Date: Mon, 11 May 2015 16:05:16 +0200
-Subject: [PATCH 2/3] Prevent slashes from sneaking into artifact filename
+Subject: [PATCH 2/4] Prevent slashes from sneaking into artifact filename
 
 ---
  .../org/fedoraproject/xmvn/resolver/impl/EffectivePomGenerator.java   | 4 +++-

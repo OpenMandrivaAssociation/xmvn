@@ -4,7 +4,7 @@
 
 Name:           xmvn
 Version:        2.4.0
-Release:        4%{?dist}
+Release:        5%{?dist}
 Summary:        Local Extensions for Apache Maven
 License:        ASL 2.0
 URL:            http://mizdebsk.fedorapeople.org/xmvn
@@ -15,6 +15,7 @@ Source0:        https://fedorahosted.org/released/%{name}/%{name}-%{version}.tar
 Patch0:         0001-Fix-NPE-in-DefaultResolver.patch
 Patch1:         0002-Prevent-slashes-from-sneaking-into-artifact-filename.patch
 Patch2:         0003-Port-to-Gradle-2.5-rc-1.patch
+Patch3:         0004-Require-persistent-artifact-files-in-XML-resolver-AP.patch
 
 BuildRequires:  maven >= 3.3
 BuildRequires:  maven-local
@@ -157,6 +158,7 @@ This package provides %{summary}.
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
+%patch3 -p1
 
 %mvn_package ":xmvn{,-it}" __noinstall
 
@@ -302,6 +304,9 @@ cp -P %{_datadir}/maven/bin/m2.conf %{buildroot}%{_datadir}/%{name}/bin/
 %doc LICENSE NOTICE
 
 %changelog
+* Tue Jul 14 2015 Mikolaj Izdebski <mizdebsk@redhat.com> - 2.4.0-5
+- Require persistent artifact files in XML resolver API
+
 * Tue Jun 30 2015 Mikolaj Izdebski <mizdebsk@redhat.com> - 2.4.0-4
 - Port to Gradle 2.5-rc-1
 
