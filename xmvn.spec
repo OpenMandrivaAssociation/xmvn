@@ -3,19 +3,14 @@
 %global __requires_exclude %{?__requires_exclude:%__requires_exclude|}^osgi\\($
 
 Name:           xmvn
-Version:        2.4.0
-Release:        5%{?dist}
+Version:        2.5.0
+Release:        1%{?dist}
 Summary:        Local Extensions for Apache Maven
 License:        ASL 2.0
 URL:            http://mizdebsk.fedorapeople.org/xmvn
 BuildArch:      noarch
 
 Source0:        https://fedorahosted.org/released/%{name}/%{name}-%{version}.tar.xz
-
-Patch0:         0001-Fix-NPE-in-DefaultResolver.patch
-Patch1:         0002-Prevent-slashes-from-sneaking-into-artifact-filename.patch
-Patch2:         0003-Port-to-Gradle-2.5-rc-1.patch
-Patch3:         0004-Require-persistent-artifact-files-in-XML-resolver-AP.patch
 
 BuildRequires:  maven >= 3.3
 BuildRequires:  maven-local
@@ -24,7 +19,7 @@ BuildRequires:  cglib
 BuildRequires:  maven-dependency-plugin
 BuildRequires:  maven-plugin-build-helper
 BuildRequires:  maven-assembly-plugin
-BuildRequires:  maven-invoker-plugin
+BuildRequires:  maven-install-plugin
 BuildRequires:  maven-site-plugin
 BuildRequires:  objectweb-asm
 BuildRequires:  modello
@@ -155,15 +150,8 @@ This package provides %{summary}.
 
 %prep
 %setup -q
-%patch0 -p1
-%patch1 -p1
-%patch2 -p1
-%patch3 -p1
 
 %mvn_package ":xmvn{,-it}" __noinstall
-
-# In XMvn 2.x xmvn-connector was renamed to xmvn-connector-aether
-%mvn_alias :xmvn-connector-aether :xmvn-connector
 
 # remove dependency plugin maven-binaries execution
 # we provide apache-maven by symlink
@@ -175,15 +163,9 @@ mver=$(sed -n '/<mavenVersion>/{s/.*>\(.*\)<.*/\1/;p}' \
 mkdir -p target/dependency/
 cp -aL %{_datadir}/maven target/dependency/apache-maven-$mver
 
-# skip ITs for now (mix of old & new XMvn config causes issues)
-rm -rf src/it
-
-# probably bug in configuration/modello?
-sed -i 's|generated-site/resources/xsd/config|generated-site/xsd/config|' xmvn-core/pom.xml
-
 %build
-# XXX some tests fail on ARM for unknown reason, see why
-%mvn_build -s -f -j
+# ITs require artifacts to be insalled in local repo
+%mvn_build -s -j -g install
 
 tar --delay-directory-restore -xvf target/*tar.bz2
 chmod -R +rwX %{name}-%{version}*
@@ -304,6 +286,9 @@ cp -P %{_datadir}/maven/bin/m2.conf %{buildroot}%{_datadir}/%{name}/bin/
 %doc LICENSE NOTICE
 
 %changelog
+* Wed Oct 28 2015 Mikolaj Izdebski <mizdebsk@redhat.com> - 2.5.0-1
+- Update to upstream version 2.5.0
+
 * Tue Jul 14 2015 Mikolaj Izdebski <mizdebsk@redhat.com> - 2.4.0-5
 - Require persistent artifact files in XML resolver API
 
