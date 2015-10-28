@@ -8,13 +8,15 @@
 
 Name:           xmvn
 Version:        2.5.0
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Local Extensions for Apache Maven
 License:        ASL 2.0
 URL:            http://mizdebsk.fedorapeople.org/xmvn
 BuildArch:      noarch
 
 Source0:        https://fedorahosted.org/released/%{name}/%{name}-%{version}.tar.xz
+
+Patch0:         0001-Copy-core-dependencies-to-lib-core-in-assembly.patch
 
 BuildRequires:  maven >= 3.3
 BuildRequires:  maven-local
@@ -154,6 +156,7 @@ This package provides %{summary}.
 
 %prep
 %setup -q
+%patch0 -p1
 
 %mvn_package ":xmvn{,-it}" __noinstall
 
@@ -294,6 +297,9 @@ cp -P %{_datadir}/maven/bin/m2.conf %{buildroot}%{_datadir}/%{name}/bin/
 %doc LICENSE NOTICE
 
 %changelog
+* Wed Oct 28 2015 Mikolaj Izdebski <mizdebsk@redhat.com> - 2.5.0-2
+- Fix symlinks in lib/core
+
 * Wed Oct 28 2015 Mikolaj Izdebski <mizdebsk@redhat.com> - 2.5.0-1
 - Update to upstream version 2.5.0
 
