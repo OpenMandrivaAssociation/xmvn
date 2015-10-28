@@ -2,6 +2,10 @@
 # any additional bundles.
 %global __requires_exclude %{?__requires_exclude:%__requires_exclude|}^osgi\\($
 
+# Integration tests are disabled by default, but you can run them by
+# adding "--with its" to rpmbuild or mock invocation.
+%bcond_with its
+
 Name:           xmvn
 Version:        2.5.0
 Release:        1%{?dist}
@@ -152,6 +156,10 @@ This package provides %{summary}.
 %setup -q
 
 %mvn_package ":xmvn{,-it}" __noinstall
+
+%if %{without its}
+%pom_disable_module xmvn-it
+%endif
 
 # remove dependency plugin maven-binaries execution
 # we provide apache-maven by symlink
