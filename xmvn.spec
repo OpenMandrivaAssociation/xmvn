@@ -8,7 +8,7 @@
 
 Name:           xmvn
 Version:        2.5.0
-Release:        3%{?dist}
+Release:        4%{?dist}
 Summary:        Local Extensions for Apache Maven
 License:        ASL 2.0
 URL:            http://mizdebsk.fedorapeople.org/xmvn
@@ -18,7 +18,7 @@ Source0:        https://fedorahosted.org/released/%{name}/%{name}-%{version}.tar
 
 Patch0:         0001-Copy-core-dependencies-to-lib-core-in-assembly.patch
 
-BuildRequires:  maven >= 3.3
+BuildRequires:  maven >= 3.3.9
 BuildRequires:  maven-local
 BuildRequires:  beust-jcommander
 BuildRequires:  cglib
@@ -224,9 +224,6 @@ install -d -m 755 %{buildroot}%{_datadir}/%{name}/conf/
 cp -P %{_datadir}/maven/conf/settings.xml %{buildroot}%{_datadir}/%{name}/conf/
 cp -P %{_datadir}/maven/bin/m2.conf %{buildroot}%{_datadir}/%{name}/bin/
 
-# XXX temp for Maven 3.3.9 transition
-ln -s %{_javadir}/commons-lang3.jar %{buildroot}%{_datadir}/%{name}/lib/
-
 %files
 %attr(755,-,-) %{_bindir}/%{name}
 %attr(755,-,-) %{_bindir}/mvn-local
@@ -300,6 +297,9 @@ ln -s %{_javadir}/commons-lang3.jar %{buildroot}%{_datadir}/%{name}/lib/
 %doc LICENSE NOTICE
 
 %changelog
+* Mon Nov 23 2015 Mikolaj Izdebski <mizdebsk@redhat.com> - 2.5.0-4
+- Remove temporary Maven 3.3.9 workaround
+
 * Mon Nov 23 2015 Mikolaj Izdebski <mizdebsk@redhat.com> - 2.5.0-3
 - Add temporary workaround for Maven 3.3.9 transition
 
