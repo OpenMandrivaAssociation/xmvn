@@ -18,7 +18,7 @@ Source0:        https://fedorahosted.org/released/%{name}/%{name}-%{version}.tar
 
 Patch0:         0001-Copy-core-dependencies-to-lib-core-in-assembly.patch
 
-BuildRequires:  maven >= 3.3.9
+BuildRequires:  maven >= 3.3.9-2
 BuildRequires:  maven-local
 BuildRequires:  beust-jcommander
 BuildRequires:  cglib
