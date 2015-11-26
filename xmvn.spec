@@ -8,7 +8,7 @@
 
 Name:           xmvn
 Version:        2.5.0
-Release:        4%{?dist}
+Release:        5%{?dist}
 Summary:        Local Extensions for Apache Maven
 License:        ASL 2.0
 URL:            http://mizdebsk.fedorapeople.org/xmvn
@@ -17,6 +17,7 @@ BuildArch:      noarch
 Source0:        https://fedorahosted.org/released/%{name}/%{name}-%{version}.tar.xz
 
 Patch0:         0001-Copy-core-dependencies-to-lib-core-in-assembly.patch
+Patch1:         0002-Try-to-procect-builddep-MOJO-against-patological-cas.patch
 
 BuildRequires:  maven >= 3.3.9-2
 BuildRequires:  maven-local
@@ -157,6 +158,7 @@ This package provides %{summary}.
 %prep
 %setup -q
 %patch0 -p1
+%patch1 -p1
 
 %mvn_package ":xmvn{,-it}" __noinstall
 
@@ -297,6 +299,9 @@ cp -P %{_datadir}/maven/bin/m2.conf %{buildroot}%{_datadir}/%{name}/bin/
 %doc LICENSE NOTICE
 
 %changelog
+* Thu Nov 26 2015 Mikolaj Izdebski <mizdebsk@redhat.com> - 2.5.0-5
+- Try to procect builddep MOJO against patological cases
+
 * Mon Nov 23 2015 Mikolaj Izdebski <mizdebsk@redhat.com> - 2.5.0-4
 - Remove temporary Maven 3.3.9 workaround
 
