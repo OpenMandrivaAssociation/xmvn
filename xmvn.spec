@@ -8,7 +8,7 @@
 
 Name:           xmvn
 Version:        2.5.0
-Release:        8%{?dist}
+Release:        9%{?dist}
 Summary:        Local Extensions for Apache Maven
 License:        ASL 2.0
 URL:            http://mizdebsk.fedorapeople.org/xmvn
@@ -19,7 +19,7 @@ Source0:        https://fedorahosted.org/released/%{name}/%{name}-%{version}.tar
 Patch0:         0001-Copy-core-dependencies-to-lib-core-in-assembly.patch
 Patch1:         0002-Try-to-procect-builddep-MOJO-against-patological-cas.patch
 
-BuildRequires:  maven >= 3.3.9-2
+BuildRequires:  maven-lib >= 3.3.9-2
 BuildRequires:  maven-local
 BuildRequires:  beust-jcommander
 BuildRequires:  cglib
@@ -38,16 +38,24 @@ BuildRequires:  junit
 BuildRequires:  easymock
 BuildRequires:  gradle >= 2.5
 
-Requires:       maven >= 3.2.5-2
-Requires:       xmvn-api = %{version}-%{release}
-Requires:       xmvn-connector-aether = %{version}-%{release}
-Requires:       xmvn-core = %{version}-%{release}
+Requires:       xmvn-minimal = %{version}-%{release}
 
 %description
 This package provides extensions for Apache Maven that can be used to
 manage system artifact repository and use it to resolve Maven
 artifacts in offline mode, as well as Maven plugins to help with
 creating RPM packages containing Maven artifacts.
+
+%package        minimal
+Summary:        Dependency-reduced version of XMvn
+Requires:       maven-lib >= 3.2.5-2
+Requires:       xmvn-api = %{version}-%{release}
+Requires:       xmvn-connector-aether = %{version}-%{release}
+Requires:       xmvn-core = %{version}-%{release}
+
+%description    minimal
+This package provides minimal version of XMvn, incapable of using
+remote repositories.
 
 %package        parent-pom
 Summary:        XMvn Parent POM
@@ -217,7 +225,7 @@ cp -r %{_datadir}/maven/lib/* %{buildroot}%{_datadir}/%{name}/lib/
 cat <<EOF >%{buildroot}%{_bindir}/%{name}
 #!/bin/sh -e
 export M2_HOME="\${M2_HOME:-%{_datadir}/%{name}}"
-exec mvn "\${@}"
+exec %{_datadir}/maven/bin/mvn-script "\${@}"
 EOF
 
 # mvn-local symlink
@@ -229,10 +237,42 @@ cp -P %{_datadir}/maven/conf/settings.xml %{buildroot}%{_datadir}/%{name}/conf/
 cp -P %{_datadir}/maven/bin/m2.conf %{buildroot}%{_datadir}/%{name}/bin/
 
 %files
-%attr(755,-,-) %{_bindir}/%{name}
 %attr(755,-,-) %{_bindir}/mvn-local
+%{_datadir}/%{name}/lib/aether_aether-connector-basic.jar
+%{_datadir}/%{name}/lib/aether_aether-transport-wagon.jar
+%{_datadir}/%{name}/lib/aopalliance.jar
+%{_datadir}/%{name}/lib/cdi-apicdi-api.jar
+%{_datadir}/%{name}/lib/commons-codec.jar
+%{_datadir}/%{name}/lib/commons-io.jar
+%{_datadir}/%{name}/lib/commons-lang.jar
+%{_datadir}/%{name}/lib/commons-logging.jar
+%{_datadir}/%{name}/lib/httpcomponents_httpclient.jar
+%{_datadir}/%{name}/lib/httpcomponents_httpcore.jar
+%{_datadir}/%{name}/lib/jsoup_jsoup.jar
+%{_datadir}/%{name}/lib/jsr-305.jar
+%{_datadir}/%{name}/lib/maven-wagon_file.jar
+%{_datadir}/%{name}/lib/maven-wagon_http-shaded.jar
+%{_datadir}/%{name}/lib/maven-wagon_http-shared.jar
+
+%files minimal
+%attr(755,-,-) %{_bindir}/%{name}
 %dir %{_datadir}/%{name}/bin
 %dir %{_datadir}/%{name}/lib
+%exclude %{_datadir}/%{name}/lib/aether_aether-connector-basic.jar
+%exclude %{_datadir}/%{name}/lib/aether_aether-transport-wagon.jar
+%exclude %{_datadir}/%{name}/lib/aopalliance.jar
+%exclude %{_datadir}/%{name}/lib/cdi-apicdi-api.jar
+%exclude %{_datadir}/%{name}/lib/commons-codec.jar
+%exclude %{_datadir}/%{name}/lib/commons-io.jar
+%exclude %{_datadir}/%{name}/lib/commons-lang.jar
+%exclude %{_datadir}/%{name}/lib/commons-logging.jar
+%exclude %{_datadir}/%{name}/lib/httpcomponents_httpclient.jar
+%exclude %{_datadir}/%{name}/lib/httpcomponents_httpcore.jar
+%exclude %{_datadir}/%{name}/lib/jsoup_jsoup.jar
+%exclude %{_datadir}/%{name}/lib/jsr-305.jar
+%exclude %{_datadir}/%{name}/lib/maven-wagon_file.jar
+%exclude %{_datadir}/%{name}/lib/maven-wagon_http-shaded.jar
+%exclude %{_datadir}/%{name}/lib/maven-wagon_http-shared.jar
 %{_datadir}/%{name}/lib/*.jar
 %{_datadir}/%{name}/lib/ext
 %{_datadir}/%{name}/bin/m2.conf
@@ -301,6 +341,9 @@ cp -P %{_datadir}/maven/bin/m2.conf %{buildroot}%{_datadir}/%{name}/bin/
 %doc LICENSE NOTICE
 
 %changelog
+* Tue Jun 28 2016 Mikolaj Izdebski <mizdebsk@redhat.com> - 2.5.0-9
+- Introduce xmvn-minimal subpackage
+
 * Wed Jun 15 2016 Mikolaj Izdebski <mizdebsk@redhat.com> - 2.5.0-8
 - Add missing build-requires
 
