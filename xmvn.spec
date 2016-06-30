@@ -8,7 +8,7 @@
 
 Name:           xmvn
 Version:        2.5.0
-Release:        9%{?dist}
+Release:        10%{?dist}
 Summary:        Local Extensions for Apache Maven
 License:        ASL 2.0
 URL:            http://mizdebsk.fedorapeople.org/xmvn
@@ -39,6 +39,7 @@ BuildRequires:  easymock
 BuildRequires:  gradle >= 2.5
 
 Requires:       xmvn-minimal = %{version}-%{release}
+Requires:       maven
 
 %description
 This package provides extensions for Apache Maven that can be used to
@@ -341,6 +342,9 @@ cp -P %{_datadir}/maven/bin/m2.conf %{buildroot}%{_datadir}/%{name}/bin/
 %doc LICENSE NOTICE
 
 %changelog
+* Thu Jun 30 2016 Mikolaj Izdebski <mizdebsk@redhat.com> - 2.5.0-10
+- Full xmvn should require full maven
+
 * Tue Jun 28 2016 Mikolaj Izdebski <mizdebsk@redhat.com> - 2.5.0-9
 - Introduce xmvn-minimal subpackage
 
