@@ -8,7 +8,7 @@
 
 Name:           xmvn
 Version:        2.5.0
-Release:        10%{?dist}
+Release:        11%{?dist}
 Summary:        Local Extensions for Apache Maven
 License:        ASL 2.0
 URL:            http://mizdebsk.fedorapeople.org/xmvn
@@ -18,6 +18,7 @@ Source0:        https://fedorahosted.org/released/%{name}/%{name}-%{version}.tar
 
 Patch0:         0001-Copy-core-dependencies-to-lib-core-in-assembly.patch
 Patch1:         0002-Try-to-procect-builddep-MOJO-against-patological-cas.patch
+Patch2:         0003-Don-t-install-POM-files-for-Tycho-projects.patch
 
 BuildRequires:  maven-lib >= 3.3.9-2
 BuildRequires:  maven-local
@@ -170,6 +171,7 @@ This package provides %{summary}.
 %setup -q
 %patch0 -p1
 %patch1 -p1
+%patch2 -p1
 
 %mvn_package ":xmvn{,-it}" __noinstall
 
@@ -342,6 +344,9 @@ cp -P %{_datadir}/maven/bin/m2.conf %{buildroot}%{_datadir}/%{name}/bin/
 %doc LICENSE NOTICE
 
 %changelog
+* Mon Jul 04 2016 Michael Simacek <msimacek@redhat.com> - 2.5.0-11
+- Don't install POM files for Tycho projects
+
 * Thu Jun 30 2016 Mikolaj Izdebski <mizdebsk@redhat.com> - 2.5.0-10
 - Full xmvn should require full maven
 
