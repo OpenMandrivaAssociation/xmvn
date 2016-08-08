@@ -8,7 +8,7 @@
 
 Name:           xmvn
 Version:        2.5.0
-Release:        11%{?dist}
+Release:        12%{?dist}
 Summary:        Local Extensions for Apache Maven
 License:        ASL 2.0
 URL:            http://mizdebsk.fedorapeople.org/xmvn
@@ -38,6 +38,9 @@ BuildRequires:  sisu-mojos
 BuildRequires:  junit
 BuildRequires:  easymock
 BuildRequires:  gradle >= 2.5
+BuildRequires:  gossip
+BuildRequires:  jansi
+BuildRequires:  maven-shared-utils
 
 Requires:       xmvn-minimal = %{version}-%{release}
 Requires:       maven
@@ -221,6 +224,14 @@ done
 # copy over maven lib directory
 cp -r %{_datadir}/maven/lib/* %{buildroot}%{_datadir}/%{name}/lib/
 
+# XXX Add temp symlinks needed for updating to Maven 3.4.0
+build-jar-repository -s -p %{buildroot}%{_datadir}/%{name}/lib/ \
+    gossip/gossip-bootstrap \
+    gossip/gossip-core \
+    gossip/gossip-slf4j \
+    jansi/jansi \
+    maven-shared-utils/maven-shared-utils \
+
 # possibly recreate symlinks that can be automated with xmvn-subst
 %{name}-subst %{buildroot}%{_datadir}/%{name}/
 
@@ -344,6 +355,9 @@ cp -P %{_datadir}/maven/bin/m2.conf %{buildroot}%{_datadir}/%{name}/bin/
 %doc LICENSE NOTICE
 
 %changelog
+* Mon Aug  8 2016 Mikolaj Izdebski <mizdebsk@redhat.com> - 2.5.0-12
+- Add temp symlinks needed for updating to Maven 3.4.0
+
 * Mon Jul 04 2016 Michael Simacek <msimacek@redhat.com> - 2.5.0-11
 - Don't install POM files for Tycho projects
 
