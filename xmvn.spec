@@ -8,7 +8,7 @@
 
 Name:           xmvn
 Version:        2.5.0
-Release:        12%{?dist}
+Release:        13%{?dist}
 Summary:        Local Extensions for Apache Maven
 License:        ASL 2.0
 URL:            http://mizdebsk.fedorapeople.org/xmvn
@@ -20,7 +20,7 @@ Patch0:         0001-Copy-core-dependencies-to-lib-core-in-assembly.patch
 Patch1:         0002-Try-to-procect-builddep-MOJO-against-patological-cas.patch
 Patch2:         0003-Don-t-install-POM-files-for-Tycho-projects.patch
 
-BuildRequires:  maven-lib >= 3.3.9-2
+BuildRequires:  maven-lib >= 3.4.0
 BuildRequires:  maven-local
 BuildRequires:  beust-jcommander
 BuildRequires:  cglib
@@ -38,12 +38,9 @@ BuildRequires:  sisu-mojos
 BuildRequires:  junit
 BuildRequires:  easymock
 BuildRequires:  gradle >= 2.5
-BuildRequires:  gossip
-BuildRequires:  jansi
-BuildRequires:  maven-shared-utils
 
 Requires:       xmvn-minimal = %{version}-%{release}
-Requires:       maven
+Requires:       maven >= 3.4.0
 
 %description
 This package provides extensions for Apache Maven that can be used to
@@ -53,7 +50,7 @@ creating RPM packages containing Maven artifacts.
 
 %package        minimal
 Summary:        Dependency-reduced version of XMvn
-Requires:       maven-lib >= 3.2.5-2
+Requires:       maven-lib >= 3.4.0
 Requires:       xmvn-api = %{version}-%{release}
 Requires:       xmvn-connector-aether = %{version}-%{release}
 Requires:       xmvn-core = %{version}-%{release}
@@ -224,14 +221,6 @@ done
 # copy over maven lib directory
 cp -r %{_datadir}/maven/lib/* %{buildroot}%{_datadir}/%{name}/lib/
 
-# XXX Add temp symlinks needed for updating to Maven 3.4.0
-build-jar-repository -s -p %{buildroot}%{_datadir}/%{name}/lib/ \
-    gossip/gossip-bootstrap \
-    gossip/gossip-core \
-    gossip/gossip-slf4j \
-    jansi/jansi \
-    maven-shared-utils/maven-shared-utils \
-
 # possibly recreate symlinks that can be automated with xmvn-subst
 %{name}-subst %{buildroot}%{_datadir}/%{name}/
 
@@ -355,6 +344,9 @@ cp -P %{_datadir}/maven/bin/m2.conf %{buildroot}%{_datadir}/%{name}/bin/
 %doc LICENSE NOTICE
 
 %changelog
+* Mon Aug  8 2016 Mikolaj Izdebski <mizdebsk@redhat.com> - 2.5.0-13
+- Remove temp symlinks
+
 * Mon Aug  8 2016 Mikolaj Izdebski <mizdebsk@redhat.com> - 2.5.0-12
 - Add temp symlinks needed for updating to Maven 3.4.0
 
