@@ -8,7 +8,7 @@
 
 Name:           xmvn
 Version:        2.5.0
-Release:        13%{?dist}
+Release:        14%{?dist}
 Summary:        Local Extensions for Apache Maven
 License:        ASL 2.0
 URL:            http://mizdebsk.fedorapeople.org/xmvn
@@ -54,6 +54,29 @@ Requires:       maven-lib >= 3.4.0
 Requires:       xmvn-api = %{version}-%{release}
 Requires:       xmvn-connector-aether = %{version}-%{release}
 Requires:       xmvn-core = %{version}-%{release}
+Requires:       aether-api
+Requires:       aether-impl
+Requires:       aether-spi
+Requires:       aether-util
+Requires:       apache-commons-cli
+Requires:       apache-commons-lang3
+Requires:       atinject
+Requires:       google-guice
+Requires:       gossip
+Requires:       guava
+Requires:       jansi
+Requires:       maven-lib
+Requires:       maven-shared-utils
+Requires:       maven-wagon-provider-api
+Requires:       objectweb-asm
+Requires:       plexus-cipher
+Requires:       plexus-containers-component-annotations
+Requires:       plexus-interpolation
+Requires:       plexus-sec-dispatcher
+Requires:       plexus-utils
+Requires:       sisu-inject
+Requires:       sisu-plexus
+Requires:       slf4j
 
 %description    minimal
 This package provides minimal version of XMvn, incapable of using
@@ -344,6 +367,9 @@ cp -P %{_datadir}/maven/bin/m2.conf %{buildroot}%{_datadir}/%{name}/bin/
 %doc LICENSE NOTICE
 
 %changelog
+* Thu Aug 11 2016 Michael Simacek <msimacek@redhat.com> - 2.5.0-14
+- Add Requires on all symlinked jars to xmvn-minimal
+
 * Mon Aug  8 2016 Mikolaj Izdebski <mizdebsk@redhat.com> - 2.5.0-13
 - Remove temp symlinks
 
