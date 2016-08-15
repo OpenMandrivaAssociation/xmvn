@@ -8,7 +8,7 @@
 
 Name:           xmvn
 Version:        2.5.0
-Release:        14%{?dist}
+Release:        15%{?dist}
 Summary:        Local Extensions for Apache Maven
 License:        ASL 2.0
 URL:            http://mizdebsk.fedorapeople.org/xmvn
@@ -227,9 +227,15 @@ rm -Rf %{name}-%{version}*/{AUTHORS,README,LICENSE,NOTICE}
 
 install -d -m 755 %{buildroot}%{_datadir}/%{name}
 cp -r %{name}-%{version}*/* %{buildroot}%{_datadir}/%{name}/
-ln -sf %{_datadir}/maven/bin/mvn %{buildroot}%{_datadir}/%{name}/bin/mvn
-ln -sf %{_datadir}/maven/bin/mvnDebug %{buildroot}%{_datadir}/%{name}/bin/mvnDebug
-ln -sf %{_datadir}/maven/bin/mvnyjp %{buildroot}%{_datadir}/%{name}/bin/mvnyjp
+
+for cmd in mvn mvnDebug mvnyjp; do
+    cat <<EOF >%{buildroot}%{_datadir}/%{name}/bin/$cmd
+#!/bin/sh -e
+export _FEDORA_MAVEN_HOME="%{_datadir}/%{name}"
+exec %{_datadir}/maven/bin/$cmd "\${@}"
+EOF
+    chmod 755 %{buildroot}%{_datadir}/%{name}/bin/$cmd
+done
 
 # helper scripts
 install -d -m 755 %{buildroot}%{_bindir}
@@ -247,12 +253,8 @@ cp -r %{_datadir}/maven/lib/* %{buildroot}%{_datadir}/%{name}/lib/
 # possibly recreate symlinks that can be automated with xmvn-subst
 %{name}-subst %{buildroot}%{_datadir}/%{name}/
 
-# /usr/bin/xmvn script
-cat <<EOF >%{buildroot}%{_bindir}/%{name}
-#!/bin/sh -e
-export M2_HOME="\${M2_HOME:-%{_datadir}/%{name}}"
-exec %{_datadir}/maven/bin/mvn-script "\${@}"
-EOF
+# /usr/bin/xmvn
+ln -s %{_datadir}/%{name}/bin/mvn %{buildroot}%{_bindir}/%{name}
 
 # mvn-local symlink
 ln -s %{name} %{buildroot}%{_bindir}/mvn-local
@@ -263,7 +265,7 @@ cp -P %{_datadir}/maven/conf/settings.xml %{buildroot}%{_datadir}/%{name}/conf/
 cp -P %{_datadir}/maven/bin/m2.conf %{buildroot}%{_datadir}/%{name}/bin/
 
 %files
-%attr(755,-,-) %{_bindir}/mvn-local
+%{_bindir}/mvn-local
 %{_datadir}/%{name}/lib/aether_aether-connector-basic.jar
 %{_datadir}/%{name}/lib/aether_aether-transport-wagon.jar
 %{_datadir}/%{name}/lib/aopalliance.jar
@@ -281,7 +283,7 @@ cp -P %{_datadir}/maven/bin/m2.conf %{buildroot}%{_datadir}/%{name}/bin/
 %{_datadir}/%{name}/lib/maven-wagon_http-shared.jar
 
 %files minimal
-%attr(755,-,-) %{_bindir}/%{name}
+%{_bindir}/%{name}
 %dir %{_datadir}/%{name}/bin
 %dir %{_datadir}/%{name}/lib
 %exclude %{_datadir}/%{name}/lib/aether_aether-connector-basic.jar
@@ -367,6 +369,9 @@ cp -P %{_datadir}/maven/bin/m2.conf %{buildroot}%{_datadir}/%{name}/bin/
 %doc LICENSE NOTICE
 
 %changelog
+* Mon Aug 15 2016 Michael Simacek <msimacek@redhat.com> - 2.5.0-15
+- Switch launcher scripts
+
 * Thu Aug 11 2016 Michael Simacek <msimacek@redhat.com> - 2.5.0-14
 - Add Requires on all symlinked jars to xmvn-minimal
 
