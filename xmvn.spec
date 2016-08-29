@@ -11,10 +11,10 @@ Version:        2.5.0
 Release:        15%{?dist}
 Summary:        Local Extensions for Apache Maven
 License:        ASL 2.0
-URL:            http://mizdebsk.fedorapeople.org/xmvn
+URL:            https://fedora-java.github.io/xmvn/
 BuildArch:      noarch
 
-Source0:        https://fedorahosted.org/released/%{name}/%{name}-%{version}.tar.xz
+Source0:        https://github.com/fedora-java/xmvn/releases/download/%{version}/xmvn-%{version}.tar.xz
 
 Patch0:         0001-Copy-core-dependencies-to-lib-core-in-assembly.patch
 Patch1:         0002-Try-to-procect-builddep-MOJO-against-patological-cas.patch
