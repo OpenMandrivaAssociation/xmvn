@@ -8,7 +8,7 @@
 
 Name:           xmvn
 Version:        2.5.0
-Release:        15%{?dist}
+Release:        16%{?dist}
 Summary:        Local Extensions for Apache Maven
 License:        ASL 2.0
 URL:            https://fedora-java.github.io/xmvn/
@@ -19,6 +19,7 @@ Source0:        https://github.com/fedora-java/xmvn/releases/download/%{version}
 Patch0:         0001-Copy-core-dependencies-to-lib-core-in-assembly.patch
 Patch1:         0002-Try-to-procect-builddep-MOJO-against-patological-cas.patch
 Patch2:         0003-Don-t-install-POM-files-for-Tycho-projects.patch
+Patch3:         0004-Allow-xmvn-to-install-files-who-names-whitespace.patch
 
 BuildRequires:  maven-lib >= 3.4.0
 BuildRequires:  maven-local
@@ -196,6 +197,7 @@ This package provides %{summary}.
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
+%patch3 -p1
 
 %mvn_package ":xmvn{,-it}" __noinstall
 
@@ -370,6 +372,9 @@ cp -P %{_datadir}/maven/bin/m2.conf %{buildroot}%{_datadir}/%{name}/bin/
 %doc LICENSE NOTICE
 
 %changelog
+* Mon Jan 16 2017 Mikolaj Izdebski <mizdebsk@redhat.com> - 2.5.0-16
+- Allow xmvn to install files who names whitespace
+
 * Mon Aug 15 2016 Michael Simacek <msimacek@redhat.com> - 2.5.0-15
 - Switch launcher scripts
 

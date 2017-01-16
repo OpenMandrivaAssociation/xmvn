@@ -1,7 +1,7 @@
-From 530df7f2f2f6751a06862955fafbe319f86a3808 Mon Sep 17 00:00:00 2001
+From 3b214255464d5baca5ee26a897cd9afca53e52c3 Mon Sep 17 00:00:00 2001
 From: Mikolaj Izdebski <mizdebsk@redhat.com>
 Date: Thu, 26 Nov 2015 14:18:48 +0100
-Subject: [PATCH 2/3] Try to procect builddep MOJO against patological cases
+Subject: [PATCH 2/4] Try to procect builddep MOJO against patological cases
 
 - Clone model before processing it to avoid
   UnsupportedOperationException (rhbz#1276729).
@@ -50,5 +50,5 @@ index 8bbdf5f..dd6a8f5 100644
              String compatVersion = resolution[1];
              String namespace = resolution[2];
 -- 
-2.7.4
+2.9.3
 

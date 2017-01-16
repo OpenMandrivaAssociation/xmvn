@@ -1,7 +1,7 @@
-From 84ee943dbe1c474aa7559242080d9f66b315b77d Mon Sep 17 00:00:00 2001
+From 077ea8168a80eab45417ec40e48084998df8681e Mon Sep 17 00:00:00 2001
 From: Mikolaj Izdebski <mizdebsk@redhat.com>
 Date: Mon, 4 Jul 2016 11:57:34 +0200
-Subject: [PATCH 3/3] Don't install POM files for Tycho projects
+Subject: [PATCH 3/4] Don't install POM files for Tycho projects
 
 ---
  .../java/org/fedoraproject/xmvn/mojo/InstallMojo.java | 19 +++++++++++--------
@@ -38,5 +38,5 @@ index fd76421..d6c95c8 100644
              Set<Artifact> attachedArtifacts = new LinkedHashSet<>();
              for ( org.apache.maven.artifact.Artifact mavenArtifact : project.getAttachedArtifacts() )
 -- 
-2.7.4
+2.9.3
 
