@@ -6,9 +6,11 @@
 # adding "--with its" to rpmbuild or mock invocation.
 %bcond_with its
 
+%bcond_without gradle
+
 Name:           xmvn
 Version:        2.5.0
-Release:        17%{?dist}
+Release:        18%{?dist}
 Summary:        Local Extensions for Apache Maven
 License:        ASL 2.0
 URL:            https://fedora-java.github.io/xmvn/
@@ -21,7 +23,7 @@ Patch1:         0002-Try-to-procect-builddep-MOJO-against-patological-cas.patch
 Patch2:         0003-Don-t-install-POM-files-for-Tycho-projects.patch
 Patch3:         0004-Allow-xmvn-to-install-files-who-names-whitespace.patch
 
-BuildRequires:  maven-lib >= 3.4.0
+BuildRequires:  maven >= 3.4.0
 BuildRequires:  maven-local
 BuildRequires:  beust-jcommander
 BuildRequires:  cglib
@@ -38,8 +40,10 @@ BuildRequires:  apache-ivy
 BuildRequires:  sisu-mojos
 BuildRequires:  junit
 BuildRequires:  easymock
-BuildRequires:  gradle >= 2.5
 BuildRequires:  maven-invoker
+%if %{with gradle}
+BuildRequires:  gradle >= 2.5
+%endif
 
 Requires:       xmvn-minimal = %{version}-%{release}
 Requires:       maven >= 3.4.0
@@ -122,6 +126,7 @@ provides integration of Eclipse Aether with XMvn.  It provides an
 adapter which allows XMvn resolver to be used as Aether workspace
 reader.
 
+%if %{with gradle}
 %package        connector-gradle
 Summary:        XMvn Connector for Gradle
 
@@ -129,6 +134,7 @@ Summary:        XMvn Connector for Gradle
 This package provides XMvn Connector for Gradle, which provides
 integration of Gradle with XMvn.  It provides an adapter which allows
 XMvn resolver to be used as Gradle resolver.
+%endif
 
 %package        connector-ivy
 Summary:        XMvn Connector for Apache Ivy
@@ -200,6 +206,10 @@ This package provides %{summary}.
 %patch3 -p1
 
 %mvn_package ":xmvn{,-it}" __noinstall
+
+%if %{without gradle}
+%pom_disable_module xmvn-connector-gradle
+%endif
 
 %if %{without its}
 %pom_disable_module xmvn-it
@@ -330,7 +340,9 @@ cp -P %{_datadir}/maven/bin/m2.conf %{buildroot}%{_datadir}/%{name}/bin/
 
 %files connector-aether -f .mfiles-xmvn-connector-aether
 
+%if %{with gradle}
 %files connector-gradle -f .mfiles-xmvn-connector-gradle
+%endif
 
 %files connector-ivy -f .mfiles-xmvn-connector-ivy
 %dir %{_datadir}/%{name}/lib
@@ -372,6 +384,9 @@ cp -P %{_datadir}/maven/bin/m2.conf %{buildroot}%{_datadir}/%{name}/bin/
 %doc LICENSE NOTICE
 
 %changelog
+* Tue Jan 31 2017 Mikolaj Izdebski <mizdebsk@redhat.com> - 2.5.0-18
+- Allow to conditionally build without gradle
+
 * Mon Jan 16 2017 Michael Simacek <msimacek@redhat.com> - 2.5.0-17
 - Use reactor artifacts when running xmvn-subst
 
