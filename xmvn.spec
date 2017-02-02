@@ -10,7 +10,7 @@
 
 Name:           xmvn
 Version:        2.5.0
-Release:        19%{?dist}
+Release:        20%{?dist}
 Summary:        Local Extensions for Apache Maven
 License:        ASL 2.0
 URL:            https://fedora-java.github.io/xmvn/
@@ -67,11 +67,8 @@ Requires:       apache-commons-cli
 Requires:       apache-commons-lang3
 Requires:       atinject
 Requires:       google-guice
-Requires:       gossip
 Requires:       guava
-Requires:       jansi
 Requires:       maven-lib
-Requires:       maven-shared-utils
 Requires:       maven-wagon-provider-api
 Requires:       objectweb-asm
 Requires:       plexus-cipher
@@ -385,6 +382,9 @@ cp -P %{_datadir}/maven/bin/m2.conf %{buildroot}%{_datadir}/%{name}/bin/
 %doc LICENSE NOTICE
 
 %changelog
+* Thu Feb 02 2017 Michael Simacek <msimacek@redhat.com> - 2.5.0-20
+- Remove requires added for maven 3.4.0
+
 * Thu Feb 02 2017 Michael Simacek <msimacek@redhat.com> - 2.5.0-19
 - Remove BR on maven-site-plugin
 
