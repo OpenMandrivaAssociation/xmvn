@@ -10,7 +10,7 @@
 
 Name:           xmvn
 Version:        2.5.0
-Release:        18%{?dist}
+Release:        19%{?dist}
 Summary:        Local Extensions for Apache Maven
 License:        ASL 2.0
 URL:            https://fedora-java.github.io/xmvn/
@@ -31,7 +31,6 @@ BuildRequires:  maven-dependency-plugin
 BuildRequires:  maven-plugin-build-helper
 BuildRequires:  maven-assembly-plugin
 BuildRequires:  maven-install-plugin
-BuildRequires:  maven-site-plugin
 BuildRequires:  maven-plugin-plugin
 BuildRequires:  objectweb-asm
 BuildRequires:  modello
@@ -204,6 +203,8 @@ This package provides %{summary}.
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
+
+%pom_remove_plugin -r :maven-site-plugin
 
 %mvn_package ":xmvn{,-it}" __noinstall
 
@@ -384,6 +385,9 @@ cp -P %{_datadir}/maven/bin/m2.conf %{buildroot}%{_datadir}/%{name}/bin/
 %doc LICENSE NOTICE
 
 %changelog
+* Thu Feb 02 2017 Michael Simacek <msimacek@redhat.com> - 2.5.0-19
+- Remove BR on maven-site-plugin
+
 * Tue Jan 31 2017 Mikolaj Izdebski <mizdebsk@redhat.com> - 2.5.0-18
 - Allow to conditionally build without gradle
 
