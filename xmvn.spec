@@ -10,7 +10,7 @@
 
 Name:           xmvn
 Version:        2.5.0
-Release:        22%{?dist}
+Release:        23%{?dist}
 Summary:        Local Extensions for Apache Maven
 License:        ASL 2.0
 URL:            https://fedora-java.github.io/xmvn/
@@ -59,19 +59,20 @@ Requires:       maven-lib >= 3.4.0
 Requires:       xmvn-api = %{version}-%{release}
 Requires:       xmvn-connector-aether = %{version}-%{release}
 Requires:       xmvn-core = %{version}-%{release}
-Requires:       aether-api
-Requires:       aether-impl
-Requires:       aether-spi
-Requires:       aether-util
+
 Requires:       apache-commons-cli
 Requires:       apache-commons-lang3
 Requires:       atinject
 Requires:       google-guice
 Requires:       guava
-Requires:       maven-lib
+Requires:       maven-resolver-api
+Requires:       maven-resolver-impl
+Requires:       maven-resolver-spi
+Requires:       maven-resolver-util
+Requires:       maven-shared-utils
 Requires:       maven-wagon-provider-api
-Requires:       objectweb-asm
 Requires:       plexus-cipher
+Requires:       plexus-classworlds
 Requires:       plexus-containers-component-annotations
 Requires:       plexus-interpolation
 Requires:       plexus-sec-dispatcher
@@ -79,7 +80,6 @@ Requires:       plexus-utils
 Requires:       sisu-inject
 Requires:       sisu-plexus
 Requires:       slf4j
-Requires:       maven-shared-utils
 
 %description    minimal
 This package provides minimal version of XMvn, incapable of using
@@ -262,10 +262,6 @@ done
 # copy over maven lib directory
 cp -r %{_datadir}/maven/lib/* %{buildroot}%{_datadir}/%{name}/lib/
 
-# XXX temporary
-build-jar-repository %{buildroot}%{_datadir}/%{name}/lib/ maven-shared-utils
-ln -s %{_javadir}/maven/maven-resolver-provider.jar %{buildroot}%{_datadir}/%{name}/lib/maven-resolver-provider.jar
-
 # possibly recreate symlinks that can be automated with xmvn-subst
 %{name}-subst -s -R %{buildroot} %{buildroot}%{_datadir}/%{name}/
 
@@ -289,6 +285,7 @@ cp -P %{_datadir}/maven/bin/m2.conf %{buildroot}%{_datadir}/%{name}/bin/
 %dir %{_datadir}/%{name}/lib
 %{_datadir}/%{name}/lib/*.jar
 %{_datadir}/%{name}/lib/ext
+%{_datadir}/%{name}/lib/jansi-native
 %{_datadir}/%{name}/bin/m2.conf
 %{_datadir}/%{name}/bin/mvn
 %{_datadir}/%{name}/bin/mvnDebug
@@ -357,6 +354,9 @@ cp -P %{_datadir}/maven/bin/m2.conf %{buildroot}%{_datadir}/%{name}/bin/
 %doc LICENSE NOTICE
 
 %changelog
+* Wed Apr 19 2017 Michael Simacek <msimacek@redhat.com> - 2.5.0-23
+- Update spec for maven 3.5.0
+
 * Wed Apr 19 2017 Michael Simacek <msimacek@redhat.com> - 2.5.0-22
 - Temporary changes for maven upgrade
 
