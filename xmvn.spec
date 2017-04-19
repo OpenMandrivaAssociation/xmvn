@@ -10,7 +10,7 @@
 
 Name:           xmvn
 Version:        2.5.0
-Release:        21%{?dist}
+Release:        22%{?dist}
 Summary:        Local Extensions for Apache Maven
 License:        ASL 2.0
 URL:            https://fedora-java.github.io/xmvn/
@@ -79,6 +79,7 @@ Requires:       plexus-utils
 Requires:       sisu-inject
 Requires:       sisu-plexus
 Requires:       slf4j
+Requires:       maven-shared-utils
 
 %description    minimal
 This package provides minimal version of XMvn, incapable of using
@@ -261,6 +262,10 @@ done
 # copy over maven lib directory
 cp -r %{_datadir}/maven/lib/* %{buildroot}%{_datadir}/%{name}/lib/
 
+# XXX temporary
+build-jar-repository %{buildroot}%{_datadir}/%{name}/lib/ maven-shared-utils
+ln -s %{_javadir}/maven/maven-resolver-provider.jar %{buildroot}%{_datadir}/%{name}/lib/maven-resolver-provider.jar
+
 # possibly recreate symlinks that can be automated with xmvn-subst
 %{name}-subst -s -R %{buildroot} %{buildroot}%{_datadir}/%{name}/
 
@@ -277,41 +282,11 @@ cp -P %{_datadir}/maven/bin/m2.conf %{buildroot}%{_datadir}/%{name}/bin/
 
 %files
 %{_bindir}/mvn-local
-%{_datadir}/%{name}/lib/aether_aether-connector-basic.jar
-%{_datadir}/%{name}/lib/aether_aether-transport-wagon.jar
-%{_datadir}/%{name}/lib/aopalliance.jar
-%{_datadir}/%{name}/lib/cdi-apicdi-api.jar
-%{_datadir}/%{name}/lib/commons-codec.jar
-%{_datadir}/%{name}/lib/commons-io.jar
-%{_datadir}/%{name}/lib/commons-lang.jar
-%{_datadir}/%{name}/lib/commons-logging.jar
-%{_datadir}/%{name}/lib/httpcomponents_httpclient.jar
-%{_datadir}/%{name}/lib/httpcomponents_httpcore.jar
-%{_datadir}/%{name}/lib/jsoup_jsoup.jar
-%{_datadir}/%{name}/lib/jsr-305.jar
-%{_datadir}/%{name}/lib/maven-wagon_file.jar
-%{_datadir}/%{name}/lib/maven-wagon_http-shaded.jar
-%{_datadir}/%{name}/lib/maven-wagon_http-shared.jar
 
 %files minimal
 %{_bindir}/%{name}
 %dir %{_datadir}/%{name}/bin
 %dir %{_datadir}/%{name}/lib
-%exclude %{_datadir}/%{name}/lib/aether_aether-connector-basic.jar
-%exclude %{_datadir}/%{name}/lib/aether_aether-transport-wagon.jar
-%exclude %{_datadir}/%{name}/lib/aopalliance.jar
-%exclude %{_datadir}/%{name}/lib/cdi-apicdi-api.jar
-%exclude %{_datadir}/%{name}/lib/commons-codec.jar
-%exclude %{_datadir}/%{name}/lib/commons-io.jar
-%exclude %{_datadir}/%{name}/lib/commons-lang.jar
-%exclude %{_datadir}/%{name}/lib/commons-logging.jar
-%exclude %{_datadir}/%{name}/lib/httpcomponents_httpclient.jar
-%exclude %{_datadir}/%{name}/lib/httpcomponents_httpcore.jar
-%exclude %{_datadir}/%{name}/lib/jsoup_jsoup.jar
-%exclude %{_datadir}/%{name}/lib/jsr-305.jar
-%exclude %{_datadir}/%{name}/lib/maven-wagon_file.jar
-%exclude %{_datadir}/%{name}/lib/maven-wagon_http-shaded.jar
-%exclude %{_datadir}/%{name}/lib/maven-wagon_http-shared.jar
 %{_datadir}/%{name}/lib/*.jar
 %{_datadir}/%{name}/lib/ext
 %{_datadir}/%{name}/bin/m2.conf
@@ -382,6 +357,9 @@ cp -P %{_datadir}/maven/bin/m2.conf %{buildroot}%{_datadir}/%{name}/bin/
 %doc LICENSE NOTICE
 
 %changelog
+* Wed Apr 19 2017 Michael Simacek <msimacek@redhat.com> - 2.5.0-22
+- Temporary changes for maven upgrade
+
 * Sat Feb 11 2017 Fedora Release Engineering <releng@fedoraproject.org> - 2.5.0-21
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_26_Mass_Rebuild
 
