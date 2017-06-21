@@ -9,8 +9,8 @@
 %bcond_without gradle
 
 Name:           xmvn
-Version:        2.5.0
-Release:        23%{?dist}
+Version:        3.0.0
+Release:        1%{?dist}
 Summary:        Local Extensions for Apache Maven
 License:        ASL 2.0
 URL:            https://fedora-java.github.io/xmvn/
@@ -18,12 +18,7 @@ BuildArch:      noarch
 
 Source0:        https://github.com/fedora-java/xmvn/releases/download/%{version}/xmvn-%{version}.tar.xz
 
-Patch0:         0001-Copy-core-dependencies-to-lib-core-in-assembly.patch
-Patch1:         0002-Try-to-procect-builddep-MOJO-against-patological-cas.patch
-Patch2:         0003-Don-t-install-POM-files-for-Tycho-projects.patch
-Patch3:         0004-Allow-xmvn-to-install-files-who-names-whitespace.patch
-
-BuildRequires:  maven >= 3.4.0
+BuildRequires:  maven >= 3.5.0
 BuildRequires:  maven-local
 BuildRequires:  beust-jcommander
 BuildRequires:  cglib
@@ -36,15 +31,17 @@ BuildRequires:  objectweb-asm
 BuildRequires:  modello
 BuildRequires:  xmlunit
 BuildRequires:  apache-ivy
-BuildRequires:  sisu-mojos
 BuildRequires:  junit
 BuildRequires:  easymock
 BuildRequires:  maven-invoker
+BuildRequires:  plexus-containers-container-default
+BuildRequires:  plexus-containers-component-annotations
+BuildRequires:  plexus-containers-component-metadata
 %if %{with gradle}
 BuildRequires:  gradle >= 2.5
 %endif
 
-Requires:       xmvn-minimal = %{version}-%{release}
+Requires:       %{name}-minimal = %{version}-%{release}
 Requires:       maven >= 3.4.0
 
 %description
@@ -56,20 +53,19 @@ creating RPM packages containing Maven artifacts.
 %package        minimal
 Summary:        Dependency-reduced version of XMvn
 Requires:       maven-lib >= 3.4.0
-Requires:       xmvn-api = %{version}-%{release}
-Requires:       xmvn-connector-aether = %{version}-%{release}
-Requires:       xmvn-core = %{version}-%{release}
-
+Requires:       %{name}-api = %{version}-%{release}
+Requires:       %{name}-connector-aether = %{version}-%{release}
+Requires:       %{name}-core = %{version}-%{release}
 Requires:       apache-commons-cli
 Requires:       apache-commons-lang3
 Requires:       atinject
 Requires:       google-guice
 Requires:       guava
+Requires:       maven-lib
 Requires:       maven-resolver-api
 Requires:       maven-resolver-impl
 Requires:       maven-resolver-spi
 Requires:       maven-resolver-util
-Requires:       maven-shared-utils
 Requires:       maven-wagon-provider-api
 Requires:       plexus-cipher
 Requires:       plexus-classworlds
@@ -93,18 +89,11 @@ This package provides XMvn parent POM.
 
 %package        api
 Summary:        XMvn API
+Obsoletes:      %{name}-launcher < 3.0.0
 
 %description    api
 This package provides XMvn API module which contains public interface
 for functionality implemented by XMvn Core.
-
-%package        launcher
-Summary:        XMvn Launcher
-
-%description    launcher
-This package provides XMvn Launcher module, which provides a way of
-launching XMvn running in isolated class realm and locating XMVn
-services.
 
 %package        core
 Summary:        XMvn Core
@@ -115,12 +104,12 @@ functionality of XMvn such as resolution of artifacts from system
 repository.
 
 %package        connector-aether
-Summary:        XMvn Connector for Eclipse Aether
+Summary:        XMvn Connector for Maven Resolver
 
 %description    connector-aether
-This package provides XMvn Connector for Eclipse Aether, which
-provides integration of Eclipse Aether with XMvn.  It provides an
-adapter which allows XMvn resolver to be used as Aether workspace
+This package provides XMvn Connector for Maven Resolver, which
+provides integration of Maven Resolver with XMvn.  It provides an
+adapter which allows XMvn resolver to be used as Maven workspace
 reader.
 
 %if %{with gradle}
@@ -197,10 +186,14 @@ This package provides %{summary}.
 
 %prep
 %setup -q
-%patch0 -p1
-%patch1 -p1
-%patch2 -p1
-%patch3 -p1
+
+# Bisect IT has no chances of working in local, offline mode, without
+# network access - it needs to access remote repositories.
+find -name BisectIntegrationTest.java -delete
+
+# Resolver IT won't work either - it tries to execute JAR file, which
+# relies on Class-Path in manifest, which is forbidden in Fedora...
+find -name ResolverIntegrationTest.java -delete
 
 %pom_remove_plugin -r :maven-site-plugin
 
@@ -210,32 +203,48 @@ This package provides %{summary}.
 %pom_disable_module xmvn-connector-gradle
 %endif
 
-%if %{without its}
-%pom_disable_module xmvn-it
-%endif
+# Upstream code quality checks, not relevant when building RPMs
+%pom_remove_plugin -r :apache-rat-plugin
+%pom_remove_plugin -r :maven-checkstyle-plugin
+%pom_remove_plugin -r :jacoco-maven-plugin
+# FIXME pom macros don't seem to support submodules in profile
+%pom_remove_plugin :jacoco-maven-plugin xmvn-it
 
 # remove dependency plugin maven-binaries execution
 # we provide apache-maven by symlink
 %pom_xpath_remove "pom:executions/pom:execution[pom:id[text()='maven-binaries']]"
 
+# Don't put Class-Path attributes in manifests
+%pom_remove_plugin :maven-jar-plugin xmvn-tools
+
 # get mavenVersion that is expected
+maven_home=$(readlink -f $(dirname $(readlink $(which mvn)))/..)
 mver=$(sed -n '/<mavenVersion>/{s/.*>\(.*\)<.*/\1/;p}' \
            xmvn-parent/pom.xml)
 mkdir -p target/dependency/
-cp -aL %{_datadir}/maven target/dependency/apache-maven-$mver
+cp -aL ${maven_home} target/dependency/apache-maven-$mver
 
 %build
-# ITs require artifacts to be insalled in local repo
-%mvn_build -s -j -g install
+%if %{with its}
+%mvn_build -s -j -- -Prun-its
+%else
+%mvn_build -s -j
+%endif
 
 tar --delay-directory-restore -xvf target/*tar.bz2
 chmod -R +rwX %{name}-%{version}*
 # These are installed as doc
-rm -Rf %{name}-%{version}*/{AUTHORS,README,LICENSE,NOTICE}
+rm -f %{name}-%{version}*/{AUTHORS-XMVN,README-XMVN.md,LICENSE,NOTICE,NOTICE-XMVN}
+# Not needed - we use JPackage launcher scripts
+rm -Rf %{name}-%{version}*/lib/{installer,resolver,subst,bisect}/
+# Irrelevant Maven launcher scripts
+rm -f %{name}-%{version}*/bin/{mvn.cmd,mvnDebug.cmd,mvn-script}
 
 
 %install
 %mvn_install
+
+maven_home=$(readlink -f $(dirname $(readlink $(which mvn)))/..)
 
 install -d -m 755 %{buildroot}%{_datadir}/%{name}
 cp -r %{name}-%{version}*/* %{buildroot}%{_datadir}/%{name}/
@@ -244,23 +253,19 @@ for cmd in mvn mvnDebug mvnyjp; do
     cat <<EOF >%{buildroot}%{_datadir}/%{name}/bin/$cmd
 #!/bin/sh -e
 export _FEDORA_MAVEN_HOME="%{_datadir}/%{name}"
-exec %{_datadir}/maven/bin/$cmd "\${@}"
+exec ${maven_home}/bin/$cmd "\${@}"
 EOF
     chmod 755 %{buildroot}%{_datadir}/%{name}/bin/$cmd
 done
 
 # helper scripts
-install -d -m 755 %{buildroot}%{_bindir}
-for tool in subst resolve bisect install;do
-    cat <<EOF >%{buildroot}%{_bindir}/%{name}-$tool
-#!/bin/sh -e
-exec %{_datadir}/%{name}/bin/%{name}-$tool "\${@}"
-EOF
-    chmod +x %{buildroot}%{_bindir}/%{name}-$tool
-done
+%jpackage_script org.fedoraproject.xmvn.tools.bisect.BisectCli "" "-Dxmvn.home=%{_datadir}/%{name}" xmvn/xmvn-bisect:beust-jcommander:maven-invoker:plexus/utils xmvn-bisect
+%jpackage_script org.fedoraproject.xmvn.tools.install.cli.InstallerCli "" "" xmvn/xmvn-install:xmvn/xmvn-api:xmvn/xmvn-core:beust-jcommander:slf4j/api:slf4j/simple:objectweb-asm/asm xmvn-install
+%jpackage_script org.fedoraproject.xmvn.tools.resolve.ResolverCli "" "" xmvn/xmvn-resolve:xmvn/xmvn-api:xmvn/xmvn-core:beust-jcommander xmvn-resolve
+%jpackage_script org.fedoraproject.xmvn.tools.subst.SubstCli "" "" xmvn/xmvn-subst:xmvn/xmvn-api:xmvn/xmvn-core:beust-jcommander xmvn-subst
 
 # copy over maven lib directory
-cp -r %{_datadir}/maven/lib/* %{buildroot}%{_datadir}/%{name}/lib/
+cp -r ${maven_home}/lib/* %{buildroot}%{_datadir}/%{name}/lib/
 
 # possibly recreate symlinks that can be automated with xmvn-subst
 %{name}-subst -s -R %{buildroot} %{buildroot}%{_datadir}/%{name}/
@@ -273,14 +278,15 @@ ln -s %{name} %{buildroot}%{_bindir}/mvn-local
 
 # make sure our conf is identical to maven so yum won't freak out
 install -d -m 755 %{buildroot}%{_datadir}/%{name}/conf/
-cp -P %{_datadir}/maven/conf/settings.xml %{buildroot}%{_datadir}/%{name}/conf/
-cp -P %{_datadir}/maven/bin/m2.conf %{buildroot}%{_datadir}/%{name}/bin/
+cp -P ${maven_home}/conf/settings.xml %{buildroot}%{_datadir}/%{name}/conf/
+cp -P ${maven_home}/bin/m2.conf %{buildroot}%{_datadir}/%{name}/bin/
 
 %files
 %{_bindir}/mvn-local
 
 %files minimal
 %{_bindir}/%{name}
+%dir %{_datadir}/%{name}
 %dir %{_datadir}/%{name}/bin
 %dir %{_datadir}/%{name}/lib
 %{_datadir}/%{name}/lib/*.jar
@@ -290,23 +296,17 @@ cp -P %{_datadir}/maven/bin/m2.conf %{buildroot}%{_datadir}/%{name}/bin/
 %{_datadir}/%{name}/bin/mvn
 %{_datadir}/%{name}/bin/mvnDebug
 %{_datadir}/%{name}/bin/mvnyjp
-%{_datadir}/%{name}/bin/xmvn
 %{_datadir}/%{name}/boot
 %{_datadir}/%{name}/conf
 
 %files parent-pom -f .mfiles-xmvn-parent
 %doc LICENSE NOTICE
 
-%files launcher -f .mfiles-xmvn-launcher
-%dir %{_datadir}/%{name}/lib
-%{_datadir}/%{name}/lib/core
-
 %files core -f .mfiles-xmvn-core
 
 %files api -f .mfiles-xmvn-api
-%dir %{_javadir}/%{name}
 %doc LICENSE NOTICE
-%doc AUTHORS README
+%doc AUTHORS README.md
 
 %files connector-aether -f .mfiles-xmvn-connector-aether
 
@@ -315,45 +315,30 @@ cp -P %{_datadir}/maven/bin/m2.conf %{buildroot}%{_datadir}/%{name}/bin/
 %endif
 
 %files connector-ivy -f .mfiles-xmvn-connector-ivy
-%dir %{_datadir}/%{name}/lib
-%{_datadir}/%{name}/lib/ivy
 
 %files mojo -f .mfiles-xmvn-mojo
 
 %files tools-pom -f .mfiles-xmvn-tools
 
 %files resolve -f .mfiles-xmvn-resolve
-%attr(755,-,-) %{_bindir}/%{name}-resolve
-%dir %{_datadir}/%{name}/bin
-%dir %{_datadir}/%{name}/lib
-%{_datadir}/%{name}/bin/%{name}-resolve
-%{_datadir}/%{name}/lib/resolver
+%{_bindir}/%{name}-resolve
 
 %files bisect -f .mfiles-xmvn-bisect
-%attr(755,-,-) %{_bindir}/%{name}-bisect
-%dir %{_datadir}/%{name}/bin
-%dir %{_datadir}/%{name}/lib
-%{_datadir}/%{name}/bin/%{name}-bisect
-%{_datadir}/%{name}/lib/bisect
+%{_bindir}/%{name}-bisect
 
 %files subst -f .mfiles-xmvn-subst
-%attr(755,-,-) %{_bindir}/%{name}-subst
-%dir %{_datadir}/%{name}/bin
-%dir %{_datadir}/%{name}/lib
-%{_datadir}/%{name}/bin/%{name}-subst
-%{_datadir}/%{name}/lib/subst
+%{_bindir}/%{name}-subst
 
 %files install -f .mfiles-xmvn-install
-%attr(755,-,-) %{_bindir}/%{name}-install
-%dir %{_datadir}/%{name}/bin
-%dir %{_datadir}/%{name}/lib
-%{_datadir}/%{name}/bin/%{name}-install
-%{_datadir}/%{name}/lib/installer
+%{_bindir}/%{name}-install
 
 %files javadoc
 %doc LICENSE NOTICE
 
 %changelog
+* Wed Jun 21 2017 Mikolaj Izdebski <mizdebsk@redhat.com> - 3.0.0-1
+- Update to upstream version 3.0.0
+
 * Wed Apr 19 2017 Michael Simacek <msimacek@redhat.com> - 2.5.0-23
 - Update spec for maven 3.5.0
 
