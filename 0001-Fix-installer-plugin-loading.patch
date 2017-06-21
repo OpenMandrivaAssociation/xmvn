@@ -1,19 +1,19 @@
-From 8174ce738f5a8f93c9541b42fc257d21c687dcb3 Mon Sep 17 00:00:00 2001
+From 0fd7b0d19bd96456292585e883e3ba2ebbaf579b Mon Sep 17 00:00:00 2001
 From: Mikolaj Izdebski <mizdebsk@redhat.com>
 Date: Wed, 21 Jun 2017 10:21:10 +0200
 Subject: [PATCH] Fix installer plugin loading
 
 ---
- .../install/impl/ArtifactInstallerFactory.java     |  87 ++++++--
+ .../install/impl/ArtifactInstallerFactory.java     |  97 ++++++--
  .../tools/install/impl/IsolatedClassRealm.java     | 245 +++++++++++++++++++++
- 2 files changed, 310 insertions(+), 22 deletions(-)
+ 2 files changed, 320 insertions(+), 22 deletions(-)
  create mode 100644 xmvn-tools/xmvn-install/src/main/java/org/fedoraproject/xmvn/tools/install/impl/IsolatedClassRealm.java
 
 diff --git a/xmvn-tools/xmvn-install/src/main/java/org/fedoraproject/xmvn/tools/install/impl/ArtifactInstallerFactory.java b/xmvn-tools/xmvn-install/src/main/java/org/fedoraproject/xmvn/tools/install/impl/ArtifactInstallerFactory.java
-index 7a80571..5223ca2 100644
+index 7a80571..e6a9a2d 100644
 --- a/xmvn-tools/xmvn-install/src/main/java/org/fedoraproject/xmvn/tools/install/impl/ArtifactInstallerFactory.java
 +++ b/xmvn-tools/xmvn-install/src/main/java/org/fedoraproject/xmvn/tools/install/impl/ArtifactInstallerFactory.java
-@@ -15,8 +15,15 @@
+@@ -15,8 +15,17 @@
   */
  package org.fedoraproject.xmvn.tools.install.impl;
  
@@ -21,6 +21,8 @@ index 7a80571..5223ca2 100644
 +import java.io.IOException;
 +import java.io.InputStream;
 +import java.io.InputStreamReader;
++import java.nio.file.Files;
++import java.nio.file.Path;
 +import java.nio.file.Paths;
  import java.util.Arrays;
 -import java.util.Collection;
@@ -30,7 +32,7 @@ index 7a80571..5223ca2 100644
  import java.util.Properties;
  
  import org.slf4j.Logger;
-@@ -35,49 +42,85 @@ class ArtifactInstallerFactory
+@@ -35,49 +44,93 @@ class ArtifactInstallerFactory
  
      private final ArtifactInstaller defaultArtifactInstaller;
  
@@ -51,7 +53,7 @@ index 7a80571..5223ca2 100644
          {
 -            return (ArtifactInstaller) ArtifactInstallerFactory.class.getClassLoader().loadClass( className ).newInstance();
 +            String resourceName = ArtifactInstaller.class.getCanonicalName() + "/" + type;
-+            InputStream resourceStream = pluginRealm.getResourceAsStream( resourceName );
++            InputStream resourceStream = pluginRealm != null ? pluginRealm.getResourceAsStream( resourceName ) : null;
 +            if ( resourceStream == null )
 +            {
 +                logger.debug( "No XMvn Installer plugin found for packaging type {}", type );
@@ -89,10 +91,18 @@ index 7a80571..5223ca2 100644
 -        // FIXME Don't hardcode plugin class name
 -        eclipseArtifactInstaller = loadPlugin( "org.fedoraproject.p2.xmvn.EclipseArtifactInstaller" );
 +
-+        ClassLoader parentClassLoader = ArtifactInstallerFactory.class.getClassLoader();
-+        pluginRealm = new IsolatedClassRealm( parentClassLoader );
-+        pluginRealm.addJarDirectory( Paths.get( "/usr/share/xmvn/lib/installer" ) );
-+        PLUGIN_IMPORTS.forEach( pluginRealm::importPackage );
++        Path pluginDir = Paths.get( "/usr/share/xmvn/lib/installer" );
++        if ( Files.isDirectory( pluginDir ) )
++        {
++            ClassLoader parentClassLoader = ArtifactInstallerFactory.class.getClassLoader();
++            pluginRealm = new IsolatedClassRealm( parentClassLoader );
++            pluginRealm.addJarDirectory( pluginDir );
++            PLUGIN_IMPORTS.forEach( pluginRealm::importPackage );
++        }
++        else
++        {
++            pluginRealm = null;
++        }
      }
  
      /**
