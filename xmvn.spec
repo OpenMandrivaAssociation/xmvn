@@ -10,7 +10,7 @@
 
 Name:           xmvn
 Version:        3.0.0
-Release:        4%{?dist}
+Release:        5%{?dist}
 Summary:        Local Extensions for Apache Maven
 License:        ASL 2.0
 URL:            https://fedora-java.github.io/xmvn/
@@ -42,8 +42,6 @@ BuildRequires:  plexus-containers-component-metadata
 %if %{with gradle}
 BuildRequires:  gradle >= 2.5
 %endif
-# XXX temp hack to unbreak buildroot
-BuildRequires:  tycho
 
 Requires:       %{name}-minimal = %{version}-%{release}
 Requires:       maven >= 3.4.0
@@ -241,8 +239,7 @@ chmod -R +rwX %{name}-%{version}*
 # These are installed as doc
 rm -f %{name}-%{version}*/{AUTHORS-XMVN,README-XMVN.md,LICENSE,NOTICE,NOTICE-XMVN}
 # Not needed - we use JPackage launcher scripts
-# XXX apparently still needed
-#rm -Rf %{name}-%{version}*/lib/{installer,resolver,subst,bisect}/
+rm -Rf %{name}-%{version}*/lib/{installer,resolver,subst,bisect}/
 # Irrelevant Maven launcher scripts
 rm -f %{name}-%{version}*/bin/{mvn.cmd,mvnDebug.cmd,mvn-script}
 
@@ -304,8 +301,6 @@ cp -P ${maven_home}/bin/m2.conf %{buildroot}%{_datadir}/%{name}/bin/
 %{_datadir}/%{name}/bin/mvnyjp
 %{_datadir}/%{name}/boot
 %{_datadir}/%{name}/conf
-# XXX
-%{_datadir}/%{name}/lib
 
 %files parent-pom -f .mfiles-xmvn-parent
 %doc LICENSE NOTICE
@@ -344,6 +339,9 @@ cp -P ${maven_home}/bin/m2.conf %{buildroot}%{_datadir}/%{name}/bin/
 %doc LICENSE NOTICE
 
 %changelog
+* Wed Jun 21 2017 Mikolaj Izdebski <mizdebsk@redhat.com> - 3.0.0-5
+- Remove temporary workaround
+
 * Wed Jun 21 2017 Mikolaj Izdebski <mizdebsk@redhat.com> - 3.0.0-4
 - Fix installer crash when plugin directory is missing
 
