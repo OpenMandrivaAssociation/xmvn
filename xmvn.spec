@@ -10,7 +10,7 @@
 
 Name:           xmvn
 Version:        3.0.0
-Release:        7%{?dist}
+Release:        8%{?dist}
 Summary:        Local Extensions for Apache Maven
 License:        ASL 2.0
 URL:            https://fedora-java.github.io/xmvn/
@@ -20,6 +20,7 @@ Source0:        https://github.com/fedora-java/xmvn/releases/download/%{version}
 
 Patch0:         0001-Fix-installer-plugin-loading.patch
 Patch1:         0001-Port-to-Gradle-4.2.patch
+Patch2:         0001-Port-to-Gradle-4.3.1.patch
 
 BuildRequires:  maven >= 3.5.0
 BuildRequires:  maven-local
@@ -41,7 +42,7 @@ BuildRequires:  plexus-containers-container-default
 BuildRequires:  plexus-containers-component-annotations
 BuildRequires:  plexus-containers-component-metadata
 %if %{with gradle}
-BuildRequires:  gradle >= 2.5
+BuildRequires:  gradle >= 4.3.1
 %endif
 
 Requires:       %{name}-minimal = %{version}-%{release}
@@ -191,6 +192,7 @@ This package provides %{summary}.
 %setup -q
 %patch0 -p1
 %patch1 -p1
+%patch2 -p1
 
 # Bisect IT has no chances of working in local, offline mode, without
 # network access - it needs to access remote repositories.
@@ -341,6 +343,9 @@ cp -P ${maven_home}/bin/m2.conf %{buildroot}%{_datadir}/%{name}/bin/
 %doc LICENSE NOTICE
 
 %changelog
+* Fri Nov 10 2017 Michael Simacek <msimacek@redhat.com> - 3.0.0-8
+- Port to Gradle 4.3.1
+
 * Mon Oct 02 2017 Michael Simacek <msimacek@redhat.com> - 3.0.0-7
 - Port to gradle 4.2
 
