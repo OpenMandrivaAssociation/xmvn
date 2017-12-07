@@ -10,7 +10,7 @@
 
 Name:           xmvn
 Version:        3.0.0
-Release:        8%{?dist}
+Release:        9%{?dist}
 Summary:        Local Extensions for Apache Maven
 License:        ASL 2.0
 URL:            https://fedora-java.github.io/xmvn/
@@ -21,6 +21,7 @@ Source0:        https://github.com/fedora-java/xmvn/releases/download/%{version}
 Patch0:         0001-Fix-installer-plugin-loading.patch
 Patch1:         0001-Port-to-Gradle-4.2.patch
 Patch2:         0001-Port-to-Gradle-4.3.1.patch
+Patch3:         0001-Support-setting-Xdoclint-none-in-m-javadoc-p-3.0.0.patch
 
 BuildRequires:  maven >= 3.5.0
 BuildRequires:  maven-local
@@ -193,6 +194,7 @@ This package provides %{summary}.
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
+%patch3 -p1
 
 # Bisect IT has no chances of working in local, offline mode, without
 # network access - it needs to access remote repositories.
@@ -343,6 +345,9 @@ cp -P ${maven_home}/bin/m2.conf %{buildroot}%{_datadir}/%{name}/bin/
 %doc LICENSE NOTICE
 
 %changelog
+* Thu Dec 07 2017 Michael Simacek <msimacek@redhat.com> - 3.0.0-9
+- Support setting "-Xdoclint:none" in m-javadoc-p >= 3.0.0
+
 * Fri Nov 10 2017 Michael Simacek <msimacek@redhat.com> - 3.0.0-8
 - Port to Gradle 4.3.1
 
