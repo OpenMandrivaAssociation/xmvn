@@ -253,7 +253,7 @@ rm -f %{name}-%{version}*/bin/{mvn.cmd,mvnDebug.cmd,mvn-script}
 %install
 %mvn_install
 
-maven_home=$(readlink -f $(dirname $(readlink $(which mvn)))/..)
+maven_home=$(readlink -f $(dirname $(readlink $(which xmvn)))/../../maven)
 
 install -d -m 755 %{buildroot}%{_datadir}/%{name}
 cp -r %{name}-%{version}*/* %{buildroot}%{_datadir}/%{name}/
