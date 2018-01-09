@@ -10,7 +10,7 @@
 
 Name:           xmvn
 Version:        3.0.0
-Release:        9%{?dist}
+Release:        10%{?dist}
 Summary:        Local Extensions for Apache Maven
 License:        ASL 2.0
 URL:            https://fedora-java.github.io/xmvn/
@@ -23,7 +23,7 @@ Patch1:         0001-Port-to-Gradle-4.2.patch
 Patch2:         0001-Port-to-Gradle-4.3.1.patch
 Patch3:         0001-Support-setting-Xdoclint-none-in-m-javadoc-p-3.0.0.patch
 
-BuildRequires:  maven >= 3.5.0
+BuildRequires:  maven-lib >= 3.5.0
 BuildRequires:  maven-local
 BuildRequires:  beust-jcommander
 BuildRequires:  cglib
@@ -345,6 +345,9 @@ cp -P ${maven_home}/bin/m2.conf %{buildroot}%{_datadir}/%{name}/bin/
 %doc LICENSE NOTICE
 
 %changelog
+* Tue Jan  9 2018 Mikolaj Izdebski <mizdebsk@redhat.com> - 3.0.0-10
+- BR maven-lib instead of full maven
+
 * Thu Dec 07 2017 Michael Simacek <msimacek@redhat.com> - 3.0.0-9
 - Support setting "-Xdoclint:none" in m-javadoc-p >= 3.0.0
 
