@@ -10,7 +10,7 @@
 
 Name:           xmvn
 Version:        3.0.0
-Release:        10%{?dist}
+Release:        11%{?dist}
 Summary:        Local Extensions for Apache Maven
 License:        ASL 2.0
 URL:            https://fedora-java.github.io/xmvn/
@@ -23,7 +23,7 @@ Patch1:         0001-Port-to-Gradle-4.2.patch
 Patch2:         0001-Port-to-Gradle-4.3.1.patch
 Patch3:         0001-Support-setting-Xdoclint-none-in-m-javadoc-p-3.0.0.patch
 
-BuildRequires:  maven-lib >= 3.5.0
+BuildRequires:  maven >= 3.5.0
 BuildRequires:  maven-local
 BuildRequires:  beust-jcommander
 BuildRequires:  cglib
@@ -227,7 +227,7 @@ find -name ResolverIntegrationTest.java -delete
 %pom_remove_plugin :maven-jar-plugin xmvn-tools
 
 # get mavenVersion that is expected
-maven_home=$(readlink -f $(dirname $(readlink $(which xmvn)))/../../maven)
+maven_home=$(readlink -f $(dirname $(readlink $(which mvn)))/..)
 mver=$(sed -n '/<mavenVersion>/{s/.*>\(.*\)<.*/\1/;p}' \
            xmvn-parent/pom.xml)
 mkdir -p target/dependency/
@@ -253,7 +253,7 @@ rm -f %{name}-%{version}*/bin/{mvn.cmd,mvnDebug.cmd,mvn-script}
 %install
 %mvn_install
 
-maven_home=$(readlink -f $(dirname $(readlink $(which xmvn)))/../../maven)
+maven_home=$(readlink -f $(dirname $(readlink $(which mvn)))/..)
 
 install -d -m 755 %{buildroot}%{_datadir}/%{name}
 cp -r %{name}-%{version}*/* %{buildroot}%{_datadir}/%{name}/
@@ -345,6 +345,9 @@ cp -P ${maven_home}/bin/m2.conf %{buildroot}%{_datadir}/%{name}/bin/
 %doc LICENSE NOTICE
 
 %changelog
+* Wed Jan 24 2018 Mikolaj Izdebski <mizdebsk@redhat.com> - 3.0.0-11
+- Build-require full maven again, instead of maven-lib
+
 * Tue Jan  9 2018 Mikolaj Izdebski <mizdebsk@redhat.com> - 3.0.0-10
 - BR maven-lib instead of full maven
 
