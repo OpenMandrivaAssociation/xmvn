@@ -10,7 +10,7 @@
 
 Name:           xmvn
 Version:        3.0.0
-Release:        11%{?dist}
+Release:        12%{?dist}
 Summary:        Local Extensions for Apache Maven
 License:        ASL 2.0
 URL:            https://fedora-java.github.io/xmvn/
@@ -65,7 +65,7 @@ Requires:       apache-commons-cli
 Requires:       apache-commons-lang3
 Requires:       atinject
 Requires:       google-guice
-Requires:       guava
+Requires:       guava20
 Requires:       maven-lib
 Requires:       maven-resolver-api
 Requires:       maven-resolver-impl
@@ -345,6 +345,9 @@ cp -P ${maven_home}/bin/m2.conf %{buildroot}%{_datadir}/%{name}/bin/
 %doc LICENSE NOTICE
 
 %changelog
+* Mon Feb 05 2018 Michael Simacek <msimacek@redhat.com> - 3.0.0-12
+- Use guava20
+
 * Wed Jan 24 2018 Mikolaj Izdebski <mizdebsk@redhat.com> - 3.0.0-11
 - Build-require full maven again, instead of maven-lib
 
