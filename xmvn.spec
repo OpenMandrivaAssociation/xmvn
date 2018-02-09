@@ -10,7 +10,7 @@
 
 Name:           xmvn
 Version:        3.0.0
-Release:        12%{?dist}
+Release:        13%{?dist}
 Summary:        Local Extensions for Apache Maven
 License:        ASL 2.0
 URL:            https://fedora-java.github.io/xmvn/
@@ -345,6 +345,9 @@ cp -P ${maven_home}/bin/m2.conf %{buildroot}%{_datadir}/%{name}/bin/
 %doc LICENSE NOTICE
 
 %changelog
+* Fri Feb 09 2018 Igor Gnatenko <ignatenkobrain@fedoraproject.org> - 3.0.0-13
+- Escape macros in %%changelog
+
 * Mon Feb 05 2018 Michael Simacek <msimacek@redhat.com> - 3.0.0-12
 - Use guava20
 
@@ -654,7 +657,7 @@ cp -P ${maven_home}/bin/m2.conf %{buildroot}%{_datadir}/%{name}/bin/
 - Rebuild without bootstrapping
 
 * Tue Jul 23 2013 Mikolaj Izdebski <mizdebsk@redhat.com> - 0.5.1-2
-- Install symlink to simplelogger.properties in %{_sysconfdir}
+- Install symlink to simplelogger.properties in %%{_sysconfdir}
 
 * Tue Jul 23 2013 Mikolaj Izdebski <mizdebsk@redhat.com> - 0.5.1-1
 - Update to upstream version 0.5.1
