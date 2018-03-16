@@ -10,7 +10,7 @@
 
 Name:           xmvn
 Version:        3.0.0
-Release:        13%{?dist}
+Release:        14%{?dist}
 Summary:        Local Extensions for Apache Maven
 License:        ASL 2.0
 URL:            https://fedora-java.github.io/xmvn/
@@ -22,6 +22,7 @@ Patch0:         0001-Fix-installer-plugin-loading.patch
 Patch1:         0001-Port-to-Gradle-4.2.patch
 Patch2:         0001-Port-to-Gradle-4.3.1.patch
 Patch3:         0001-Support-setting-Xdoclint-none-in-m-javadoc-p-3.0.0.patch
+Patch4:         0001-Fix-configuration-of-aliased-plugins.patch
 
 BuildRequires:  maven >= 3.5.0
 BuildRequires:  maven-local
@@ -195,6 +196,7 @@ This package provides %{summary}.
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
+%patch4 -p1
 
 # Bisect IT has no chances of working in local, offline mode, without
 # network access - it needs to access remote repositories.
@@ -345,6 +347,10 @@ cp -P ${maven_home}/bin/m2.conf %{buildroot}%{_datadir}/%{name}/bin/
 %doc LICENSE NOTICE
 
 %changelog
+* Fri Mar 16 2018 Mikolaj Izdebski <mizdebsk@redhat.com> - 3.0.0-14
+- Fix configuration of aliased plugins
+- Resolves: rhbz#1556974
+
 * Fri Feb 09 2018 Igor Gnatenko <ignatenkobrain@fedoraproject.org> - 3.0.0-13
 - Escape macros in %%changelog
 
