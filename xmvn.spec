@@ -10,7 +10,7 @@
 
 Name:           xmvn
 Version:        3.0.0
-Release:        14%{?dist}
+Release:        15%{?dist}
 Summary:        Local Extensions for Apache Maven
 License:        ASL 2.0
 URL:            https://fedora-java.github.io/xmvn/
@@ -229,7 +229,7 @@ find -name ResolverIntegrationTest.java -delete
 %pom_remove_plugin :maven-jar-plugin xmvn-tools
 
 # get mavenVersion that is expected
-maven_home=$(readlink -f $(dirname $(readlink $(which mvn)))/..)
+maven_home=$(realpath $(dirname $(realpath $(which mvn)))/..)
 mver=$(sed -n '/<mavenVersion>/{s/.*>\(.*\)<.*/\1/;p}' \
            xmvn-parent/pom.xml)
 mkdir -p target/dependency/
@@ -249,18 +249,18 @@ rm -f %{name}-%{version}*/{AUTHORS-XMVN,README-XMVN.md,LICENSE,NOTICE,NOTICE-XMV
 # Not needed - we use JPackage launcher scripts
 rm -Rf %{name}-%{version}*/lib/{installer,resolver,subst,bisect}/
 # Irrelevant Maven launcher scripts
-rm -f %{name}-%{version}*/bin/{mvn.cmd,mvnDebug.cmd,mvn-script}
+rm -f %{name}-%{version}*/bin/*
 
 
 %install
 %mvn_install
 
-maven_home=$(readlink -f $(dirname $(readlink $(which mvn)))/..)
+maven_home=$(realpath $(dirname $(realpath $(which mvn)))/..)
 
 install -d -m 755 %{buildroot}%{_datadir}/%{name}
 cp -r %{name}-%{version}*/* %{buildroot}%{_datadir}/%{name}/
 
-for cmd in mvn mvnDebug mvnyjp; do
+for cmd in mvn mvnDebug; do
     cat <<EOF >%{buildroot}%{_datadir}/%{name}/bin/$cmd
 #!/bin/sh -e
 export _FEDORA_MAVEN_HOME="%{_datadir}/%{name}"
@@ -306,7 +306,6 @@ cp -P ${maven_home}/bin/m2.conf %{buildroot}%{_datadir}/%{name}/bin/
 %{_datadir}/%{name}/bin/m2.conf
 %{_datadir}/%{name}/bin/mvn
 %{_datadir}/%{name}/bin/mvnDebug
-%{_datadir}/%{name}/bin/mvnyjp
 %{_datadir}/%{name}/boot
 %{_datadir}/%{name}/conf
 
@@ -347,6 +346,9 @@ cp -P ${maven_home}/bin/m2.conf %{buildroot}%{_datadir}/%{name}/bin/
 %doc LICENSE NOTICE
 
 %changelog
+* Thu Apr 19 2018 Michael Simacek <msimacek@redhat.com> - 3.0.0-15
+- Fix maven home lookup and layout to match current maven
+
 * Fri Mar 16 2018 Mikolaj Izdebski <mizdebsk@redhat.com> - 3.0.0-14
 - Fix configuration of aliased plugins
 - Resolves: rhbz#1556974
