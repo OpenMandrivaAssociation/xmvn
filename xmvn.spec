@@ -10,7 +10,7 @@
 
 Name:           xmvn
 Version:        3.0.0
-Release:        15%{?dist}
+Release:        16%{?dist}
 Summary:        Local Extensions for Apache Maven
 License:        ASL 2.0
 URL:            https://fedora-java.github.io/xmvn/
@@ -23,6 +23,7 @@ Patch1:         0001-Port-to-Gradle-4.2.patch
 Patch2:         0001-Port-to-Gradle-4.3.1.patch
 Patch3:         0001-Support-setting-Xdoclint-none-in-m-javadoc-p-3.0.0.patch
 Patch4:         0001-Fix-configuration-of-aliased-plugins.patch
+Patch5:         0001-Don-t-use-JAXB-for-converting-bytes-to-hex-string.patch
 
 BuildRequires:  maven >= 3.5.0
 BuildRequires:  maven-local
@@ -197,6 +198,7 @@ This package provides %{summary}.
 %patch2 -p1
 %patch3 -p1
 %patch4 -p1
+%patch5 -p1
 
 # Bisect IT has no chances of working in local, offline mode, without
 # network access - it needs to access remote repositories.
@@ -346,6 +348,9 @@ cp -P ${maven_home}/bin/m2.conf %{buildroot}%{_datadir}/%{name}/bin/
 %doc LICENSE NOTICE
 
 %changelog
+* Fri Apr 27 2018 Mikolaj Izdebski <mizdebsk@redhat.com> - 3.0.0-16
+- Remove use of JAXB from xmvn-core to make it work with Java 9
+
 * Thu Apr 19 2018 Michael Simacek <msimacek@redhat.com> - 3.0.0-15
 - Fix maven home lookup and layout to match current maven
 
