@@ -377,36 +377,156 @@ index 3ec10cfa..2fc3d619 100644
       * 
 diff --git a/xmvn-tools/xmvn-install/src/test/resources/recompression-size.jar b/xmvn-tools/xmvn-install/src/test/resources/recompression-size.jar
 new file mode 100644
-index 0000000000000000000000000000000000000000..976481eab0095a5a86e162ef6802bfebde20866e
-GIT binary patch
-literal 4376
-zcmdT|T}V_>5Wef`uHIa>K+#B+Afkx;>7}BS+=nzvZKJI~Fc7jZ%AgW9B=T>2^&yC$
-zmxUk}0-+xf`g^b^=`9OFBUlKEV8fS$lBk(E=bk&qz4v<8w~(vrc%7ebX1<wo632q2
-zrcq)T#!Ba%&L_7@er$%%_*5BnM%UqFyuPEmt+6ZK-O+aVWU`^F?NqYD2+p;C>^XSk
-zW6w}(gApiwdc-j3TUX!U!1?}b*XvLBU%fVPW$?h(Jq=9}Gh!ydOcj_ZH>SYM&%0-P
-zA4d)2;fn}J>Wp&(R~yd{T<Ry)`#|-6cvh*-zsrT*G*#Ws{eAUz{?WI&4?7~iP8_Y+
-z{-tm4{mZYv4o&UeKDqxv%kTNr&6hX+EUj$0b7&<$d1moxB$-O&@`1AI*!x%_7f;WG
-zt3Wc`nhr}zK2RN#lIbwM97hSfTobw&&9-D_#}|U%XD4RDAQGBB$Kd~^rr}o94HBgr
-z{}dJyGMh~0;vga2!xLf4k$gZ%z>#TGt<0ip)956sCP&b!l%Uo3>CrLsN_1y-X?f&%
-zlk^E3Ml&)xG$VY<Z;Dy*PPeDfOBLO&W)&ToBoKOQvrC!f5j2q95LD)e`UnSe*UOen
-zLnS$98FK+wnlA!ebdB700+%7+2V54lFK{V#S8ySgnh?c~C~Rvc=*P_H#mS`%;et@k
-zj-w<>@R?CBaOt%oz~$8?Dt8TV5lLBHz4xF>7J}qXW_B?s9i;rWfb)w%ic4f1;!+Zb
-z%WPaT((<UOB2}@gwvnnaUaMMFk`<tf&|OwHC8$AUbd*EtCcSc@iDftOCYBXS-ZWJ5
-zd~)-i?MkhIeP<cqrEQxmwq2cQBaut5YSF?#8Esfhz!J-7gPNu$q;hQIIo#S?D~px-
-zS!V@ik`bgGs3J%QY{`6j)Hk-03Z1dFIoTh!c6ObxWkJgh#Uj@`l+`V@Gf*CNrJ#F4
-zQb-)?cAYqDv&DA}OPm*=aqUD}joXYPK+XcKacMeGOi0*@qO2&9;Uy>FbkjKjC94}(
-zO3;Q~Tz;C>M-A&m#Q4D*XFavZRxD_1vVjVWl~N1T29c3c$q$~`0&YcN%jv%mTUK1Y
-zu=T8A8K{pM)&u3u%5Wx!^wetRair0l5U8$&vm9(_0C+<c8md@l4ZDunLY(DXbE;vr
-zD)DLVUC%UZwc*3-S*}WyTGwfAQ<c-!wvNe;MN3M-JeH_RD(lf=a2D%~P{h|6shav{
-zZJhOqD=FzeUQgMerL9ox=f!TPVkeggW2?XSc1qc0tG~<c?eiEQjy?Pspba9qHeka5
-zv-9F|IR*$S5L3lEg}~y==L`)cu?lnEu$N=k1yL57FRoZd{*%*<&2V1B-keNa;o7+B
-zjAP@RDKLo>LO%uIAhH9cY2zPTBugu%0&K++;~!hHt?>g%+_2T=osU30vHf(sI&mye
-z5(~QBE!4sdgJA^Vc{YlloNpS+#7)Dhs{o<d?K**Lz5tr-%LUMemkR~j%0lQt34CSY
-JXU|6b?H{Hr(0Kp=
-
-literal 0
-HcmV?d00001
-
+index 00000000..976481ea
+--- /dev/null
++++ b/xmvn-tools/xmvn-install/src/test/resources/recompression-size.jar
+@@ -0,0 +1,145 @@
++PK
++    ûL“L²î        META-INF/MANIFEST.MFUT	 ÉGØZ;HØZux ³H  ³H  Manifest-Version: 1.0
++
++PK   ®L“Lõ–^]±  ¦»   dir/fileUT	 7GØZ8GØZux ³H  ³H  íÒáÃ0†áÿ½ËÓ«èÉÕ'ùQJ	%äa6›m¾çu®,%8£=úÓx}¼yýðû“?ûíWÛ³TxPáíÔPáA…·TxP{@…ÔPáAíTxP{@…µTxPáAíÔPj¨= ÂƒÚêÂ„·ÔPPáíÞP{@A…·Tx{@íÞPPáA…·Tx{@A…ÞPPáíTxáAA…µTxP{„ÔPáAíµTxP{@…µÔPáAíÔP{@…µTx{@íÔPPáíµTx{@A…·Ô…‚
++o(¨ðö€º0PPáíÔáAA…·TxP{„ÞPPáAíTxP{@…µGxPPáAíÔP*<¨= ÂƒÚêÂ@…µTxP{@]¨ð ö€‚
++o¨ÔPPáíua ÂƒÚ
++*¼= .Tx{@A…·TxPáíÔPáA…·TxP{@…ÞPPáAíTxP{@…µTxPáAíÔPj¨= ÂƒÚêÂ„·ÔPáAíÞP{@A…·Tx{@íÞPPáíµTx{@A…ÞPPáíTxáAA…µTxP{„ÔPáAíTxP{@…µÔPáAíÔP{@…µTx{@íÔPPáíµTxP{@A…·Ô…‚
++o(¨ðö€º0PPáíÞP
++*¼=  ÂƒÚ#<(¨ðö€‚
++jð  ÂƒÚ*<¨=Âƒ‚
++j¨ð ö€
++*<¨= ÂƒÚêÂ@…µTxP{@]¨ð ö€
++j¨ÔPPáíua ÂƒÚ
++*¼= .Tx{@A…·TxPáíÞPPáA…·TxP{@…ÞPPáAíTxP{@…µTxPáAíÔPáAíµTxP{@]˜ðö€Ú*<¨=  ÂÛj¨ð ö€‚
++o¨=  ÂÛ
++*¼= ö€‚
++o(¨ð ÂÛ
++*¼=  Âƒ
++/<(¨ðö€‚
++jð  ÂƒÚ*<¨=Âƒ‚
++j¨ð ö
++*<¨= ÂƒÚj¨ð ö€
++j¨= ÂƒÚ
++*¼= ö€
++j(¨ðö€º0PáAíÞP
++*¼=  ÂÛêÂ@A…·TxP{„ÞPPáAíTx{@A…µGxPPáAíÔPáA…µTxP{@…ÔPáAíua ÂƒÚ*<¨= .TxP{@A…·Ô…
++j(¨ðö€º0P{@íÞPPáA…·Tx{@A…ÞPPáAíTx{@A…µTxPáíÔPáA…µTxP{@…µÔPáAíÔP{@…µTx{@íÔPPáíµTx{@A…·ÔPPáíÞP{@A…·TxPá…ÞPPáAíTx{@A…µGxPPáAíÔáAA…µTxP{@íÔPáAíµTxP{@…µÔPáAíÞP*<¨=  ÂÛêÂ@A…·Tx{@](¨ðö€‚
++o¨ÞPPáAíTx{@A…µGxPPáíÔPáA…µTxP{@…ÔPáAíua ÂƒÚ*<¨= .TxP{@…µÔ…
++j(¨ðö€º0P{@íÞPPáA…·Tx{@A…ÞPPáíTx{@A…µTxPáíÔPáA…·TxP{@…µÔPáAíÔP{@…µTx{@íÔPPáíµTxP{@A…·ÔPPáíÞP{@A…·Tx{@](¨ðö€‚
++jð  ÂÛ
++*<¨=Âƒ‚
++j¨ð ö
++*<¨= ÂƒÚ#<(¨ð ö€
++j¨= ÂƒÚ*<¨= ö€
++j(¨ðö€º0PáAíÞP*<¨=  ÂÛêÂ@A…·Tx{@](¨ðö€‚
++o¨ÞPPáAíTx{@A…µTxPáAíÔPáA…µTxP{@…ÔPáAíua ÂƒÚ*<¨= .TxP{@…µÔ…Új(¨ðö€‚
++o¨=  ÂÛ
++*<¨ðö€‚
++o(¨ð ÂÛ
++*¼=  Âƒ
++o(¨ð ö€
++*¼=  ÂƒÚ*<¨= ö€
++j¨ð ö€Ú*<¨= ÂƒÚj¨ð ö€‚
++o¨= ÂƒÚ
++*¼= ö€
++j(¨ðö€Ú
++*¼=  ÂÛêÂ@A…·TxP{„ÞPPáAíTx{@A…µGxPPáAíÔáAA…µTxP{@íÔPáAíµTxP{@…µÔ…
++j(¨ðö€º0PáAíÞP*<¨=  ÂÛêÂ@A…·Tx{@](¨ðö€‚
++jð  ÂÛ
++*<¨= Âƒ
++o(¨ð ö€
++*<¨= ÂƒÚ*<¨ð ö€
++j¨ð ÂƒÚ*<¨= .TxP{@…µÔ…Új(¨ðö€‚
++o¨=  ÂÛ
++*¼= ö€‚
++o(¨ð ÂÛ
++*¼=  Âƒ
++o(¨ð ö€
++*¼=  ÂƒÚ*<¨=Âƒ‚
++j¨ð ö€Ú*<¨= ÂƒÚj¨ð ö€
++j¨= ÂƒÚ
++*¼= ö€
++j(¨ðö€Ú
++*¼=  ÂÛêÂ@A…·Tx{@](¨ðö€‚
++jð  ÂÛ
++*<¨=Âƒ‚
++o(¨ð ö
++*<¨= ÂƒÚ#<(¨ð ö€
++j¨= ÂƒÚ*<¨= .TxP{@…µÔ…
++j(¨ðö€º0PáAíÞP
++*¼=  ÂÛêÂ@A…·Tx{@](¨ðö€‚
++j¨ð ÂÛ
++*<¨= Âƒ
++o(¨ð ö€
++*<¨= ÂƒÚ*<¨ð ö€
++j¨ÔPáAíua ö€Ú*<¨=  ÂÛj(¨ðö€‚
++o¨=  ÂÛ
++*<¨ðö€‚
++o(¨ð ÂÛ
++*¼=  Âƒ
++o(¨ð ö€
++jð  ÂƒÚ*<¨=Âƒ‚
++j¨ð ö€Ú*<¨= ÂƒÚj¨ð ö€‚
++o¨= ÂƒÚ
++*¼= ö€
++j(¨ðö€º0PPáíÞP
++*¼=  ÂÛêÂ@A…·TxP{„ÞPPáAíTxP{@…µGxPPáAíÔáAA…µTxP{@]¨ð ö€
++j¨ÔPPáíua ÂƒÚ
++*¼= .TxP{@A…·Ô…‚
++o(¨ðö€º0PPáíÞPPáA…·TxP{@…ÞPPáAíTxP{@…µTxPáAíÔPáA…µTxP{@]¨= ö€
++j(¨ðö€Ú
++*¼=  ÂÛj(¨ðö€‚
++o¨=  ÂÛ
++*<¨ðö€‚
++o(¨ð ÂÛ
++*¼=  ÂƒÚ#<(¨ð ö€
++jð  ÂƒÚ*<¨= ö€
++j¨ð ö€Ú*<¨= ÂƒÚj¨ð ö€‚
++o¨= ÂƒÚ
++*¼= .TxP{@A…·Ô…‚
++o(¨ðö€º0PPáíÔáAA…·TxP{„ÞPPáAíTxP{@…µGxPPáAíÔP*<¨= ÂƒÚêÂ@…µTxP{@]¨ð ö€‚
++o¨ÔPPáíua ÂƒÚ
++*¼= .Tx{@A…·TxPáíÔPáA…·TxP{@…ÞPPáAíTxP{@…µTxPáAíÔPáAíµTxP{@A…·ÔPáAíÞP{@A…·Tx{@íÞPPáíµTx{@A…ÞPPáíÔáAA…µTxP{„ÔPáAíTxP{@…µÔPáAíÔP{@…µTxP{@íÔPPáíua ÂƒÚ
++*¼= .Tx{@A…·Ô…‚
++o(¨ðö€º0PPáíÔáAA…·TxP{„ÔPáAíTxP{@…µTxPáAíÔP*<¨= ÂƒÚêÂ@…µTxP{@]¨ð ö€‚
++o¨ÔPPáíua  ÂÛ
++*¼=  Âƒ
++o(¨ðö€‚
++*¼=  ÂƒÚ*<¨ðö€‚
++j¨ð ÂÛ
++*<¨= Âƒ
++j¨ð ö€
++j¨= ÂƒÚ
++*¼= ö€
++j(¨ðö€Ú*<¨=  ÂÛj(¨ðö€‚
++o¨=  ÂÛ
++*<¨ðö€‚
++o(¨ð ö
++*¼=  ÂƒÚ#<(¨ð ö€
++jð  ÂƒÚ*<¨=Âƒ‚
++j¨ð ö€Ú*<¨= ÂƒÚj¨ð ö€‚
++o¨ÔPPáíua ÂƒÚ
++*¼= .Tx{@A…·Ô…‚
++o(¨ð ö
++*¼=  ÂƒÚ#<(¨ðö€‚
++jð  ÂƒÚ*<¨= Âƒ
++j¨ð ö€
++*<¨= ÂƒÚêÂ@…µTxP{@]¨ð ö€‚
++o¨ÔPPáíua ö€Ú
++*¼=  Âƒ
++o(¨ðö€‚
++*¼=  ÂÛ
++*<¨ðö€‚
++j¨ð ÂÛ
++*<¨= Âƒ
++j¨ð ö€
++j¨= ÂƒÚ*<¨= ö€
++j(¨ðö€Ú*<¨=  ÂÛj(¨ðö€‚
++o¨=  ÂÛ
++*¼= ö€‚
++o(¨ð ö
++*¼=  ÂƒÚ#<(¨ðö€‚
++jð  ÂƒÚ*<¨=Âƒ‚
++j¨ð ö€Ú*<¨= ÂƒÚj¨ð öÜOPK
++    ûL“L²î               ´    META-INF/MANIFEST.MFUT ÉGØZux ³H  ³H  PK   ®L“Lõ–^]±  ¦»          ´g   dir/fileUT 7GØZux ³H  ³H  PK      ¨   Z    
+\ No newline at end of file
 diff --git a/xmvn.spec b/xmvn.spec
 index 8764b63d..0775d4a2 100644
 --- a/xmvn.spec
