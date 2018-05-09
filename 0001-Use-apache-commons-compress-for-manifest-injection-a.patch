@@ -1,0 +1,433 @@
+From fbc18951e5f6f98e0ae8db2b08a4477a39884e83 Mon Sep 17 00:00:00 2001
+From: Michael Simacek <msimacek@redhat.com>
+Date: Mon, 16 Apr 2018 15:29:50 +0200
+Subject: [PATCH] Use apache-commons-compress for manifest injection and native
+ code detection
+
+---
+ xmvn-parent/pom.xml                                |   8 +-
+ xmvn-tools/xmvn-install/pom.xml                    |   4 +
+ .../fedoraproject/xmvn/tools/install/JarUtils.java | 178 +++++++++------------
+ .../xmvn/tools/install/impl/JarUtilsTest.java      |  32 ++++
+ .../src/test/resources/recompression-size.jar      | Bin 0 -> 4376 bytes
+ xmvn.spec                                          |   3 +-
+ 6 files changed, 119 insertions(+), 106 deletions(-)
+ create mode 100644 xmvn-tools/xmvn-install/src/test/resources/recompression-size.jar
+
+diff --git a/xmvn-parent/pom.xml b/xmvn-parent/pom.xml
+index df6af7fb..f6465d90 100644
+--- a/xmvn-parent/pom.xml
++++ b/xmvn-parent/pom.xml
+@@ -92,6 +92,7 @@
+     <plexusUtilsVersion>3.0.24</plexusUtilsVersion>
+     <pluginToolsVersion>3.5</pluginToolsVersion>
+     <slf4jVersion>1.7.25</slf4jVersion>
++    <commonsCompressVersion>1.16.1</commonsCompressVersion>
+ 
+     <!-- Build dependencies -->
+     <apivizVersion>1.3.2.GA</apivizVersion>
+@@ -102,7 +103,7 @@
+     <compilerPluginVersion>3.6.1</compilerPluginVersion>
+     <dependencyPluginVersion>3.0.0</dependencyPluginVersion>
+     <deployPluginVersion>2.8.2</deployPluginVersion>
+-    <easymockVersion>3.4</easymockVersion>
++    <easymockVersion>3.5</easymockVersion>
+     <gpgPluginVersion>1.6</gpgPluginVersion>
+     <installPluginVersion>2.5.2</installPluginVersion>
+     <jacocoVersion>0.7.9</jacocoVersion>
+@@ -321,6 +322,11 @@
+         <artifactId>plexus-container-default</artifactId>
+         <version>${plexusVersion}</version>
+       </dependency>
++      <dependency>
++        <groupId>org.apache.commons</groupId>
++        <artifactId>commons-compress</artifactId>
++        <version>${commonsCompressVersion}</version>
++      </dependency>
+     </dependencies>
+   </dependencyManagement>
+   <dependencies>
+diff --git a/xmvn-tools/xmvn-install/pom.xml b/xmvn-tools/xmvn-install/pom.xml
+index 66ac01d7..fbb36a68 100644
+--- a/xmvn-tools/xmvn-install/pom.xml
++++ b/xmvn-tools/xmvn-install/pom.xml
+@@ -61,5 +61,9 @@
+       <groupId>org.ow2.asm</groupId>
+       <artifactId>asm</artifactId>
+     </dependency>
++    <dependency>
++      <groupId>org.apache.commons</groupId>
++      <artifactId>commons-compress</artifactId>
++    </dependency>
+   </dependencies>
+ </project>
+diff --git a/xmvn-tools/xmvn-install/src/main/java/org/fedoraproject/xmvn/tools/install/JarUtils.java b/xmvn-tools/xmvn-install/src/main/java/org/fedoraproject/xmvn/tools/install/JarUtils.java
+index 98d3a57e..0a885460 100644
+--- a/xmvn-tools/xmvn-install/src/main/java/org/fedoraproject/xmvn/tools/install/JarUtils.java
++++ b/xmvn-tools/xmvn-install/src/main/java/org/fedoraproject/xmvn/tools/install/JarUtils.java
+@@ -16,19 +16,17 @@
+ package org.fedoraproject.xmvn.tools.install;
+ 
+ import java.io.IOException;
+-import java.lang.reflect.Field;
++import java.io.InputStream;
+ import java.nio.file.Files;
+ import java.nio.file.Path;
+-import java.util.Collection;
++import java.nio.file.StandardCopyOption;
++import java.util.Enumeration;
+ import java.util.jar.Attributes;
+-import java.util.jar.JarEntry;
+-import java.util.jar.JarInputStream;
+-import java.util.jar.JarOutputStream;
+ import java.util.jar.Manifest;
+-import java.util.zip.ZipEntry;
+-import java.util.zip.ZipInputStream;
+-import java.util.zip.ZipOutputStream;
+ 
++import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
++import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
++import org.apache.commons.compress.archivers.zip.ZipFile;
+ import org.objectweb.asm.ClassReader;
+ import org.objectweb.asm.ClassVisitor;
+ import org.objectweb.asm.MethodVisitor;
+@@ -43,6 +41,8 @@ import org.fedoraproject.xmvn.artifact.Artifact;
+  */
+ public final class JarUtils
+ {
++    private static final String MANIFEST_PATH = "META-INF/MANIFEST.MF";
++
+     private static final Logger LOGGER = LoggerFactory.getLogger( JarUtils.class );
+ 
+     // From /usr/include/linux/elf.h
+@@ -67,28 +67,33 @@ public final class JarUtils
+      * 
+      * @return {@code true} if native code was found inside given JAR
+      */
+-    public static boolean containsNativeCode( Path jar )
++    public static boolean containsNativeCode( Path jarPath )
+     {
+-        try ( ZipInputStream jis = new ZipInputStream( Files.newInputStream( jar ) ) )
++        try ( ZipFile jar = new ZipFile( jarPath.toFile() ) )
+         {
+-            ZipEntry ent;
+-            while ( ( ent = jis.getNextEntry() ) != null )
++            Enumeration<ZipArchiveEntry> entries = jar.getEntries();
++            while ( entries.hasMoreElements() )
+             {
+-                if ( ent.isDirectory() )
++                ZipArchiveEntry entry = entries.nextElement();
++                if ( entry.isDirectory() )
+                     continue;
+-                if ( jis.read() == ELFMAG0 && jis.read() == ELFMAG1 && jis.read() == ELFMAG2 && jis.read() == ELFMAG3 )
++                try ( InputStream jis = jar.getInputStream( entry ) )
+                 {
+-                    LOGGER.debug( "Native code found inside {}: {}", jar, ent.getName() );
+-                    return true;
++                    if ( jis.read() == ELFMAG0 && jis.read() == ELFMAG1 && jis.read() == ELFMAG2
++                        && jis.read() == ELFMAG3 )
++                    {
++                        LOGGER.debug( "Native code found inside {}: {}", jarPath, entry.getName() );
++                        return true;
++                    }
+                 }
+             }
+ 
+-            LOGGER.trace( "Native code not found inside {}", jar );
++            LOGGER.trace( "Native code not found inside {}", jarPath );
+             return false;
+         }
+         catch ( IOException e )
+         {
+-            LOGGER.debug( "I/O exception caught when trying to determine whether JAR contains native code: {}", jar,
++            LOGGER.debug( "I/O exception caught when trying to determine whether JAR contains native code: {}", jarPath,
+                           e );
+             return false;
+         }
+@@ -122,40 +127,47 @@ public final class JarUtils
+      * 
+      * @return {@code true} given JAR as found inside to use native code
+      */
+-    public static boolean usesNativeCode( Path jar )
++    public static boolean usesNativeCode( Path jarPath )
+     {
+-        try ( ZipInputStream jis = new ZipInputStream( Files.newInputStream( jar ) ) )
++        try ( ZipFile jar = new ZipFile( jarPath.toFile() ) )
+         {
+-            ZipEntry ent;
+-            while ( ( ent = jis.getNextEntry() ) != null )
++            Enumeration<ZipArchiveEntry> entries = jar.getEntries();
++            while ( entries.hasMoreElements() )
+             {
+-                final String entryName = ent.getName();
+-                if ( ent.isDirectory() || !entryName.endsWith( ".class" ) )
++                ZipArchiveEntry entry = entries.nextElement();
++                final String entryName = entry.getName();
++                if ( entry.isDirectory() || !entryName.endsWith( ".class" ) )
+                     continue;
+ 
+-                new ClassReader( jis ).accept( new ClassVisitor( Opcodes.ASM4 )
++                try ( InputStream jis = jar.getInputStream( entry ) )
+                 {
+-                    @Override
+-                    public MethodVisitor visitMethod( int flags, String name, String desc, String sig, String[] exc )
++                    new ClassReader( jis ).accept( new ClassVisitor( Opcodes.ASM4 )
+                     {
+-                        if ( ( flags & Opcodes.ACC_NATIVE ) != 0 )
+-                            throw new NativeMethodFound( entryName, name, sig );
++                        @Override
++                        public MethodVisitor visitMethod( int flags, String name, String desc, String sig,
++                                                          String[] exc )
++                        {
++                            if ( ( flags & Opcodes.ACC_NATIVE ) != 0 )
++                                throw new NativeMethodFound( entryName, name, sig );
+ 
+-                        return super.visitMethod( flags, name, desc, sig, exc );
+-                    }
+-                }, ClassReader.SKIP_CODE );
++                            return super.visitMethod( flags, name, desc, sig, exc );
++                        }
++                    }, ClassReader.SKIP_CODE );
++                }
+             }
+ 
+             return false;
+         }
+         catch ( NativeMethodFound e )
+         {
+-            LOGGER.debug( "Native method {}({}) found in {}: {}", e.methodName, e.methodSignature, jar, e.className );
++            LOGGER.debug( "Native method {}({}) found in {}: {}", e.methodName, e.methodSignature, jarPath,
++                          e.className );
+             return true;
+         }
+         catch ( IOException e )
+         {
+-            LOGGER.debug( "I/O exception caught when trying to determine whether JAR uses native code: {}", jar, e );
++            LOGGER.debug( "I/O exception caught when trying to determine whether JAR uses native code: {}", jarPath,
++                          e );
+             return false;
+         }
+         catch ( RuntimeException e )
+@@ -178,29 +190,13 @@ public final class JarUtils
+         }
+     }
+ 
+-    /**
+-     * OpenJDK has a sanity check that prevents adding duplicate entries to ZIP streams. The problem is that some of
+-     * JARs we try to inject manifests to (especially the ones created by Gradle) already contain duplicate entries, so
+-     * manifest injection would always fail for them with "ZipException: duplicate entry".
+-     * <p>
+-     * This function tries to work around this OpenJDK sanity check, effectively allowing creating ZIP files with
+-     * duplicated entries. It should be called on particular ZIP output stream before adding each duplicate entry.
+-     * 
+-     * @param zipOutputStream ZIP stream to hack
+-     */
+-    private static void openJdkAvoidDuplicateEntryHack( ZipOutputStream zipOutputStream )
++    private static void updateManifest( Artifact artifact, Manifest mf )
+     {
+-        try
+-        {
+-            Field namesField = ZipOutputStream.class.getDeclaredField( "names" );
+-            namesField.setAccessible( true );
+-            Collection<?> names = (Collection<?>) namesField.get( zipOutputStream );
+-            names.clear();
+-        }
+-        catch ( ReflectiveOperationException e )
+-        {
+-            // This hack relies on OpenJDK internals and therefore is not guaranteed to work. Ignore failures.
+-        }
++        putAttribute( mf, Artifact.MF_KEY_GROUPID, artifact.getGroupId(), null );
++        putAttribute( mf, Artifact.MF_KEY_ARTIFACTID, artifact.getArtifactId(), null );
++        putAttribute( mf, Artifact.MF_KEY_EXTENSION, artifact.getExtension(), Artifact.DEFAULT_EXTENSION );
++        putAttribute( mf, Artifact.MF_KEY_CLASSIFIER, artifact.getClassifier(), "" );
++        putAttribute( mf, Artifact.MF_KEY_VERSION, artifact.getVersion(), Artifact.DEFAULT_VERSION );
+     }
+ 
+     /**
+@@ -213,65 +209,39 @@ public final class JarUtils
+     public static void injectManifest( Path targetJar, Artifact artifact )
+     {
+         LOGGER.trace( "Trying to inject manifest to {}", artifact );
+-        Manifest mf = null;
+         try
+         {
+-            try ( JarInputStream jis = new JarInputStream( Files.newInputStream( targetJar ) ) )
++            try ( ZipFile jar = new ZipFile( targetJar.toFile() ) )
+             {
+-                mf = jis.getManifest();
+-                if ( mf == null )
++                ZipArchiveEntry manifestEntry = jar.getEntry( MANIFEST_PATH );
++                if ( manifestEntry != null )
+                 {
+-                    // getManifest sometimes doesn't find the manifest, try finding it as plain entry
+-                    ZipEntry ent;
+-                    while ( ( ent = jis.getNextEntry() ) != null )
++                    Manifest mf = new Manifest( jar.getInputStream( manifestEntry ) );
++                    updateManifest( artifact, mf );
++                    Path tempJar = Files.createTempFile( "xmvn", ".tmp" );
++                    try ( ZipArchiveOutputStream os = new ZipArchiveOutputStream( tempJar.toFile() ) )
+                     {
+-                        if ( ent.getName().equalsIgnoreCase( "META-INF/MANIFEST.MF" ) )
+-                        {
+-                            mf = new Manifest( jis );
+-                            break;
+-                        }
++                        // write manifest
++                        ZipArchiveEntry newManifestEntry = new ZipArchiveEntry( MANIFEST_PATH );
++                        os.putArchiveEntry( newManifestEntry );
++                        mf.write( os );
++                        os.closeArchiveEntry();
++                        // copy the rest of content
++                        jar.copyRawEntries( os, entry -> !entry.equals( manifestEntry ) );
+                     }
+-                }
+-            }
+-
+-            if ( mf == null )
+-            {
+-                LOGGER.trace( "Manifest injection skipped: no pre-existing manifest found to update" );
+-                return;
+-            }
+-
+-            putAttribute( mf, Artifact.MF_KEY_GROUPID, artifact.getGroupId(), null );
+-            putAttribute( mf, Artifact.MF_KEY_ARTIFACTID, artifact.getArtifactId(), null );
+-            putAttribute( mf, Artifact.MF_KEY_EXTENSION, artifact.getExtension(), Artifact.DEFAULT_EXTENSION );
+-            putAttribute( mf, Artifact.MF_KEY_CLASSIFIER, artifact.getClassifier(), "" );
+-            putAttribute( mf, Artifact.MF_KEY_VERSION, artifact.getVersion(), Artifact.DEFAULT_VERSION );
+-
+-            try ( JarInputStream jis = new JarInputStream( Files.newInputStream( targetJar ) ) )
+-            {
+-
+-                targetJar = targetJar.toRealPath();
+-                Files.delete( targetJar );
+-                try ( JarOutputStream jos = new JarOutputStream( Files.newOutputStream( targetJar ), mf ) )
+-                {
+-                    byte[] buf = new byte[512];
+-                    JarEntry entry;
+-                    while ( ( entry = jis.getNextJarEntry() ) != null )
++                    catch ( IOException e )
+                     {
+-                        openJdkAvoidDuplicateEntryHack( jos );
+-                        jos.putNextEntry( entry );
+-
+-                        int sz;
+-                        while ( ( sz = jis.read( buf ) ) > 0 )
+-                            jos.write( buf, 0, sz );
++                        // Re-throw exceptions that occur when processing JAR file after reading header and manifest.
++                        throw new RuntimeException( e );
+                     }
++                    Files.move( tempJar, targetJar, StandardCopyOption.REPLACE_EXISTING );
++                    LOGGER.trace( "Manifest injected successfully" );
+                 }
+-                catch ( IOException e )
++                else
+                 {
+-                    // Re-throw exceptions that occur when processing JAR file after reading header and manifest.
+-                    throw new RuntimeException( e );
++                    LOGGER.trace( "Manifest injection skipped: no pre-existing manifest found to update" );
++                    return;
+                 }
+-
+-                LOGGER.trace( "Manifest injected successfully" );
+             }
+         }
+         catch ( IOException e )
+diff --git a/xmvn-tools/xmvn-install/src/test/java/org/fedoraproject/xmvn/tools/install/impl/JarUtilsTest.java b/xmvn-tools/xmvn-install/src/test/java/org/fedoraproject/xmvn/tools/install/impl/JarUtilsTest.java
+index 3ec10cfa..2fc3d619 100644
+--- a/xmvn-tools/xmvn-install/src/test/java/org/fedoraproject/xmvn/tools/install/impl/JarUtilsTest.java
++++ b/xmvn-tools/xmvn-install/src/test/java/org/fedoraproject/xmvn/tools/install/impl/JarUtilsTest.java
+@@ -116,6 +116,38 @@ public class JarUtilsTest
+         }
+     }
+ 
++    /**
++     * Regression test for a jar which contains an entry that can recompress with a different size, which caused a
++     * mismatch in sizes.
++     * 
++     * @throws Exception
++     */
++    @Test
++    public void testManifestInjectionRecompressionCausesSizeMismatch()
++        throws Exception
++    {
++        Path testResource = Paths.get( "src/test/resources/recompression-size.jar" );
++        Path testJar = workDir.resolve( "manifest.jar" );
++        Files.copy( testResource, testJar, StandardCopyOption.COPY_ATTRIBUTES, StandardCopyOption.REPLACE_EXISTING );
++
++        Artifact artifact =
++            new DefaultArtifact( "org.eclipse.osgi", "osgi.compatibility.state", "1.1.0.v20180409-1212" );
++        JarUtils.injectManifest( testJar, artifact );
++
++        try ( JarInputStream jis = new JarInputStream( Files.newInputStream( testJar ) ) )
++        {
++            Manifest mf = jis.getManifest();
++            assertNotNull( mf );
++
++            Attributes attr = mf.getMainAttributes();
++            assertNotNull( attr );
++
++            assertEquals( "org.eclipse.osgi", attr.getValue( "JavaPackages-GroupId" ) );
++            assertEquals( "osgi.compatibility.state", attr.getValue( "JavaPackages-ArtifactId" ) );
++            assertEquals( "1.1.0.v20180409-1212", attr.getValue( "JavaPackages-Version" ) );
++        }
++    }
++
+     /**
+      * Test JAR if manifest injection works as expected when some artifact fields have default values.
+      * 
+diff --git a/xmvn-tools/xmvn-install/src/test/resources/recompression-size.jar b/xmvn-tools/xmvn-install/src/test/resources/recompression-size.jar
+new file mode 100644
+index 0000000000000000000000000000000000000000..976481eab0095a5a86e162ef6802bfebde20866e
+GIT binary patch
+literal 4376
+zcmdT|T}V_>5Wef`uHIa>K+#B+Afkx;>7}BS+=nzvZKJI~Fc7jZ%AgW9B=T>2^&yC$
+zmxUk}0-+xf`g^b^=`9OFBUlKEV8fS$lBk(E=bk&qz4v<8w~(vrc%7ebX1<wo632q2
+zrcq)T#!Ba%&L_7@er$%%_*5BnM%UqFyuPEmt+6ZK-O+aVWU`^F?NqYD2+p;C>^XSk
+zW6w}(gApiwdc-j3TUX!U!1?}b*XvLBU%fVPW$?h(Jq=9}Gh!ydOcj_ZH>SYM&%0-P
+zA4d)2;fn}J>Wp&(R~yd{T<Ry)`#|-6cvh*-zsrT*G*#Ws{eAUz{?WI&4?7~iP8_Y+
+z{-tm4{mZYv4o&UeKDqxv%kTNr&6hX+EUj$0b7&<$d1moxB$-O&@`1AI*!x%_7f;WG
+zt3Wc`nhr}zK2RN#lIbwM97hSfTobw&&9-D_#}|U%XD4RDAQGBB$Kd~^rr}o94HBgr
+z{}dJyGMh~0;vga2!xLf4k$gZ%z>#TGt<0ip)956sCP&b!l%Uo3>CrLsN_1y-X?f&%
+zlk^E3Ml&)xG$VY<Z;Dy*PPeDfOBLO&W)&ToBoKOQvrC!f5j2q95LD)e`UnSe*UOen
+zLnS$98FK+wnlA!ebdB700+%7+2V54lFK{V#S8ySgnh?c~C~Rvc=*P_H#mS`%;et@k
+zj-w<>@R?CBaOt%oz~$8?Dt8TV5lLBHz4xF>7J}qXW_B?s9i;rWfb)w%ic4f1;!+Zb
+z%WPaT((<UOB2}@gwvnnaUaMMFk`<tf&|OwHC8$AUbd*EtCcSc@iDftOCYBXS-ZWJ5
+zd~)-i?MkhIeP<cqrEQxmwq2cQBaut5YSF?#8Esfhz!J-7gPNu$q;hQIIo#S?D~px-
+zS!V@ik`bgGs3J%QY{`6j)Hk-03Z1dFIoTh!c6ObxWkJgh#Uj@`l+`V@Gf*CNrJ#F4
+zQb-)?cAYqDv&DA}OPm*=aqUD}joXYPK+XcKacMeGOi0*@qO2&9;Uy>FbkjKjC94}(
+zO3;Q~Tz;C>M-A&m#Q4D*XFavZRxD_1vVjVWl~N1T29c3c$q$~`0&YcN%jv%mTUK1Y
+zu=T8A8K{pM)&u3u%5Wx!^wetRair0l5U8$&vm9(_0C+<c8md@l4ZDunLY(DXbE;vr
+zD)DLVUC%UZwc*3-S*}WyTGwfAQ<c-!wvNe;MN3M-JeH_RD(lf=a2D%~P{h|6shav{
+zZJhOqD=FzeUQgMerL9ox=f!TPVkeggW2?XSc1qc0tG~<c?eiEQjy?Pspba9qHeka5
+zv-9F|IR*$S5L3lEg}~y==L`)cu?lnEu$N=k1yL57FRoZd{*%*<&2V1B-keNa;o7+B
+zjAP@RDKLo>LO%uIAhH9cY2zPTBugu%0&K++;~!hHt?>g%+_2T=osU30vHf(sI&mye
+z5(~QBE!4sdgJA^Vc{YlloNpS+#7)Dhs{o<d?K**Lz5tr-%LUMemkR~j%0lQt34CSY
+JXU|6b?H{Hr(0Kp=
+
+literal 0
+HcmV?d00001
+
+diff --git a/xmvn.spec b/xmvn.spec
+index 8764b63d..0775d4a2 100644
+--- a/xmvn.spec
++++ b/xmvn.spec
+@@ -196,6 +196,7 @@ artifact repository.
+ 
+ %package        install
+ Summary:        XMvn Install
++Requires:       apache-commons-compress
+ 
+ %description    install
+ This package provides XMvn Install, which is a command-line interface
+@@ -284,7 +285,7 @@ done
+ 
+ # helper scripts
+ %jpackage_script org.fedoraproject.xmvn.tools.bisect.BisectCli "" "-Dxmvn.home=%{_datadir}/%{name}" xmvn/xmvn-bisect:beust-jcommander:maven-invoker:plexus/utils xmvn-bisect
+-%jpackage_script org.fedoraproject.xmvn.tools.install.cli.InstallerCli "" "" xmvn/xmvn-install:xmvn/xmvn-api:xmvn/xmvn-core:beust-jcommander:slf4j/api:slf4j/simple:objectweb-asm/asm xmvn-install
++%jpackage_script org.fedoraproject.xmvn.tools.install.cli.InstallerCli "" "" xmvn/xmvn-install:xmvn/xmvn-api:xmvn/xmvn-core:beust-jcommander:slf4j/api:slf4j/simple:objectweb-asm/asm:objenesis/objenesis:commons-compress xmvn-install
+ %jpackage_script org.fedoraproject.xmvn.tools.resolve.ResolverCli "" "" xmvn/xmvn-resolve:xmvn/xmvn-api:xmvn/xmvn-core:beust-jcommander xmvn-resolve
+ %jpackage_script org.fedoraproject.xmvn.tools.subst.SubstCli "" "" xmvn/xmvn-subst:xmvn/xmvn-api:xmvn/xmvn-core:beust-jcommander xmvn-subst
+ 
+-- 
+2.14.3
+

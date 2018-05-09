@@ -10,7 +10,7 @@
 
 Name:           xmvn
 Version:        3.0.0
-Release:        16%{?dist}
+Release:        17%{?dist}
 Summary:        Local Extensions for Apache Maven
 License:        ASL 2.0
 URL:            https://fedora-java.github.io/xmvn/
@@ -24,9 +24,11 @@ Patch2:         0001-Port-to-Gradle-4.3.1.patch
 Patch3:         0001-Support-setting-Xdoclint-none-in-m-javadoc-p-3.0.0.patch
 Patch4:         0001-Fix-configuration-of-aliased-plugins.patch
 Patch5:         0001-Don-t-use-JAXB-for-converting-bytes-to-hex-string.patch
+Patch6:         0001-Use-apache-commons-compress-for-manifest-injection-a.patch
 
 BuildRequires:  maven >= 3.5.0
 BuildRequires:  maven-local
+BuildRequires:  apache-commons-compress
 BuildRequires:  beust-jcommander
 BuildRequires:  cglib
 BuildRequires:  maven-dependency-plugin
@@ -179,6 +181,7 @@ artifact repository.
 
 %package        install
 Summary:        XMvn Install
+Requires:       apache-commons-compress
 
 %description    install
 This package provides XMvn Install, which is a command-line interface
@@ -199,6 +202,7 @@ This package provides %{summary}.
 %patch3 -p1
 %patch4 -p1
 %patch5 -p1
+%patch6 -p1
 
 # Bisect IT has no chances of working in local, offline mode, without
 # network access - it needs to access remote repositories.
@@ -273,7 +277,7 @@ done
 
 # helper scripts
 %jpackage_script org.fedoraproject.xmvn.tools.bisect.BisectCli "" "-Dxmvn.home=%{_datadir}/%{name}" xmvn/xmvn-bisect:beust-jcommander:maven-invoker:plexus/utils xmvn-bisect
-%jpackage_script org.fedoraproject.xmvn.tools.install.cli.InstallerCli "" "" xmvn/xmvn-install:xmvn/xmvn-api:xmvn/xmvn-core:beust-jcommander:slf4j/api:slf4j/simple:objectweb-asm/asm xmvn-install
+%jpackage_script org.fedoraproject.xmvn.tools.install.cli.InstallerCli "" "" xmvn/xmvn-install:xmvn/xmvn-api:xmvn/xmvn-core:beust-jcommander:slf4j/api:slf4j/simple:objectweb-asm/asm:objenesis/objenesis:commons-compress xmvn-install
 %jpackage_script org.fedoraproject.xmvn.tools.resolve.ResolverCli "" "" xmvn/xmvn-resolve:xmvn/xmvn-api:xmvn/xmvn-core:beust-jcommander xmvn-resolve
 %jpackage_script org.fedoraproject.xmvn.tools.subst.SubstCli "" "" xmvn/xmvn-subst:xmvn/xmvn-api:xmvn/xmvn-core:beust-jcommander xmvn-subst
 
@@ -348,6 +352,10 @@ cp -P ${maven_home}/bin/m2.conf %{buildroot}%{_datadir}/%{name}/bin/
 %doc LICENSE NOTICE
 
 %changelog
+* Wed May  9 2018 Mikolaj Izdebski <mizdebsk@redhat.com> - 3.0.0-17
+- Switch to commons-compress for manifest manipulation
+- Resolves: rhbz#1576358
+
 * Fri Apr 27 2018 Mikolaj Izdebski <mizdebsk@redhat.com> - 3.0.0-16
 - Remove use of JAXB from xmvn-core to make it work with Java 9
 
