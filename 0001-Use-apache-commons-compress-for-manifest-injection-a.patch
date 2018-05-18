@@ -1,4 +1,4 @@
-From fbc18951e5f6f98e0ae8db2b08a4477a39884e83 Mon Sep 17 00:00:00 2001
+From 4e1e7377d6318d2bd7dd8620269e172a704650e2 Mon Sep 17 00:00:00 2001
 From: Michael Simacek <msimacek@redhat.com>
 Date: Mon, 16 Apr 2018 15:29:50 +0200
 Subject: [PATCH] Use apache-commons-compress for manifest injection and native
@@ -7,11 +7,11 @@ Subject: [PATCH] Use apache-commons-compress for manifest injection and native
 ---
  xmvn-parent/pom.xml                                |   8 +-
  xmvn-tools/xmvn-install/pom.xml                    |   4 +
- .../fedoraproject/xmvn/tools/install/JarUtils.java | 178 +++++++++------------
- .../xmvn/tools/install/impl/JarUtilsTest.java      |  32 ++++
+ .../fedoraproject/xmvn/tools/install/JarUtils.java | 176 +++++++++------------
+ .../xmvn/tools/install/impl/JarUtilsTest.java      |  55 +++++++
  .../src/test/resources/recompression-size.jar      | Bin 0 -> 4376 bytes
  xmvn.spec                                          |   3 +-
- 6 files changed, 119 insertions(+), 106 deletions(-)
+ 6 files changed, 140 insertions(+), 106 deletions(-)
  create mode 100644 xmvn-tools/xmvn-install/src/test/resources/recompression-size.jar
 
 diff --git a/xmvn-parent/pom.xml b/xmvn-parent/pom.xml
@@ -62,10 +62,10 @@ index 66ac01d7..fbb36a68 100644
    </dependencies>
  </project>
 diff --git a/xmvn-tools/xmvn-install/src/main/java/org/fedoraproject/xmvn/tools/install/JarUtils.java b/xmvn-tools/xmvn-install/src/main/java/org/fedoraproject/xmvn/tools/install/JarUtils.java
-index 98d3a57e..0a885460 100644
+index 98d3a57e..5cb62b0f 100644
 --- a/xmvn-tools/xmvn-install/src/main/java/org/fedoraproject/xmvn/tools/install/JarUtils.java
 +++ b/xmvn-tools/xmvn-install/src/main/java/org/fedoraproject/xmvn/tools/install/JarUtils.java
-@@ -16,19 +16,17 @@
+@@ -16,19 +16,16 @@
  package org.fedoraproject.xmvn.tools.install;
  
  import java.io.IOException;
@@ -74,7 +74,6 @@ index 98d3a57e..0a885460 100644
  import java.nio.file.Files;
  import java.nio.file.Path;
 -import java.util.Collection;
-+import java.nio.file.StandardCopyOption;
 +import java.util.Enumeration;
  import java.util.jar.Attributes;
 -import java.util.jar.JarEntry;
@@ -91,7 +90,7 @@ index 98d3a57e..0a885460 100644
  import org.objectweb.asm.ClassReader;
  import org.objectweb.asm.ClassVisitor;
  import org.objectweb.asm.MethodVisitor;
-@@ -43,6 +41,8 @@ import org.fedoraproject.xmvn.artifact.Artifact;
+@@ -43,6 +40,8 @@ import org.fedoraproject.xmvn.artifact.Artifact;
   */
  public final class JarUtils
  {
@@ -100,7 +99,7 @@ index 98d3a57e..0a885460 100644
      private static final Logger LOGGER = LoggerFactory.getLogger( JarUtils.class );
  
      // From /usr/include/linux/elf.h
-@@ -67,28 +67,33 @@ public final class JarUtils
+@@ -67,28 +66,33 @@ public final class JarUtils
       * 
       * @return {@code true} if native code was found inside given JAR
       */
@@ -144,7 +143,7 @@ index 98d3a57e..0a885460 100644
                            e );
              return false;
          }
-@@ -122,40 +127,47 @@ public final class JarUtils
+@@ -122,40 +126,47 @@ public final class JarUtils
       * 
       * @return {@code true} given JAR as found inside to use native code
       */
@@ -208,7 +207,7 @@ index 98d3a57e..0a885460 100644
              return false;
          }
          catch ( RuntimeException e )
-@@ -178,29 +190,13 @@ public final class JarUtils
+@@ -178,29 +189,13 @@ public final class JarUtils
          }
      }
  
@@ -244,7 +243,7 @@ index 98d3a57e..0a885460 100644
      }
  
      /**
-@@ -213,65 +209,39 @@ public final class JarUtils
+@@ -213,65 +208,38 @@ public final class JarUtils
      public static void injectManifest( Path targetJar, Artifact artifact )
      {
          LOGGER.trace( "Trying to inject manifest to {}", artifact );
@@ -264,8 +263,8 @@ index 98d3a57e..0a885460 100644
 -                    while ( ( ent = jis.getNextEntry() ) != null )
 +                    Manifest mf = new Manifest( jar.getInputStream( manifestEntry ) );
 +                    updateManifest( artifact, mf );
-+                    Path tempJar = Files.createTempFile( "xmvn", ".tmp" );
-+                    try ( ZipArchiveOutputStream os = new ZipArchiveOutputStream( tempJar.toFile() ) )
++                    Files.delete( targetJar );
++                    try ( ZipArchiveOutputStream os = new ZipArchiveOutputStream( targetJar.toFile() ) )
                      {
 -                        if ( ent.getName().equalsIgnoreCase( "META-INF/MANIFEST.MF" ) )
 -                        {
@@ -316,7 +315,6 @@ index 98d3a57e..0a885460 100644
 +                        // Re-throw exceptions that occur when processing JAR file after reading header and manifest.
 +                        throw new RuntimeException( e );
                      }
-+                    Files.move( tempJar, targetJar, StandardCopyOption.REPLACE_EXISTING );
 +                    LOGGER.trace( "Manifest injected successfully" );
                  }
 -                catch ( IOException e )
@@ -333,10 +331,24 @@ index 98d3a57e..0a885460 100644
          }
          catch ( IOException e )
 diff --git a/xmvn-tools/xmvn-install/src/test/java/org/fedoraproject/xmvn/tools/install/impl/JarUtilsTest.java b/xmvn-tools/xmvn-install/src/test/java/org/fedoraproject/xmvn/tools/install/impl/JarUtilsTest.java
-index 3ec10cfa..2fc3d619 100644
+index 3ec10cfa..98945a64 100644
 --- a/xmvn-tools/xmvn-install/src/test/java/org/fedoraproject/xmvn/tools/install/impl/JarUtilsTest.java
 +++ b/xmvn-tools/xmvn-install/src/test/java/org/fedoraproject/xmvn/tools/install/impl/JarUtilsTest.java
-@@ -116,6 +116,38 @@ public class JarUtilsTest
+@@ -19,11 +19,13 @@ import static org.junit.Assert.assertEquals;
+ import static org.junit.Assert.assertFalse;
+ import static org.junit.Assert.assertNotNull;
+ import static org.junit.Assert.assertTrue;
++import static org.junit.Assume.assumeTrue;
+ 
+ import java.nio.file.Files;
+ import java.nio.file.Path;
+ import java.nio.file.Paths;
+ import java.nio.file.StandardCopyOption;
++import java.nio.file.attribute.PosixFilePermission;
+ import java.util.Arrays;
+ import java.util.jar.Attributes;
+ import java.util.jar.JarInputStream;
+@@ -116,6 +118,38 @@ public class JarUtilsTest
          }
      }
  
@@ -374,6 +386,34 @@ index 3ec10cfa..2fc3d619 100644
 +
      /**
       * Test JAR if manifest injection works as expected when some artifact fields have default values.
+      * 
+@@ -148,6 +182,27 @@ public class JarUtilsTest
+         }
+     }
+ 
++    /**
++     * Test JAR if manifest injection preserves sane file perms.
++     *
++     * @throws Exception
++     */
++    @Test
++    public void testManifestInjectionSanePermissions()
++            throws Exception
++    {
++        Path testResource = Paths.get( "src/test/resources/example.jar" );
++        Path testJar = workDir.resolve( "manifest.jar" );
++        Files.copy( testResource, testJar, StandardCopyOption.COPY_ATTRIBUTES, StandardCopyOption.REPLACE_EXISTING );
++
++        assumeTrue( "sane umask", Files.getPosixFilePermissions( testJar ).contains( PosixFilePermission.OTHERS_READ ) );
++
++        Artifact artifact = new DefaultArtifact( "org.apache.maven", "maven-model", "xsd", "model", "2.2.1" );
++        JarUtils.injectManifest( testJar, artifact );
++
++        assertTrue( Files.getPosixFilePermissions( testJar ).contains( PosixFilePermission.OTHERS_READ ) );
++    }
++
+     /**
+      * Test if native code detection works as expected.
       * 
 diff --git a/xmvn-tools/xmvn-install/src/test/resources/recompression-size.jar b/xmvn-tools/xmvn-install/src/test/resources/recompression-size.jar
 new file mode 100644

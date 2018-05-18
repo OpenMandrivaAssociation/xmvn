@@ -10,7 +10,7 @@
 
 Name:           xmvn
 Version:        3.0.0
-Release:        17%{?dist}
+Release:        18%{?dist}
 Summary:        Local Extensions for Apache Maven
 License:        ASL 2.0
 URL:            https://fedora-java.github.io/xmvn/
@@ -352,6 +352,10 @@ cp -P ${maven_home}/bin/m2.conf %{buildroot}%{_datadir}/%{name}/bin/
 %doc LICENSE NOTICE
 
 %changelog
+* Fri May 18 2018 Mikolaj Izdebski <mizdebsk@redhat.com> - 3.0.0-18
+- Avoid creating temp files during manifest injection
+- Resolves: rhbz#1579236
+
 * Wed May  9 2018 Mikolaj Izdebski <mizdebsk@redhat.com> - 3.0.0-17
 - Switch to commons-compress for manifest manipulation
 - Resolves: rhbz#1576358
