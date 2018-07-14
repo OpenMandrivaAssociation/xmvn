@@ -10,7 +10,7 @@
 
 Name:           xmvn
 Version:        3.0.0
-Release:        19%{?dist}
+Release:        20%{?dist}
 Summary:        Local Extensions for Apache Maven
 License:        ASL 2.0
 URL:            https://fedora-java.github.io/xmvn/
@@ -352,6 +352,9 @@ cp -P ${maven_home}/bin/m2.conf %{buildroot}%{_datadir}/%{name}/bin/
 %doc LICENSE NOTICE
 
 %changelog
+* Sat Jul 14 2018 Fedora Release Engineering <releng@fedoraproject.org> - 3.0.0-20
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_29_Mass_Rebuild
+
 * Tue Jun 05 2018 Michael Simacek <msimacek@redhat.com> - 3.0.0-19
 - Remove now unnecessary objenesis from classpath
 
