@@ -10,7 +10,7 @@
 
 Name:           xmvn
 Version:        3.0.0
-Release:        20%{?dist}
+Release:        21%{?dist}
 Summary:        Local Extensions for Apache Maven
 License:        ASL 2.0
 URL:            https://fedora-java.github.io/xmvn/
@@ -156,6 +156,9 @@ This package provides XMvn Tools parent POM.
 
 %package        resolve
 Summary:        XMvn Resolver
+# Explicit javapackages-tools requires since scripts use
+# /usr/share/java-utils/java-functions
+Requires:       javapackages-tools
 
 %description    resolve
 This package provides XMvn Resolver, which is a very simple
@@ -166,6 +169,9 @@ Resolver is debugging local artifact repositories.
 
 %package        bisect
 Summary:        XMvn Bisect
+# Explicit javapackages-tools requires since scripts use
+# /usr/share/java-utils/java-functions
+Requires:       javapackages-tools
 
 %description    bisect
 This package provides XMvn Bisect, which is a debugging tool that can
@@ -173,6 +179,9 @@ diagnose build failures by using bisection method.
 
 %package        subst
 Summary:        XMvn Subst
+# Explicit javapackages-tools requires since scripts use
+# /usr/share/java-utils/java-functions
+Requires:       javapackages-tools
 
 %description    subst
 This package provides XMvn Subst, which is a tool that can substitute
@@ -182,6 +191,9 @@ artifact repository.
 %package        install
 Summary:        XMvn Install
 Requires:       apache-commons-compress
+# Explicit javapackages-tools requires since scripts use
+# /usr/share/java-utils/java-functions
+Requires:       javapackages-tools
 
 %description    install
 This package provides XMvn Install, which is a command-line interface
@@ -352,6 +364,10 @@ cp -P ${maven_home}/bin/m2.conf %{buildroot}%{_datadir}/%{name}/bin/
 %doc LICENSE NOTICE
 
 %changelog
+* Wed Aug 01 2018 Severin Gehwolf <sgehwolf@redhat.com> - 3.0.0-21
+- Add requirement on javapackages-tools since scripts use
+  java-functions.
+
 * Sat Jul 14 2018 Fedora Release Engineering <releng@fedoraproject.org> - 3.0.0-20
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_29_Mass_Rebuild
 
