@@ -10,7 +10,7 @@
 
 Name:           xmvn
 Version:        3.0.0
-Release:        21%{?dist}
+Release:        22%{?dist}
 Summary:        Local Extensions for Apache Maven
 License:        ASL 2.0
 URL:            https://fedora-java.github.io/xmvn/
@@ -25,6 +25,7 @@ Patch3:         0001-Support-setting-Xdoclint-none-in-m-javadoc-p-3.0.0.patch
 Patch4:         0001-Fix-configuration-of-aliased-plugins.patch
 Patch5:         0001-Don-t-use-JAXB-for-converting-bytes-to-hex-string.patch
 Patch6:         0001-Use-apache-commons-compress-for-manifest-injection-a.patch
+Patch7:         0001-port-to-gradle-4.4.1.patch
 
 BuildRequires:  maven >= 3.5.0
 BuildRequires:  maven-local
@@ -47,7 +48,7 @@ BuildRequires:  plexus-containers-container-default
 BuildRequires:  plexus-containers-component-annotations
 BuildRequires:  plexus-containers-component-metadata
 %if %{with gradle}
-BuildRequires:  gradle >= 4.3.1
+BuildRequires:  gradle >= 4.4.1
 %endif
 
 Requires:       %{name}-minimal = %{version}-%{release}
@@ -215,6 +216,7 @@ This package provides %{summary}.
 %patch4 -p1
 %patch5 -p1
 %patch6 -p1
+%patch7 -p1
 
 # Bisect IT has no chances of working in local, offline mode, without
 # network access - it needs to access remote repositories.
@@ -364,6 +366,9 @@ cp -P ${maven_home}/bin/m2.conf %{buildroot}%{_datadir}/%{name}/bin/
 %doc LICENSE NOTICE
 
 %changelog
+* Tue Oct 30 2018 Mikolaj Izdebski <mizdebsk@redhat.com> - 3.0.0-22
+- Port to Gradle 4.4.1
+
 * Wed Aug 01 2018 Severin Gehwolf <sgehwolf@redhat.com> - 3.0.0-21
 - Add requirement on javapackages-tools since scripts use
   java-functions.
