@@ -99,7 +99,6 @@ This package provides XMvn parent POM.
 
 %package        api
 Summary:        XMvn API
-Obsoletes:      %{name}-launcher < 3.0.0
 
 %description    api
 This package provides XMvn API module which contains public interface
