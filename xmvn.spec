@@ -2,11 +2,6 @@
 # any additional bundles.
 %global __requires_exclude %{?__requires_exclude:%__requires_exclude|}^osgi\\($
 
-# Integration tests are disabled by default, but you can run them by
-# adding "--with its" to rpmbuild or mock invocation.
-%bcond_with its
-
-%bcond_without gradle
 
 Name:           xmvn
 Version:        3.0.0
@@ -46,9 +41,6 @@ BuildRequires:  maven-invoker
 BuildRequires:  plexus-containers-container-default
 BuildRequires:  plexus-containers-component-annotations
 BuildRequires:  plexus-containers-component-metadata
-%if %{with gradle}
-BuildRequires:  gradle >= 4.3.1
-%endif
 
 Requires:       %{name}-minimal = %{version}-%{release}
 Requires:       maven >= 3.4.0
@@ -121,15 +113,6 @@ provides integration of Maven Resolver with XMvn.  It provides an
 adapter which allows XMvn resolver to be used as Maven workspace
 reader.
 
-%if %{with gradle}
-%package        connector-gradle
-Summary:        XMvn Connector for Gradle
-
-%description    connector-gradle
-This package provides XMvn Connector for Gradle, which provides
-integration of Gradle with XMvn.  It provides an adapter which allows
-XMvn resolver to be used as Gradle resolver.
-%endif
 
 %package        connector-ivy
 Summary:        XMvn Connector for Apache Ivy
@@ -228,9 +211,7 @@ find -name ResolverIntegrationTest.java -delete
 
 %mvn_package ":xmvn{,-it}" __noinstall
 
-%if %{without gradle}
 %pom_disable_module xmvn-connector-gradle
-%endif
 
 # Upstream code quality checks, not relevant when building RPMs
 %pom_remove_plugin -r :apache-rat-plugin
@@ -254,11 +235,7 @@ mkdir -p target/dependency/
 cp -aL ${maven_home} target/dependency/apache-maven-$mver
 
 %build
-%if %{with its}
-%mvn_build -s -j -- -Prun-its
-%else
 %mvn_build -s -j
-%endif
 
 tar --delay-directory-restore -xvf target/*tar.bz2
 chmod -R +rwX %{name}-%{version}*
@@ -338,9 +315,6 @@ cp -P ${maven_home}/bin/m2.conf %{buildroot}%{_datadir}/%{name}/bin/
 
 %files connector-aether -f .mfiles-xmvn-connector-aether
 
-%if %{with gradle}
-%files connector-gradle -f .mfiles-xmvn-connector-gradle
-%endif
 
 %files connector-ivy -f .mfiles-xmvn-connector-ivy
 
