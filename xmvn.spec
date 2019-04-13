@@ -5,7 +5,7 @@
 
 Name:           xmvn
 Version:        3.0.0
-Release:        21%{?dist}
+Release:        22%{?dist}
 Summary:        Local Extensions for Apache Maven
 License:        ASL 2.0
 URL:            https://fedora-java.github.io/xmvn/
@@ -43,7 +43,7 @@ BuildRequires:  plexus-containers-component-annotations
 BuildRequires:  plexus-containers-component-metadata
 
 Requires:       %{name}-minimal = %{version}-%{release}
-Requires:       maven >= 3.4.0
+Requires:       maven >= 3.6.1
 
 %description
 This package provides extensions for Apache Maven that can be used to
@@ -61,7 +61,7 @@ Requires:       apache-commons-cli
 Requires:       apache-commons-lang3
 Requires:       atinject
 Requires:       google-guice
-Requires:       guava20
+Requires:       guava
 Requires:       maven-lib
 Requires:       maven-resolver-api
 Requires:       maven-resolver-impl
@@ -337,6 +337,9 @@ cp -P ${maven_home}/bin/m2.conf %{buildroot}%{_datadir}/%{name}/bin/
 %doc LICENSE NOTICE
 
 %changelog
+* Sat Apr 13 2019 Mikolaj Izdebski <mizdebsk@redhat.com> - 3.0.0-22
+- Switch to Maven 3.6.1 and non-compat Guava
+
 * Wed Aug 01 2018 Severin Gehwolf <sgehwolf@redhat.com> - 3.0.0-21
 - Add requirement on javapackages-tools since scripts use
   java-functions.
