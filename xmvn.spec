@@ -5,7 +5,7 @@
 
 Name:           xmvn
 Version:        3.0.0
-Release:        22%{?dist}
+Release:        23%{?dist}
 Summary:        Local Extensions for Apache Maven
 License:        ASL 2.0
 URL:            https://fedora-java.github.io/xmvn/
@@ -20,6 +20,8 @@ Patch3:         0001-Support-setting-Xdoclint-none-in-m-javadoc-p-3.0.0.patch
 Patch4:         0001-Fix-configuration-of-aliased-plugins.patch
 Patch5:         0001-Don-t-use-JAXB-for-converting-bytes-to-hex-string.patch
 Patch6:         0001-Use-apache-commons-compress-for-manifest-injection-a.patch
+Patch7:         0001-test-Fix-XML-namespace-in-installer-test-resources.patch
+Patch8:         0001-Port-to-Xmlunit-2.6.2.patch
 
 BuildRequires:  maven >= 3.5.0
 BuildRequires:  maven-local
@@ -33,7 +35,7 @@ BuildRequires:  maven-install-plugin
 BuildRequires:  maven-plugin-plugin
 BuildRequires:  objectweb-asm
 BuildRequires:  modello
-BuildRequires:  xmlunit
+BuildRequires:  xmlunit-assertj
 BuildRequires:  apache-ivy
 BuildRequires:  junit
 BuildRequires:  easymock
@@ -197,6 +199,8 @@ This package provides %{summary}.
 %patch4 -p1
 %patch5 -p1
 %patch6 -p1
+%patch7 -p1
+%patch8 -p1
 
 # Bisect IT has no chances of working in local, offline mode, without
 # network access - it needs to access remote repositories.
@@ -337,6 +341,9 @@ cp -P ${maven_home}/bin/m2.conf %{buildroot}%{_datadir}/%{name}/bin/
 %doc LICENSE NOTICE
 
 %changelog
+* Fri Apr 19 2019 Marian Koncek <mkoncek@redhat.com> - 3.0.0-23
+- Port to Xmlunit 2.6.2
+
 * Sat Apr 13 2019 Mikolaj Izdebski <mizdebsk@redhat.com> - 3.0.0-22
 - Switch to Maven 3.6.1 and non-compat Guava
 
