@@ -7,7 +7,7 @@
 
 Name:           xmvn
 Version:        2.1.0
-Release:        8.6
+Release:        9
 Summary:        Local Extensions for Apache Maven
 Group:		Development/Java
 License:        ASL 2.0
@@ -22,6 +22,7 @@ Patch2:         0003-Fix-conversion-of-Ivy-to-XMvn-artifacts.patch
 Patch3:         0004-Use-topmost-repository-namespace-during-installation.patch
 Patch4:         0005-Ignore-any-system-dependencies-in-Tycho-projects.patch
 Patch5:         0006-Add-fully-qualified-osgi-version-to-install-plan-whe.patch
+Patch6:		xmvn-2.1.0-modular-java.patch
 
 # Import Gradle connector (by upstreamer, adapted)
 # https://pagure.io/xmvn/c/64438a57367519c2c1d861f1ce1e01e819e19142?branch=master
@@ -178,6 +179,7 @@ This package provides %{summary}.
 %patch3 -p1
 %patch4 -p1
 %patch5 -p1
+%patch6 -p1
 
 %patch100 -p1 -b.orig
 
