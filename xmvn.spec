@@ -5,7 +5,7 @@
 
 Name:           xmvn
 Version:        3.0.0
-Release:        23%{?dist}
+Release:        24%{?dist}
 Summary:        Local Extensions for Apache Maven
 License:        ASL 2.0
 URL:            https://fedora-java.github.io/xmvn/
@@ -341,6 +341,9 @@ cp -P ${maven_home}/bin/m2.conf %{buildroot}%{_datadir}/%{name}/bin/
 %doc LICENSE NOTICE
 
 %changelog
+* Fri May 24 2019 Mikolaj Izdebski <mizdebsk@redhat.com> - 3.0.0-24
+- Mass rebuild for javapackages-tools 201901
+
 * Fri Apr 19 2019 Marian Koncek <mkoncek@redhat.com> - 3.0.0-23
 - Port to Xmlunit 2.6.2
 
