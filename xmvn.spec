@@ -5,7 +5,7 @@
 
 Name:           xmvn
 Version:        3.0.0
-Release:        24%{?dist}
+Release:        25%{?dist}
 Summary:        Local Extensions for Apache Maven
 License:        ASL 2.0
 URL:            https://fedora-java.github.io/xmvn/
@@ -22,6 +22,7 @@ Patch5:         0001-Don-t-use-JAXB-for-converting-bytes-to-hex-string.patch
 Patch6:         0001-Use-apache-commons-compress-for-manifest-injection-a.patch
 Patch7:         0001-test-Fix-XML-namespace-in-installer-test-resources.patch
 Patch8:         0001-Port-to-Xmlunit-2.6.2.patch
+Patch9:         0001-Update-maven-invoker-to-version-3.0.1.patch
 
 BuildRequires:  maven >= 3.5.0
 BuildRequires:  maven-local
@@ -201,6 +202,7 @@ This package provides %{summary}.
 %patch6 -p1
 %patch7 -p1
 %patch8 -p1
+%patch9 -p1
 
 # Bisect IT has no chances of working in local, offline mode, without
 # network access - it needs to access remote repositories.
@@ -341,6 +343,9 @@ cp -P ${maven_home}/bin/m2.conf %{buildroot}%{_datadir}/%{name}/bin/
 %doc LICENSE NOTICE
 
 %changelog
+* Thu May 30 2019 Marian Koncek <mkoncek@redhat.com> - 3.0.0-25
+- Update maven-invoker to version 3.0.1
+
 * Fri May 24 2019 Mikolaj Izdebski <mizdebsk@redhat.com> - 3.0.0-24
 - Mass rebuild for javapackages-tools 201901
 
