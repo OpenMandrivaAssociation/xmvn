@@ -4,25 +4,14 @@
 
 
 Name:           xmvn
-Version:        3.0.0
-Release:        25%{?dist}
+Version:        3.1.0
+Release:        1%{?dist}
 Summary:        Local Extensions for Apache Maven
 License:        ASL 2.0
 URL:            https://fedora-java.github.io/xmvn/
 BuildArch:      noarch
 
 Source0:        https://github.com/fedora-java/xmvn/releases/download/%{version}/xmvn-%{version}.tar.xz
-
-Patch0:         0001-Fix-installer-plugin-loading.patch
-Patch1:         0001-Port-to-Gradle-4.2.patch
-Patch2:         0001-Port-to-Gradle-4.3.1.patch
-Patch3:         0001-Support-setting-Xdoclint-none-in-m-javadoc-p-3.0.0.patch
-Patch4:         0001-Fix-configuration-of-aliased-plugins.patch
-Patch5:         0001-Don-t-use-JAXB-for-converting-bytes-to-hex-string.patch
-Patch6:         0001-Use-apache-commons-compress-for-manifest-injection-a.patch
-Patch7:         0001-test-Fix-XML-namespace-in-installer-test-resources.patch
-Patch8:         0001-Port-to-Xmlunit-2.6.2.patch
-Patch9:         0001-Update-maven-invoker-to-version-3.0.1.patch
 
 BuildRequires:  maven >= 3.5.0
 BuildRequires:  maven-local
@@ -193,16 +182,6 @@ This package provides %{summary}.
 
 %prep
 %setup -q
-%patch0 -p1
-%patch1 -p1
-%patch2 -p1
-%patch3 -p1
-%patch4 -p1
-%patch5 -p1
-%patch6 -p1
-%patch7 -p1
-%patch8 -p1
-%patch9 -p1
 
 # Bisect IT has no chances of working in local, offline mode, without
 # network access - it needs to access remote repositories.
@@ -343,6 +322,9 @@ cp -P ${maven_home}/bin/m2.conf %{buildroot}%{_datadir}/%{name}/bin/
 %doc LICENSE NOTICE
 
 %changelog
+* Fri Jun 14 2019 Mikolaj Izdebski <mizdebsk@redhat.com> - 3.1.0-1
+- Update to upstream version 3.1.0
+
 * Thu May 30 2019 Marian Koncek <mkoncek@redhat.com> - 3.0.0-25
 - Update maven-invoker to version 3.0.1
 
