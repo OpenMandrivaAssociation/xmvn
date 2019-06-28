@@ -5,13 +5,15 @@
 
 Name:           xmvn
 Version:        3.1.0
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Local Extensions for Apache Maven
 License:        ASL 2.0
 URL:            https://fedora-java.github.io/xmvn/
 BuildArch:      noarch
 
 Source0:        https://github.com/fedora-java/xmvn/releases/download/%{version}/xmvn-%{version}.tar.xz
+
+Patch1:         0001-Prefer-namespaced-metadata-when-duplicates-are-found.patch
 
 BuildRequires:  maven >= 3.5.0
 BuildRequires:  maven-local
@@ -182,6 +184,7 @@ This package provides %{summary}.
 
 %prep
 %setup -q
+%patch1 -p1
 
 # Bisect IT has no chances of working in local, offline mode, without
 # network access - it needs to access remote repositories.
@@ -322,6 +325,9 @@ cp -P ${maven_home}/bin/m2.conf %{buildroot}%{_datadir}/%{name}/bin/
 %doc LICENSE NOTICE
 
 %changelog
+* Fri Jun 28 2019 Mikolaj Izdebski <mizdebsk@redhat.com> - 3.1.0-2
+- Prefer namespaced metadata when duplicates are found
+
 * Fri Jun 14 2019 Mikolaj Izdebski <mizdebsk@redhat.com> - 3.1.0-1
 - Update to upstream version 3.1.0
 
