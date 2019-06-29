@@ -68,8 +68,7 @@ Requires:       plexus-containers-component-annotations
 Requires:       plexus-interpolation
 Requires:       plexus-sec-dispatcher
 Requires:       plexus-utils
-Requires:       sisu-inject
-Requires:       sisu-plexus
+Requires:       sisu
 Requires:       slf4j
 
 %description    minimal
