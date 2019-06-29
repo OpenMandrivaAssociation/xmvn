@@ -61,7 +61,7 @@ Requires:       maven-resolver-api
 Requires:       maven-resolver-impl
 Requires:       maven-resolver-spi
 Requires:       maven-resolver-util
-Requires:       maven-wagon-provider-api
+Requires:       maven-wagon
 Requires:       plexus-cipher
 Requires:       plexus-classworlds
 Requires:       plexus-containers-component-annotations
