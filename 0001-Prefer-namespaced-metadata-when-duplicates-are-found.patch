@@ -1,7 +1,7 @@
-From a4d655c2537eaffe0a3031243427cfdfd480a450 Mon Sep 17 00:00:00 2001
+From 1474fd57e606bdb00417524a7b648f7841b014c8 Mon Sep 17 00:00:00 2001
 From: Mikolaj Izdebski <mizdebsk@redhat.com>
 Date: Fri, 28 Jun 2019 12:15:23 +0200
-Subject: [PATCH] Prefer namespaced metadata when duplicates are found
+Subject: [PATCH 1/2] Prefer namespaced metadata when duplicates are found
 
 ---
  .../metadata/impl/DefaultMetadataResult.java  | 33 +++++++++++--------
