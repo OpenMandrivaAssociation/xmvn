@@ -57,10 +57,7 @@ Requires:       atinject
 Requires:       google-guice
 Requires:       guava
 Requires:       maven-lib
-Requires:       maven-resolver-api
-Requires:       maven-resolver-impl
-Requires:       maven-resolver-spi
-Requires:       maven-resolver-util
+Requires:       maven-resolver
 Requires:       maven-wagon
 Requires:       plexus-cipher
 Requires:       plexus-classworlds
