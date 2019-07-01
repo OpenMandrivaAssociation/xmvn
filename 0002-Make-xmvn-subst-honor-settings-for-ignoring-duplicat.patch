@@ -1,7 +1,7 @@
 From 4957492864d6a88a814bfd6f21798b52a4e70515 Mon Sep 17 00:00:00 2001
 From: Mikolaj Izdebski <mizdebsk@redhat.com>
 Date: Sat, 29 Jun 2019 14:00:13 +0200
-Subject: [PATCH 2/2] Make xmvn-subst honor settings for ignoring duplicate
+Subject: [PATCH 2/3] Make xmvn-subst honor settings for ignoring duplicate
  metadata
 
 ---

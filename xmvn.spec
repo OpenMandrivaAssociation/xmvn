@@ -15,6 +15,7 @@ Source0:        https://github.com/fedora-java/xmvn/releases/download/%{version}
 
 Patch1:         0001-Prefer-namespaced-metadata-when-duplicates-are-found.patch
 Patch2:         0002-Make-xmvn-subst-honor-settings-for-ignoring-duplicat.patch
+Patch3:         0003-Fix-requires-generation-for-self-depending-packages.patch
 
 BuildRequires:  maven >= 3.5.0
 BuildRequires:  maven-local
@@ -183,6 +184,7 @@ This package provides %{summary}.
 %setup -q
 %patch1 -p1
 %patch2 -p1
+%patch3 -p1
 
 # Bisect IT has no chances of working in local, offline mode, without
 # network access - it needs to access remote repositories.
