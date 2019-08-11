@@ -6,11 +6,11 @@
 # adding "--with its" to rpmbuild or mock invocation.
 %bcond_with its
 
-%bcond_without gradle
+%bcond_with gradle
 
 Name:           xmvn
 Version:        3.0.0
-Release:        24%{?dist}
+Release:        25%{?dist}
 Summary:        Local Extensions for Apache Maven
 License:        ASL 2.0
 URL:            https://fedora-java.github.io/xmvn/
@@ -365,6 +365,9 @@ cp -P ${maven_home}/bin/m2.conf %{buildroot}%{_datadir}/%{name}/bin/
 %doc LICENSE NOTICE
 
 %changelog
+* Sun Aug 11 2019 Fabio Valentini <decathorpe@gmail.com> - 3.0.0-25
+- Disable gradle support by default.
+
 * Sat Jul 27 2019 Fedora Release Engineering <releng@fedoraproject.org> - 3.0.0-24
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_31_Mass_Rebuild
 
