@@ -1,3 +1,6 @@
+/results_*
+/*.src.rpm
+
 /xmvn-0.tar.xz
 /xmvn-0.0.1.tar.xz
 /xmvn-0.0.2.tar.xz

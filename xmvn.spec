@@ -26,6 +26,8 @@ Patch4:         0001-Fix-configuration-of-aliased-plugins.patch
 Patch5:         0001-Don-t-use-JAXB-for-converting-bytes-to-hex-string.patch
 Patch6:         0001-Use-apache-commons-compress-for-manifest-injection-a.patch
 Patch7:         0001-port-to-gradle-4.4.1.patch
+Patch8:         0001-test-Fix-XML-namespace-in-installer-test-resources.patch
+Patch9:         0001-Port-to-Xmlunit-2.6.2.patch
 
 BuildRequires:  maven >= 3.5.0
 BuildRequires:  maven-local
@@ -39,7 +41,7 @@ BuildRequires:  maven-install-plugin
 BuildRequires:  maven-plugin-plugin
 BuildRequires:  objectweb-asm
 BuildRequires:  modello
-BuildRequires:  xmlunit
+BuildRequires:  xmlunit-assertj
 BuildRequires:  apache-ivy
 BuildRequires:  junit
 BuildRequires:  easymock
@@ -216,6 +218,8 @@ This package provides %{summary}.
 %patch5 -p1
 %patch6 -p1
 %patch7 -p1
+%patch8 -p1
+%patch9 -p1
 
 # Bisect IT has no chances of working in local, offline mode, without
 # network access - it needs to access remote repositories.
@@ -365,6 +369,9 @@ cp -P ${maven_home}/bin/m2.conf %{buildroot}%{_datadir}/%{name}/bin/
 %doc LICENSE NOTICE
 
 %changelog
+* Thu Aug 22 2019 Fabio Valentini <decathorpe@gmail.com> - 3.0.0-26
+- Port to xmlunit2.
+
 * Sun Aug 11 2019 Fabio Valentini <decathorpe@gmail.com> - 3.0.0-25
 - Disable gradle support by default.
 
