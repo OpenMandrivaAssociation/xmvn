@@ -1,0 +1,115 @@
+From 5d8219051b8419aeb33f15f6a5e38084f1782572 Mon Sep 17 00:00:00 2001
+From: Marian Koncek <mkoncek@redhat.com>
+Date: Wed, 29 May 2019 16:55:20 +0200
+Subject: [PATCH] Update maven-invoker to version 3.0.1
+
+---
+ xmvn-parent/pom.xml                           |  2 +-
+ xmvn-tools/xmvn-bisect/pom.xml                |  4 ++
+ .../xmvn/tools/bisect/BisectCliRequest.java   | 38 ++++++++++++++++---
+ 3 files changed, 37 insertions(+), 7 deletions(-)
+
+diff --git a/xmvn-parent/pom.xml b/xmvn-parent/pom.xml
+index 5c21cfa..edf6cbd 100644
+--- a/xmvn-parent/pom.xml
++++ b/xmvn-parent/pom.xml
+@@ -86,7 +86,7 @@
+     <jcommanderVersion>1.64</jcommanderVersion>
+     <gradleVersion>4.4.1</gradleVersion>
+     <groovyVersion>2.4.10</groovyVersion>
+-    <mavenInvokerVersion>2.2</mavenInvokerVersion>
++    <mavenInvokerVersion>3.0.1</mavenInvokerVersion>
+     <mavenResolverVersion>1.0.3</mavenResolverVersion>
+     <mavenVersion>3.5.0</mavenVersion>
+     <plexusUtilsVersion>3.0.24</plexusUtilsVersion>
+diff --git a/xmvn-tools/xmvn-bisect/pom.xml b/xmvn-tools/xmvn-bisect/pom.xml
+index ce592ad..1410022 100644
+--- a/xmvn-tools/xmvn-bisect/pom.xml
++++ b/xmvn-tools/xmvn-bisect/pom.xml
+@@ -49,5 +49,9 @@
+         </exclusion>
+       </exclusions>
+     </dependency>
++    <dependency>
++      <groupId>org.codehaus.plexus</groupId>
++      <artifactId>plexus-utils</artifactId>
++    </dependency>
+   </dependencies>
+ </project>
+diff --git a/xmvn-tools/xmvn-bisect/src/main/java/org/fedoraproject/xmvn/tools/bisect/BisectCliRequest.java b/xmvn-tools/xmvn-bisect/src/main/java/org/fedoraproject/xmvn/tools/bisect/BisectCliRequest.java
+index 795bfd9..1f0fcf5 100644
+--- a/xmvn-tools/xmvn-bisect/src/main/java/org/fedoraproject/xmvn/tools/bisect/BisectCliRequest.java
++++ b/xmvn-tools/xmvn-bisect/src/main/java/org/fedoraproject/xmvn/tools/bisect/BisectCliRequest.java
+@@ -29,6 +29,8 @@ import com.beust.jcommander.Parameter;
+ import com.beust.jcommander.ParameterException;
+ import org.apache.maven.shared.invoker.DefaultInvocationRequest;
+ import org.apache.maven.shared.invoker.InvocationRequest;
++import org.apache.maven.shared.invoker.InvocationRequest.CheckSumPolicy;
++import org.apache.maven.shared.invoker.InvocationRequest.ReactorFailureBehavior;
+ import org.codehaus.plexus.util.StringUtils;
+ 
+ /**
+@@ -178,6 +180,30 @@ public class BisectCliRequest
+         return null;
+     }
+ 
++    private static CheckSumPolicy stringToCheckSumPolicy( String policy )
++    {
++        if ( policy == null )
++            return null;
++        if ( policy.equals( "fail" ) )
++            return CheckSumPolicy.Fail;
++        if ( policy.equals( "warn" ) )
++            return CheckSumPolicy.Warn;
++
++        throw new IllegalArgumentException( "Invalid checksum policy selected" );
++    }
++
++    private static String checkSumPolicyToString( CheckSumPolicy policy )
++    {
++        if ( policy == null )
++            return null;
++        if ( policy.equals( CheckSumPolicy.Fail ) )
++            return "fail";
++        if ( policy.equals( CheckSumPolicy.Warn ) )
++            return "warn";
++
++        throw new IllegalArgumentException( "Invalid checksum policy selected" );
++    }
++
+     private void setDefaultValues()
+     {
+         String userHome = System.getProperty( "user.home" );
+@@ -193,11 +219,11 @@ public class BisectCliRequest
+         alsoMake = request.isAlsoMake();
+         alsoMakeDependents = request.isAlsoMakeDependents();
+         debug = request.isDebug();
+-        failureBehavior = request.getFailureBehavior();
+-        globalChecksumPolicy = request.getGlobalChecksumPolicy();
++        failureBehavior = request.getReactorFailureBehavior().getLongOption();
++        globalChecksumPolicy = checkSumPolicyToString( request.getGlobalChecksumPolicy() );
+         globalSettings = StringUtils.defaultString( request.getGlobalSettingsFile() );
+         goals = request.getGoals();
+-        batchMode = !request.isInteractive();
++        batchMode = request.isBatchMode();
+         javaHome = fileToString( request.getJavaHome() );
+         localRepository = fileToString( request.getLocalRepositoryDirectory( null ) );
+         mavenOpts = request.getMavenOpts();
+@@ -222,11 +248,11 @@ public class BisectCliRequest
+         request.setAlsoMake( alsoMake );
+         request.setAlsoMakeDependents( alsoMakeDependents );
+         request.setDebug( debug );
+-        request.setFailureBehavior( failureBehavior );
+-        request.setGlobalChecksumPolicy( globalChecksumPolicy );
++        request.setReactorFailureBehavior( ReactorFailureBehavior.valueOfByLongOption( failureBehavior ) );
++        request.setGlobalChecksumPolicy( stringToCheckSumPolicy( globalChecksumPolicy ) );
+         request.setGlobalSettingsFile( stringToFile( globalSettings ) );
+         request.setGoals( goals );
+-        request.setInteractive( !batchMode );
++        request.setBatchMode( batchMode );
+         request.setJavaHome( stringToFile( javaHome ) );
+         request.setLocalRepositoryDirectory( stringToFile( localRepository ) );
+         request.setMavenOpts( mavenOpts );
+-- 
+2.20.1
+
