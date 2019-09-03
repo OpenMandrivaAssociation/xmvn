@@ -261,7 +261,9 @@ done
 cp -r ${maven_home}/lib/* %{buildroot}%{_datadir}/%{name}/lib/
 
 # possibly recreate symlinks that can be automated with xmvn-subst
+%if !0%{?sclraw_phase}
 %{name}-subst -s -R %{buildroot} %{buildroot}%{_datadir}/%{name}/
+%endif
 
 # /usr/bin/xmvn
 ln -s %{_datadir}/%{name}/bin/mvn %{buildroot}%{_bindir}/%{name}
