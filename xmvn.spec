@@ -25,7 +25,6 @@ BuildRequires:  cglib
 BuildRequires:  maven-dependency-plugin
 BuildRequires:  maven-plugin-build-helper
 BuildRequires:  maven-assembly-plugin
-BuildRequires:  maven-install-plugin
 BuildRequires:  maven-plugin-plugin
 BuildRequires:  objectweb-asm
 BuildRequires:  modello
@@ -199,6 +198,9 @@ find -name ResolverIntegrationTest.java -delete
 %mvn_package ":xmvn{,-it}" __noinstall
 
 %pom_disable_module xmvn-connector-gradle
+
+%pom_remove_plugin :maven-install-plugin xmvn-it
+%pom_remove_plugin :maven-install-plugin xmvn-parent
 
 # Upstream code quality checks, not relevant when building RPMs
 %pom_remove_plugin -r :apache-rat-plugin
