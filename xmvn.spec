@@ -25,7 +25,6 @@ BuildRequires:  cglib
 BuildRequires:  maven-dependency-plugin
 BuildRequires:  maven-plugin-build-helper
 BuildRequires:  maven-assembly-plugin
-BuildRequires:  maven-install-plugin
 BuildRequires:  maven-plugin-plugin
 BuildRequires:  objectweb-asm
 BuildRequires:  modello
