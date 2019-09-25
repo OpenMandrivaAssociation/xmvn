@@ -264,9 +264,6 @@ cp -r ${maven_home}/lib/* %{buildroot}%{_datadir}/%{name}/lib/
 %{name}-subst -s -R %{buildroot} %{buildroot}%{_datadir}/%{name}/
 %endif
 
-rm -rf %{buildroot}%{_datadir}/%{name}/lib/maven-resolver*
-cp -Lr ${maven_home}/lib/maven-resolver* %{buildroot}%{_datadir}/%{name}/lib/
-
 # /usr/bin/xmvn
 ln -s %{_datadir}/%{name}/bin/mvn %{buildroot}%{_bindir}/%{name}
 
