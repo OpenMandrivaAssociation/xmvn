@@ -257,13 +257,15 @@ done
 %jpackage_script org.fedoraproject.xmvn.tools.subst.SubstCli "" "" xmvn/xmvn-subst:xmvn/xmvn-api:xmvn/xmvn-core:beust-jcommander xmvn-subst
 
 # copy over maven lib directory
-rm -rf %{buildroot}%{_datadir}/%{name}/lib/*
-cp -Lr ${maven_home}/lib/* %{buildroot}%{_datadir}/%{name}/lib/
+cp -r ${maven_home}/lib/* %{buildroot}%{_datadir}/%{name}/lib/
 
 # possibly recreate symlinks that can be automated with xmvn-subst
 %if !0%{?sclraw_phase}
-# %{name}-subst -s -R %{buildroot} %{buildroot}%{_datadir}/%{name}/
+%{name}-subst -s -R %{buildroot} %{buildroot}%{_datadir}/%{name}/
 %endif
+
+rm -rf %{buildroot}%{_datadir}/%{name}/lib/maven-resolver*
+cp -Lr ${maven_home}/lib/maven-resolver* %{buildroot}%{_datadir}/%{name}/lib/
 
 # /usr/bin/xmvn
 ln -s %{_datadir}/%{name}/bin/mvn %{buildroot}%{_bindir}/%{name}
