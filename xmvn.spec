@@ -10,7 +10,7 @@
 
 Name:           xmvn
 Version:        3.0.0
-Release:        27%{?dist}
+Release:        28%{?dist}
 Summary:        Local Extensions for Apache Maven
 License:        ASL 2.0
 URL:            https://fedora-java.github.io/xmvn/
@@ -30,7 +30,7 @@ Patch8:         0001-test-Fix-XML-namespace-in-installer-test-resources.patch
 Patch9:         0001-Port-to-Xmlunit-2.6.2.patch
 Patch10:        0001-Update-maven-invoker-to-version-3.0.1.patch
 
-BuildRequires:  maven >= 3.5.0
+BuildRequires:  maven >= 3.6.1
 BuildRequires:  maven-local
 BuildRequires:  apache-commons-compress
 BuildRequires:  beust-jcommander
@@ -55,7 +55,7 @@ BuildRequires:  gradle >= 4.4.1
 %endif
 
 Requires:       %{name}-minimal = %{version}-%{release}
-Requires:       maven >= 3.4.0
+Requires:       maven >= 3.6.1
 
 %description
 This package provides extensions for Apache Maven that can be used to
@@ -65,7 +65,7 @@ creating RPM packages containing Maven artifacts.
 
 %package        minimal
 Summary:        Dependency-reduced version of XMvn
-Requires:       maven-lib >= 3.4.0
+Requires:       maven-lib >= 3.6.1
 Requires:       %{name}-api = %{version}-%{release}
 Requires:       %{name}-connector-aether = %{version}-%{release}
 Requires:       %{name}-core = %{version}-%{release}
@@ -73,7 +73,7 @@ Requires:       apache-commons-cli
 Requires:       apache-commons-lang3
 Requires:       atinject
 Requires:       google-guice
-Requires:       guava20
+Requires:       guava
 Requires:       maven-lib
 Requires:       maven-resolver-api
 Requires:       maven-resolver-impl
@@ -371,6 +371,9 @@ cp -P ${maven_home}/bin/m2.conf %{buildroot}%{_datadir}/%{name}/bin/
 %doc LICENSE NOTICE
 
 %changelog
+* Thu Oct 17 2019 Fabio Valentini <decathorpe@gmail.com> - 3.0.0-28
+- Bump requirement to maven 3.6.1 and non-compat guava.
+
 * Mon Sep 02 2019 Marian Koncek <mkoncek@redhat.com> - 3.0.0-27
 - Port to maven-invoker 3.0.1
 
