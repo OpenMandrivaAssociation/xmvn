@@ -4,18 +4,15 @@
 
 
 Name:           xmvn
-Version:        3.1.0
-Release:        2%{?dist}
+Version:        4.0.0~20191027.5d1e284
+Release:        1%{?dist}
 Summary:        Local Extensions for Apache Maven
 License:        ASL 2.0
 URL:            https://fedora-java.github.io/xmvn/
 BuildArch:      noarch
 
-Source0:        https://github.com/fedora-java/xmvn/releases/download/%{version}/xmvn-%{version}.tar.xz
-
-Patch1:         0001-Prefer-namespaced-metadata-when-duplicates-are-found.patch
-Patch2:         0002-Make-xmvn-subst-honor-settings-for-ignoring-duplicat.patch
-Patch3:         0003-Fix-requires-generation-for-self-depending-packages.patch
+#Source0:        https://github.com/fedora-java/xmvn/releases/download/%{version}/xmvn-%{version}.tar.xz
+Source0:        https://github.com/fedora-java/xmvn/archive/5d1e284.tar.gz
 
 BuildRequires:  maven >= 3.5.0
 BuildRequires:  maven-local
@@ -180,10 +177,7 @@ Summary:        API documentation for %{name}
 This package provides %{summary}.
 
 %prep
-%setup -q
-%patch1 -p1
-%patch2 -p1
-%patch3 -p1
+%setup -q -n xmvn-5d1e284e74e4315040bfd231e0a5638b9199b7e6
 
 # Bisect IT has no chances of working in local, offline mode, without
 # network access - it needs to access remote repositories.
@@ -326,6 +320,9 @@ cp -P ${maven_home}/bin/m2.conf %{buildroot}%{_datadir}/%{name}/bin/
 %doc LICENSE NOTICE
 
 %changelog
+* Mon Oct 28 2019 Mikolaj Izdebski <mizdebsk@redhat.com> - 4.0.0~20191027.5d1e284-1
+- Update to upstream snapshot of 4.0.0
+
 * Fri Jun 28 2019 Mikolaj Izdebski <mizdebsk@redhat.com> - 3.1.0-2
 - Prefer namespaced metadata when duplicates are found
 
