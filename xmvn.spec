@@ -4,7 +4,7 @@
 
 
 Name:           xmvn
-Version:        4.0.0~20191027.5d1e284
+Version:        4.0.0~20191028.da67577
 Release:        1%{?dist}
 Summary:        Local Extensions for Apache Maven
 License:        ASL 2.0
@@ -12,7 +12,7 @@ URL:            https://fedora-java.github.io/xmvn/
 BuildArch:      noarch
 
 #Source0:        https://github.com/fedora-java/xmvn/releases/download/%{version}/xmvn-%{version}.tar.xz
-Source0:        https://github.com/fedora-java/xmvn/archive/5d1e284.tar.gz
+Source0:        https://github.com/fedora-java/xmvn/archive/da67577.tar.gz
 
 BuildRequires:  maven-local
 BuildRequires:  mvn(com.beust:jcommander)
@@ -189,7 +189,7 @@ Summary:        API documentation for %{name}
 This package provides %{summary}.
 
 %prep
-%setup -q -n xmvn-5d1e284e74e4315040bfd231e0a5638b9199b7e6
+%setup -q -n xmvn-da67577d9252f0b1fffed546c7c23d97a97dec4b
 
 # Bisect IT has no chances of working in local, offline mode, without
 # network access - it needs to access remote repositories.
@@ -334,7 +334,7 @@ cp -P ${maven_home}/bin/m2.conf %{buildroot}%{_datadir}/%{name}/bin/
 %doc LICENSE NOTICE
 
 %changelog
-* Mon Oct 28 2019 Mikolaj Izdebski <mizdebsk@redhat.com> - 4.0.0~20191027.5d1e284-1
+* Mon Oct 28 2019 Mikolaj Izdebski <mizdebsk@redhat.com> - 4.0.0~20191028.da67577-1
 - Update to upstream snapshot of 4.0.0
 
 * Fri Jun 28 2019 Mikolaj Izdebski <mizdebsk@redhat.com> - 3.1.0-2
