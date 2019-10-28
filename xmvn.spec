@@ -217,23 +217,25 @@ cp -aL ${maven_home} target/dependency/apache-maven-$mver
 %build
 %mvn_build -s -j
 
+version=4.0.0-SNAPSHOT
 tar --delay-directory-restore -xvf target/*tar.bz2
-chmod -R +rwX %{name}-%{version}*
+chmod -R +rwX %{name}-${version}*
 # These are installed as doc
-rm -f %{name}-%{version}*/{AUTHORS-XMVN,README-XMVN.md,LICENSE,NOTICE,NOTICE-XMVN}
+rm -f %{name}-${version}*/{AUTHORS-XMVN,README-XMVN.md,LICENSE,NOTICE,NOTICE-XMVN}
 # Not needed - we use JPackage launcher scripts
-rm -Rf %{name}-%{version}*/lib/{installer,resolver,subst,bisect}/
+rm -Rf %{name}-${version}*/lib/{installer,resolver,subst,bisect}/
 # Irrelevant Maven launcher scripts
-rm -f %{name}-%{version}*/bin/*
+rm -f %{name}-${version}*/bin/*
 
 
 %install
 %mvn_install
 
+version=4.0.0-SNAPSHOT
 maven_home=$(realpath $(dirname $(realpath $(which mvn)))/..)
 
 install -d -m 755 %{buildroot}%{_datadir}/%{name}
-cp -r %{name}-%{version}*/* %{buildroot}%{_datadir}/%{name}/
+cp -r %{name}-${version}*/* %{buildroot}%{_datadir}/%{name}/
 
 for cmd in mvn mvnDebug; do
     cat <<EOF >%{buildroot}%{_datadir}/%{name}/bin/$cmd
