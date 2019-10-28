@@ -14,25 +14,37 @@ BuildArch:      noarch
 #Source0:        https://github.com/fedora-java/xmvn/releases/download/%{version}/xmvn-%{version}.tar.xz
 Source0:        https://github.com/fedora-java/xmvn/archive/5d1e284.tar.gz
 
-BuildRequires:  maven >= 3.5.0
 BuildRequires:  maven-local
-BuildRequires:  apache-commons-compress
-BuildRequires:  beust-jcommander
-BuildRequires:  cglib
-BuildRequires:  maven-dependency-plugin
-BuildRequires:  maven-plugin-build-helper
-BuildRequires:  maven-assembly-plugin
-BuildRequires:  maven-plugin-plugin
-BuildRequires:  objectweb-asm
-BuildRequires:  modello
-BuildRequires:  xmlunit-assertj
-BuildRequires:  apache-ivy
-BuildRequires:  junit
-BuildRequires:  easymock
-BuildRequires:  maven-invoker
-BuildRequires:  plexus-containers-container-default
-BuildRequires:  plexus-containers-component-annotations
-BuildRequires:  plexus-containers-component-metadata
+BuildRequires:  mvn(com.beust:jcommander)
+BuildRequires:  mvn(org.apache.commons:commons-compress)
+BuildRequires:  mvn(org.apache.ivy:ivy)
+BuildRequires:  mvn(org.apache.maven.plugin-tools:maven-plugin-annotations)
+BuildRequires:  mvn(org.apache.maven.plugins:maven-assembly-plugin)
+BuildRequires:  mvn(org.apache.maven.plugins:maven-plugin-plugin)
+BuildRequires:  mvn(org.apache.maven.resolver:maven-resolver-api)
+BuildRequires:  mvn(org.apache.maven.resolver:maven-resolver-util)
+BuildRequires:  mvn(org.apache.maven.shared:maven-invoker)
+BuildRequires:  mvn(org.apache.maven:maven-artifact)
+BuildRequires:  mvn(org.apache.maven:maven-core)
+BuildRequires:  mvn(org.apache.maven:maven-model)
+BuildRequires:  mvn(org.apache.maven:maven-model-builder)
+BuildRequires:  mvn(org.apache.maven:maven-plugin-api)
+BuildRequires:  mvn(org.codehaus.modello:modello-maven-plugin)
+BuildRequires:  mvn(org.codehaus.mojo:build-helper-maven-plugin)
+BuildRequires:  mvn(org.codehaus.plexus:plexus-classworlds)
+BuildRequires:  mvn(org.codehaus.plexus:plexus-component-annotations)
+BuildRequires:  mvn(org.codehaus.plexus:plexus-component-metadata)
+BuildRequires:  mvn(org.codehaus.plexus:plexus-container-default)
+BuildRequires:  mvn(org.codehaus.plexus:plexus-utils)
+BuildRequires:  mvn(org.easymock:easymock)
+BuildRequires:  mvn(org.junit.jupiter:junit-jupiter)
+BuildRequires:  mvn(org.ow2.asm:asm)
+BuildRequires:  mvn(org.slf4j:slf4j-api)
+BuildRequires:  mvn(org.slf4j:slf4j-simple)
+BuildRequires:  mvn(org.xmlunit:xmlunit-assertj)
+
+# For /usr/bin/mvn, used to determine location of Maven home
+BuildRequires:  maven
 
 Requires:       %{name}-minimal = %{version}-%{release}
 Requires:       maven >= 3.6.1
