@@ -5,7 +5,7 @@
 
 Name:           xmvn
 Version:        4.0.0~20191028.da67577
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Local Extensions for Apache Maven
 License:        ASL 2.0
 URL:            https://fedora-java.github.io/xmvn/
@@ -334,6 +334,9 @@ cp -P ${maven_home}/bin/m2.conf %{buildroot}%{_datadir}/%{name}/bin/
 %doc LICENSE NOTICE
 
 %changelog
+* Tue Nov 05 2019 Mikolaj Izdebski <mizdebsk@redhat.com> - 4.0.0~20191028.da67577-2
+- Mass rebuild for javapackages-tools 201902
+
 * Mon Oct 28 2019 Mikolaj Izdebski <mizdebsk@redhat.com> - 4.0.0~20191028.da67577-1
 - Update to upstream snapshot of 4.0.0
 
