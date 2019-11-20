@@ -224,7 +224,7 @@ maven_home=$(realpath $(dirname $(realpath $(which mvn)))/..)
 mver=$(sed -n '/<mavenVersion>/{s/.*>\(.*\)<.*/\1/;p}' \
            xmvn-parent/pom.xml)
 mkdir -p target/dependency/
-cp -aL ${maven_home} target/dependency/apache-maven-$mver
+cp -a ${maven_home} target/dependency/apache-maven-$mver
 
 %build
 %mvn_build -s -j
