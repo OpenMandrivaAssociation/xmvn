@@ -5,7 +5,7 @@
 
 Name:           xmvn
 Version:        4.0.0~20191028.da67577
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary:        Local Extensions for Apache Maven
 License:        ASL 2.0
 URL:            https://fedora-java.github.io/xmvn/
@@ -13,6 +13,8 @@ BuildArch:      noarch
 
 #Source0:        https://github.com/fedora-java/xmvn/releases/download/%{version}/xmvn-%{version}.tar.xz
 Source0:        https://github.com/fedora-java/xmvn/archive/da67577.tar.gz
+
+Patch0:         0001-Initial-PoC-of-XMvn-toolchain-manager.patch
 
 BuildRequires:  maven-local
 BuildRequires:  mvn(com.beust:jcommander)
@@ -190,6 +192,7 @@ This package provides %{summary}.
 
 %prep
 %setup -q -n xmvn-da67577d9252f0b1fffed546c7c23d97a97dec4b
+%patch0 -p1
 
 # Bisect IT has no chances of working in local, offline mode, without
 # network access - it needs to access remote repositories.
@@ -334,6 +337,9 @@ cp -P ${maven_home}/bin/m2.conf %{buildroot}%{_datadir}/%{name}/bin/
 %doc LICENSE NOTICE
 
 %changelog
+* Thu Jan 23 2020 Mikolaj Izdebski <mizdebsk@redhat.com> - 4.0.0~20191028.da67577-3
+- Implement toolchain manager
+
 * Tue Nov 05 2019 Mikolaj Izdebski <mizdebsk@redhat.com> - 4.0.0~20191028.da67577-2
 - Mass rebuild for javapackages-tools 201902
 
