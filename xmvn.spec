@@ -5,7 +5,7 @@
 
 Name:           xmvn
 Version:        4.0.0~20191028.da67577
-Release:        3%{?dist}
+Release:        4%{?dist}
 Summary:        Local Extensions for Apache Maven
 License:        ASL 2.0
 URL:            https://fedora-java.github.io/xmvn/
@@ -59,7 +59,6 @@ creating RPM packages containing Maven artifacts.
 
 %package        minimal
 Summary:        Dependency-reduced version of XMvn
-Requires:       maven-lib >= 3.4.0
 Requires:       %{name}-api = %{version}-%{release}
 Requires:       %{name}-connector-aether = %{version}-%{release}
 Requires:       %{name}-core = %{version}-%{release}
@@ -68,7 +67,6 @@ Requires:       apache-commons-lang3
 Requires:       atinject
 Requires:       google-guice
 Requires:       guava
-Requires:       maven-lib
 Requires:       maven-resolver
 Requires:       maven-wagon
 Requires:       plexus-cipher
@@ -79,6 +77,10 @@ Requires:       plexus-sec-dispatcher
 Requires:       plexus-utils
 Requires:       sisu
 Requires:       slf4j
+
+Requires:       maven-lib >= 3.4.0
+Requires:       maven-jdk-binding
+Suggests:       maven-openjdk11
 
 %description    minimal
 This package provides minimal version of XMvn, incapable of using
@@ -337,6 +339,9 @@ cp -P ${maven_home}/bin/m2.conf %{buildroot}%{_datadir}/%{name}/bin/
 %doc LICENSE NOTICE
 
 %changelog
+* Wed Feb 19 2020 Mikolaj Izdebski <mizdebsk@redhat.com> - 4.0.0~20191028.da67577-4
+- Require maven-jdk-binding
+
 * Thu Jan 23 2020 Mikolaj Izdebski <mizdebsk@redhat.com> - 4.0.0~20191028.da67577-3
 - Implement toolchain manager
 
