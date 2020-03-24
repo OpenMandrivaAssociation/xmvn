@@ -288,6 +288,9 @@ install -d -m 755 %{buildroot}%{_datadir}/%{name}/conf/
 cp -P ${maven_home}/conf/settings.xml %{buildroot}%{_datadir}/%{name}/conf/
 cp -P ${maven_home}/bin/m2.conf %{buildroot}%{_datadir}/%{name}/bin/
 
+# Make sure javapackages config is not bundled
+rm -rf %{buildroot}%{_datadir}/%{name}/{configuration.xml,config.d/,conf/toolchains.xml}
+
 %files
 %{_bindir}/mvn-local
 
