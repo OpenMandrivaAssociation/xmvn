@@ -5,7 +5,7 @@
 
 Name:           xmvn
 Version:        4.0.0~20191028.da67577
-Release:        4%{?dist}
+Release:        5%{?dist}
 Summary:        Local Extensions for Apache Maven
 License:        ASL 2.0
 URL:            https://fedora-java.github.io/xmvn/
@@ -19,7 +19,6 @@ Patch0:         0001-Initial-PoC-of-XMvn-toolchain-manager.patch
 BuildRequires:  maven-local
 BuildRequires:  mvn(com.beust:jcommander)
 BuildRequires:  mvn(org.apache.commons:commons-compress)
-BuildRequires:  mvn(org.apache.ivy:ivy)
 BuildRequires:  mvn(org.apache.maven.plugin-tools:maven-plugin-annotations)
 BuildRequires:  mvn(org.apache.maven.plugins:maven-assembly-plugin)
 BuildRequires:  mvn(org.apache.maven.plugins:maven-plugin-plugin)
@@ -116,15 +115,6 @@ provides integration of Maven Resolver with XMvn.  It provides an
 adapter which allows XMvn resolver to be used as Maven workspace
 reader.
 
-
-%package        connector-ivy
-Summary:        XMvn Connector for Apache Ivy
-
-%description    connector-ivy
-This package provides XMvn Connector for Apache Ivy, which provides
-integration of Apache Ivy with XMvn.  It provides an adapter which
-allows XMvn resolver to be used as Ivy resolver.
-
 %package        mojo
 Summary:        XMvn MOJO
 
@@ -209,6 +199,7 @@ find -name ResolverIntegrationTest.java -delete
 %mvn_package ":xmvn{,-it}" __noinstall
 
 %pom_disable_module xmvn-connector-gradle
+%pom_disable_module xmvn-connector-ivy
 
 # Upstream code quality checks, not relevant when building RPMs
 %pom_remove_plugin -r :apache-rat-plugin
@@ -319,9 +310,6 @@ rm -rf %{buildroot}%{_datadir}/%{name}/{configuration.xml,config.d/,conf/toolcha
 
 %files connector-aether -f .mfiles-xmvn-connector-aether
 
-
-%files connector-ivy -f .mfiles-xmvn-connector-ivy
-
 %files mojo -f .mfiles-xmvn-mojo
 
 %files tools-pom -f .mfiles-xmvn-tools
@@ -342,6 +330,9 @@ rm -rf %{buildroot}%{_datadir}/%{name}/{configuration.xml,config.d/,conf/toolcha
 %doc LICENSE NOTICE
 
 %changelog
+* Mon Apr 20 2020 Mikolaj Izdebski <mizdebsk@redhat.com> - 4.0.0~20191028.da67577-5
+- Disable Ivy connector
+
 * Wed Feb 19 2020 Mikolaj Izdebski <mizdebsk@redhat.com> - 4.0.0~20191028.da67577-4
 - Require maven-jdk-binding
 
