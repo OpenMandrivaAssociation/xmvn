@@ -24,7 +24,6 @@ BuildRequires:  mvn(org.apache.maven.plugins:maven-assembly-plugin)
 BuildRequires:  mvn(org.apache.maven.plugins:maven-plugin-plugin)
 BuildRequires:  mvn(org.apache.maven.resolver:maven-resolver-api)
 BuildRequires:  mvn(org.apache.maven.resolver:maven-resolver-util)
-BuildRequires:  mvn(org.apache.maven.shared:maven-invoker)
 BuildRequires:  mvn(org.apache.maven:maven-artifact)
 BuildRequires:  mvn(org.apache.maven:maven-core)
 BuildRequires:  mvn(org.apache.maven:maven-model)
@@ -143,16 +142,6 @@ Basically it's just an interface to artifact resolution mechanism
 implemented by XMvn Core.  The primary intended use case of XMvn
 Resolver is debugging local artifact repositories.
 
-%package        bisect
-Summary:        XMvn Bisect
-# Explicit javapackages-tools requires since scripts use
-# /usr/share/java-utils/java-functions
-Requires:       javapackages-tools
-
-%description    bisect
-This package provides XMvn Bisect, which is a debugging tool that can
-diagnose build failures by using bisection method.
-
 %package        subst
 Summary:        XMvn Subst
 # Explicit javapackages-tools requires since scripts use
@@ -198,6 +187,8 @@ find -name ResolverIntegrationTest.java -delete
 
 %mvn_package ":xmvn{,-it}" __noinstall
 
+%pom_remove_dep :xmvn-bisect
+%pom_disable_module xmvn-bisect xmvn-tools
 %pom_disable_module xmvn-connector-gradle
 %pom_disable_module xmvn-connector-ivy
 
@@ -255,7 +246,6 @@ EOF
 done
 
 # helper scripts
-%jpackage_script org.fedoraproject.xmvn.tools.bisect.BisectCli "" "-Dxmvn.home=%{_datadir}/%{name}" xmvn/xmvn-bisect:beust-jcommander:maven-invoker:plexus/utils xmvn-bisect
 %jpackage_script org.fedoraproject.xmvn.tools.install.cli.InstallerCli "" "" xmvn/xmvn-install:xmvn/xmvn-api:xmvn/xmvn-core:beust-jcommander:slf4j/api:slf4j/simple:objectweb-asm/asm:commons-compress xmvn-install
 %jpackage_script org.fedoraproject.xmvn.tools.resolve.ResolverCli "" "" xmvn/xmvn-resolve:xmvn/xmvn-api:xmvn/xmvn-core:beust-jcommander xmvn-resolve
 %jpackage_script org.fedoraproject.xmvn.tools.subst.SubstCli "" "" xmvn/xmvn-subst:xmvn/xmvn-api:xmvn/xmvn-core:beust-jcommander xmvn-subst
@@ -316,9 +306,6 @@ rm -rf %{buildroot}%{_datadir}/%{name}/{configuration.xml,config.d/,conf/toolcha
 
 %files resolve -f .mfiles-xmvn-resolve
 %{_bindir}/%{name}-resolve
-
-%files bisect -f .mfiles-xmvn-bisect
-%{_bindir}/%{name}-bisect
 
 %files subst -f .mfiles-xmvn-subst
 %{_bindir}/%{name}-subst
