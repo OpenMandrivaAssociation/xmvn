@@ -10,7 +10,7 @@
 
 Name:           xmvn
 Version:        3.1.0
-Release:        3%{?dist}
+Release:        4%{?dist}
 Summary:        Local Extensions for Apache Maven
 License:        ASL 2.0
 
@@ -362,6 +362,9 @@ cp -P ${maven_home}/bin/m2.conf %{buildroot}%{_datadir}/%{name}/bin/
 %doc LICENSE NOTICE
 
 %changelog
+* Fri Jun 26 2020 Alexander Kurtakov <akurtako@redhat.com> 3.1.0-4
+- Rebuild to pick jsr250-api switch to jakarta-annotations.
+
 * Thu Jun 25 2020 Alexander Kurtakov <akurtako@redhat.com> 3.1.0-3
 - Ignore test failures as they fail when built Java 11.
 
