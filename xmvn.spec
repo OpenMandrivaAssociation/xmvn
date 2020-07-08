@@ -43,8 +43,8 @@ BuildRequires:  mvn(org.slf4j:slf4j-api)
 BuildRequires:  mvn(org.slf4j:slf4j-simple)
 BuildRequires:  mvn(org.xmlunit:xmlunit-assertj)
 
-# For /usr/bin/mvn, used to determine location of Maven home
-BuildRequires:  maven
+# Used to determine location of Maven home
+BuildRequires:  %{_bindir}/mvn
 
 Requires:       %{name}-minimal = %{version}-%{release}
 Requires:       maven >= 3.6.1
