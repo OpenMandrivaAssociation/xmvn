@@ -10,7 +10,7 @@
 
 Name:           xmvn
 Version:        3.1.0
-Release:        4%{?dist}
+Release:        5%{?dist}
 Summary:        Local Extensions for Apache Maven
 License:        ASL 2.0
 
@@ -25,6 +25,8 @@ Patch1:         0001-Prefer-namespaced-metadata-when-duplicates-are-found.patch
 Patch2:         0002-Make-xmvn-subst-honor-settings-for-ignoring-duplicat.patch
 # Downstream bug-fix patch from modular branch:
 Patch3:         0003-Fix-requires-generation-for-self-depending-packages.patch
+# Submitted upstream: https://github.com/fedora-java/xmvn/pull/57
+Patch4:         0004-Honour-source-parameter.patch
 
 BuildArch:      noarch
 
@@ -213,6 +215,7 @@ This package provides %{summary}.
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
+%patch4 -p1
 
 # Bisect IT has no chances of working in local, offline mode, without
 # network access - it needs to access remote repositories.
@@ -362,6 +365,9 @@ cp -P ${maven_home}/bin/m2.conf %{buildroot}%{_datadir}/%{name}/bin/
 %doc LICENSE NOTICE
 
 %changelog
+* Thu Jul 09 2020 Mat Booth <mat.booth@redhat.com> - 3.1.0-5
+- Honour source parameter in javadoc mojo
+
 * Fri Jun 26 2020 Alexander Kurtakov <akurtako@redhat.com> 3.1.0-4
 - Rebuild to pick jsr250-api switch to jakarta-annotations.
 

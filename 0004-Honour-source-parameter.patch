@@ -1,0 +1,37 @@
+From cc643c14f5f6d3c623e9d1afe48265be236db97a Mon Sep 17 00:00:00 2001
+From: Mat Booth <mat.booth@redhat.com>
+Date: Thu, 9 Jul 2020 17:52:47 +0100
+Subject: [PATCH 4/4] Honour source parameter
+
+---
+ .../main/java/org/fedoraproject/xmvn/mojo/JavadocMojo.java | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/xmvn-mojo/src/main/java/org/fedoraproject/xmvn/mojo/JavadocMojo.java b/xmvn-mojo/src/main/java/org/fedoraproject/xmvn/mojo/JavadocMojo.java
+index 3d6ef5e..ea18b2a 100644
+--- a/xmvn-mojo/src/main/java/org/fedoraproject/xmvn/mojo/JavadocMojo.java
++++ b/xmvn-mojo/src/main/java/org/fedoraproject/xmvn/mojo/JavadocMojo.java
+@@ -84,6 +84,9 @@ public class JavadocMojo
+     @Parameter( defaultValue = "${project.build.directory}", required = true )
+     private File buildDirectory;
+ 
++    @Parameter( property = "source" )
++    private String source;
++
+     private static String quoted( Object obj )
+     {
+         String arg = obj.toString();
+@@ -226,6 +229,10 @@ public class JavadocMojo
+             opts.add( quoted( docencoding ) );
+             opts.add( "-doctitle" );
+             opts.add( quoted( "Javadoc for package XXX" ) );
++            if ( source != null ) {
++                opts.add( "-source" );
++                opts.add( quoted( source ) );
++            }
+ 
+             for ( Path file : files )
+                 opts.add( quoted( file ) );
+-- 
+2.26.2
+
