@@ -10,7 +10,7 @@
 
 Name:           xmvn
 Version:        3.1.0
-Release:        5%{?dist}
+Release:        6%{?dist}
 Summary:        Local Extensions for Apache Maven
 License:        ASL 2.0
 
@@ -365,6 +365,9 @@ cp -P ${maven_home}/bin/m2.conf %{buildroot}%{_datadir}/%{name}/bin/
 %doc LICENSE NOTICE
 
 %changelog
+* Fri Jul 10 2020 Jiri Vanek <jvanek@redhat.com> - 3.1.0-6
+- Rebuilt for JDK-11, see https://fedoraproject.org/wiki/Changes/Java11
+
 * Thu Jul 09 2020 Mat Booth <mat.booth@redhat.com> - 3.1.0-5
 - Honour source parameter in javadoc mojo
 
