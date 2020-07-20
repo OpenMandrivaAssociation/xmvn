@@ -234,13 +234,13 @@ version=4.0.0-SNAPSHOT
 maven_home=$(realpath $(dirname $(realpath $(which mvn)))/..)
 
 install -d -m 755 %{buildroot}%{_datadir}/%{name}
-cp -r %{name}-${version}*/* %{buildroot}%{_datadir}/%{name}/
+cp -r%{?mbi:L} %{name}-${version}*/* %{buildroot}%{_datadir}/%{name}/
 
 for cmd in mvn mvnDebug; do
     cat <<EOF >%{buildroot}%{_datadir}/%{name}/bin/$cmd
 #!/bin/sh -e
 export _FEDORA_MAVEN_HOME="%{_datadir}/%{name}"
-exec ${maven_home}/bin/$cmd "\${@}"
+exec %{_datadir}/maven/bin/$cmd "\${@}"
 EOF
     chmod 755 %{buildroot}%{_datadir}/%{name}/bin/$cmd
 done
@@ -251,10 +251,10 @@ done
 %jpackage_script org.fedoraproject.xmvn.tools.subst.SubstCli "" "" xmvn/xmvn-subst:xmvn/xmvn-api:xmvn/xmvn-core:beust-jcommander xmvn-subst
 
 # copy over maven lib directory
-cp -r ${maven_home}/lib/* %{buildroot}%{_datadir}/%{name}/lib/
+cp -r%{?mbi:L} ${maven_home}/lib/* %{buildroot}%{_datadir}/%{name}/lib/
 
 # possibly recreate symlinks that can be automated with xmvn-subst
-%if !0%{?sclraw_phase}
+%if !0%{?mbi}
 %{name}-subst -s -R %{buildroot} %{buildroot}%{_datadir}/%{name}/
 %endif
 
