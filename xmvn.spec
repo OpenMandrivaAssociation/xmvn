@@ -2,6 +2,9 @@
 # any additional bundles.
 %global __requires_exclude %{?__requires_exclude:%__requires_exclude|}^osgi\\($
 
+%if "%{_module_name}" == "javapackages-bootstrap"
+%global mbi 1
+%endif
 
 Name:           xmvn
 Version:        4.0.0~20191028.da67577
