@@ -178,6 +178,9 @@ This package provides %{summary}.
 %setup -q -n xmvn-da67577d9252f0b1fffed546c7c23d97a97dec4b
 %patch0 -p1
 
+# Port to xmlunit-assertj3
+find -name '*.java' -exec sed -i 's/org\.xmlunit\.assertj/org.xmlunit.assertj3/' {} +
+
 # Bisect IT has no chances of working in local, offline mode, without
 # network access - it needs to access remote repositories.
 find -name BisectIntegrationTest.java -delete
