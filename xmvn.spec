@@ -10,7 +10,7 @@
 
 Name:           xmvn
 Version:        3.1.0
-Release:        7%{?dist}
+Release:        8%{?dist}
 Summary:        Local Extensions for Apache Maven
 License:        ASL 2.0
 
@@ -365,6 +365,9 @@ cp -P ${maven_home}/bin/m2.conf %{buildroot}%{_datadir}/%{name}/bin/
 %doc LICENSE NOTICE
 
 %changelog
+* Thu Jan 28 2021 Fedora Release Engineering <releng@fedoraproject.org> - 3.1.0-8
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_34_Mass_Rebuild
+
 * Wed Jul 29 2020 Fedora Release Engineering <releng@fedoraproject.org> - 3.1.0-7
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_33_Mass_Rebuild
 
