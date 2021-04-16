@@ -1,3 +1,5 @@
+%bcond_without bootstrap
+
 # XMvn uses OSGi environment provided by Tycho, it shouldn't require
 # any additional bundles.
 %global __requires_exclude %{?__requires_exclude:%__requires_exclude|}^osgi\\($
@@ -20,6 +22,9 @@ Source0:        https://github.com/fedora-java/xmvn/archive/da67577.tar.gz
 Patch0:         0001-Initial-PoC-of-XMvn-toolchain-manager.patch
 
 BuildRequires:  maven-local
+%if %{with bootstrap}
+BuildRequires:  javapackages-bootstrap
+%else
 BuildRequires:  mvn(com.beust:jcommander)
 BuildRequires:  mvn(org.apache.commons:commons-compress)
 BuildRequires:  mvn(org.apache.maven.plugin-tools:maven-plugin-annotations)
@@ -45,9 +50,12 @@ BuildRequires:  mvn(org.ow2.asm:asm)
 BuildRequires:  mvn(org.slf4j:slf4j-api)
 BuildRequires:  mvn(org.slf4j:slf4j-simple)
 BuildRequires:  mvn(org.xmlunit:xmlunit-assertj)
+%endif
 
 # Used to determine location of Maven home
+%if %{without bootstrap}
 BuildRequires:  %{_bindir}/mvn
+%endif
 
 Requires:       %{name}-minimal = %{version}-%{release}
 Requires:       maven >= 3.6.1
