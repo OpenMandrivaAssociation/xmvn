@@ -1,4 +1,4 @@
-%bcond_without bootstrap
+%bcond_with bootstrap
 
 # XMvn uses OSGi environment provided by Tycho, it shouldn't require
 # any additional bundles.
