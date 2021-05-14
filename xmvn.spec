@@ -1,57 +1,60 @@
+%bcond_with bootstrap
+
 # XMvn uses OSGi environment provided by Tycho, it shouldn't require
 # any additional bundles.
 %global __requires_exclude %{?__requires_exclude:%__requires_exclude|}^osgi\\($
 
-# Integration tests are disabled by default, but you can run them by
-# adding "--with its" to rpmbuild or mock invocation.
-%bcond_with its
-
-%bcond_with gradle
+%if "%{_module_name}" == "javapackages-bootstrap"
+%global mbi 1
+%endif
 
 Name:           xmvn
-Version:        3.1.0
-Release:        8%{?dist}
+Version:        4.0.0~20191028.da67577
+Release:        5%{?dist}
 Summary:        Local Extensions for Apache Maven
 License:        ASL 2.0
-
 URL:            https://fedora-java.github.io/xmvn/
-Source0:        https://github.com/fedora-java/xmvn/releases/download/%{version}/xmvn-%{version}.tar.xz
-
-# Upstream bug-fix patch:
-# https://github.com/fedora-java/xmvn/commit/a4d655c
-Patch1:         0001-Prefer-namespaced-metadata-when-duplicates-are-found.patch
-# Upstream bug-fix patch:
-# https://github.com/fedora-java/xmvn/commit/ccde1f4
-Patch2:         0002-Make-xmvn-subst-honor-settings-for-ignoring-duplicat.patch
-# Downstream bug-fix patch from modular branch:
-Patch3:         0003-Fix-requires-generation-for-self-depending-packages.patch
-# Submitted upstream: https://github.com/fedora-java/xmvn/pull/57
-Patch4:         0004-Honour-source-parameter.patch
-
 BuildArch:      noarch
 
-BuildRequires:  maven >= 3.6.1
+#Source0:        https://github.com/fedora-java/xmvn/releases/download/%{version}/xmvn-%{version}.tar.xz
+Source0:        https://github.com/fedora-java/xmvn/archive/da67577.tar.gz
+
+Patch0:         0001-Initial-PoC-of-XMvn-toolchain-manager.patch
+
 BuildRequires:  maven-local
-BuildRequires:  apache-commons-compress
-BuildRequires:  beust-jcommander
-BuildRequires:  cglib
-BuildRequires:  maven-dependency-plugin
-BuildRequires:  maven-plugin-build-helper
-BuildRequires:  maven-assembly-plugin
-BuildRequires:  maven-install-plugin
-BuildRequires:  maven-plugin-plugin
-BuildRequires:  objectweb-asm
-BuildRequires:  modello
-BuildRequires:  xmlunit-assertj
-BuildRequires:  apache-ivy
-BuildRequires:  junit
-BuildRequires:  easymock
-BuildRequires:  maven-invoker
-BuildRequires:  plexus-containers-container-default
-BuildRequires:  plexus-containers-component-annotations
-BuildRequires:  plexus-containers-component-metadata
-%if %{with gradle}
-BuildRequires:  gradle >= 4.4.1
+%if %{with bootstrap}
+BuildRequires:  javapackages-bootstrap
+%else
+BuildRequires:  mvn(com.beust:jcommander)
+BuildRequires:  mvn(org.apache.commons:commons-compress)
+BuildRequires:  mvn(org.apache.maven.plugin-tools:maven-plugin-annotations)
+BuildRequires:  mvn(org.apache.maven.plugins:maven-assembly-plugin)
+BuildRequires:  mvn(org.apache.maven.plugins:maven-plugin-plugin)
+BuildRequires:  mvn(org.apache.maven.resolver:maven-resolver-api)
+BuildRequires:  mvn(org.apache.maven.resolver:maven-resolver-util)
+BuildRequires:  mvn(org.apache.maven:maven-artifact)
+BuildRequires:  mvn(org.apache.maven:maven-core)
+BuildRequires:  mvn(org.apache.maven:maven-model)
+BuildRequires:  mvn(org.apache.maven:maven-model-builder)
+BuildRequires:  mvn(org.apache.maven:maven-plugin-api)
+BuildRequires:  mvn(org.codehaus.modello:modello-maven-plugin)
+BuildRequires:  mvn(org.codehaus.mojo:build-helper-maven-plugin)
+BuildRequires:  mvn(org.codehaus.plexus:plexus-classworlds)
+BuildRequires:  mvn(org.codehaus.plexus:plexus-component-annotations)
+BuildRequires:  mvn(org.codehaus.plexus:plexus-component-metadata)
+BuildRequires:  mvn(org.codehaus.plexus:plexus-container-default)
+BuildRequires:  mvn(org.codehaus.plexus:plexus-utils)
+BuildRequires:  mvn(org.easymock:easymock)
+BuildRequires:  mvn(org.junit.jupiter:junit-jupiter)
+BuildRequires:  mvn(org.ow2.asm:asm)
+BuildRequires:  mvn(org.slf4j:slf4j-api)
+BuildRequires:  mvn(org.slf4j:slf4j-simple)
+BuildRequires:  mvn(org.xmlunit:xmlunit-assertj)
+%endif
+
+# Used to determine location of Maven home
+%if %{without bootstrap}
+BuildRequires:  %{_bindir}/mvn
 %endif
 
 Requires:       %{name}-minimal = %{version}-%{release}
@@ -65,7 +68,6 @@ creating RPM packages containing Maven artifacts.
 
 %package        minimal
 Summary:        Dependency-reduced version of XMvn
-Requires:       maven-lib >= 3.6.1
 Requires:       %{name}-api = %{version}-%{release}
 Requires:       %{name}-connector-aether = %{version}-%{release}
 Requires:       %{name}-core = %{version}-%{release}
@@ -74,21 +76,20 @@ Requires:       apache-commons-lang3
 Requires:       atinject
 Requires:       google-guice
 Requires:       guava
-Requires:       maven-lib
-Requires:       maven-resolver-api
-Requires:       maven-resolver-impl
-Requires:       maven-resolver-spi
-Requires:       maven-resolver-util
-Requires:       maven-wagon-provider-api
+Requires:       maven-resolver
+Requires:       maven-wagon
 Requires:       plexus-cipher
 Requires:       plexus-classworlds
 Requires:       plexus-containers-component-annotations
 Requires:       plexus-interpolation
 Requires:       plexus-sec-dispatcher
 Requires:       plexus-utils
-Requires:       sisu-inject
-Requires:       sisu-plexus
+Requires:       sisu
 Requires:       slf4j
+
+Requires:       maven-lib >= 3.4.0
+Requires:       maven-jdk-binding
+Suggests:       maven-openjdk11
 
 %description    minimal
 This package provides minimal version of XMvn, incapable of using
@@ -124,24 +125,6 @@ provides integration of Maven Resolver with XMvn.  It provides an
 adapter which allows XMvn resolver to be used as Maven workspace
 reader.
 
-%if %{with gradle}
-%package        connector-gradle
-Summary:        XMvn Connector for Gradle
-
-%description    connector-gradle
-This package provides XMvn Connector for Gradle, which provides
-integration of Gradle with XMvn.  It provides an adapter which allows
-XMvn resolver to be used as Gradle resolver.
-%endif
-
-%package        connector-ivy
-Summary:        XMvn Connector for Apache Ivy
-
-%description    connector-ivy
-This package provides XMvn Connector for Apache Ivy, which provides
-integration of Apache Ivy with XMvn.  It provides an adapter which
-allows XMvn resolver to be used as Ivy resolver.
-
 %package        mojo
 Summary:        XMvn MOJO
 
@@ -169,16 +152,6 @@ commald-line tool to resolve Maven artifacts from system repositories.
 Basically it's just an interface to artifact resolution mechanism
 implemented by XMvn Core.  The primary intended use case of XMvn
 Resolver is debugging local artifact repositories.
-
-%package        bisect
-Summary:        XMvn Bisect
-# Explicit javapackages-tools requires since scripts use
-# /usr/share/java-utils/java-functions
-Requires:       javapackages-tools
-
-%description    bisect
-This package provides XMvn Bisect, which is a debugging tool that can
-diagnose build failures by using bisection method.
 
 %package        subst
 Summary:        XMvn Subst
@@ -210,12 +183,11 @@ Summary:        API documentation for %{name}
 This package provides %{summary}.
 
 %prep
-%setup -q
+%setup -q -n xmvn-da67577d9252f0b1fffed546c7c23d97a97dec4b
+%patch0 -p1
 
-%patch1 -p1
-%patch2 -p1
-%patch3 -p1
-%patch4 -p1
+# Port to xmlunit-assertj3
+find -name '*.java' -exec sed -i 's/org\.xmlunit\.assertj/org.xmlunit.assertj3/' {} +
 
 # Bisect IT has no chances of working in local, offline mode, without
 # network access - it needs to access remote repositories.
@@ -229,9 +201,10 @@ find -name ResolverIntegrationTest.java -delete
 
 %mvn_package ":xmvn{,-it}" __noinstall
 
-%if %{without gradle}
+%pom_remove_dep :xmvn-bisect
+%pom_disable_module xmvn-bisect xmvn-tools
 %pom_disable_module xmvn-connector-gradle
-%endif
+%pom_disable_module xmvn-connector-ivy
 
 # Upstream code quality checks, not relevant when building RPMs
 %pom_remove_plugin -r :apache-rat-plugin
@@ -248,57 +221,57 @@ find -name ResolverIntegrationTest.java -delete
 %pom_remove_plugin :maven-jar-plugin xmvn-tools
 
 # get mavenVersion that is expected
-maven_home=$(realpath $(dirname $(realpath $(which mvn)))/..)
+maven_home=$(realpath $(dirname $(realpath $(%{?jpb_env} which mvn)))/..)
 mver=$(sed -n '/<mavenVersion>/{s/.*>\(.*\)<.*/\1/;p}' \
            xmvn-parent/pom.xml)
 mkdir -p target/dependency/
-cp -aL ${maven_home} target/dependency/apache-maven-$mver
+cp -a ${maven_home} target/dependency/apache-maven-$mver
 
 %build
-%if %{with its}
-%mvn_build -s -j -- -Prun-its
-%else
-%mvn_build -s -j -- -Dmaven.test.failure.ignore=true
-%endif
+%mvn_build -s -j
 
+version=4.0.0-SNAPSHOT
 tar --delay-directory-restore -xvf target/*tar.bz2
-chmod -R +rwX %{name}-%{version}*
+chmod -R +rwX %{name}-${version}*
 # These are installed as doc
-rm -f %{name}-%{version}*/{AUTHORS-XMVN,README-XMVN.md,LICENSE,NOTICE,NOTICE-XMVN}
+rm -f %{name}-${version}*/{AUTHORS-XMVN,README-XMVN.md,LICENSE,NOTICE,NOTICE-XMVN}
 # Not needed - we use JPackage launcher scripts
-rm -Rf %{name}-%{version}*/lib/{installer,resolver,subst,bisect}/
+rm -Rf %{name}-${version}*/lib/{installer,resolver,subst,bisect}/
 # Irrelevant Maven launcher scripts
-rm -f %{name}-%{version}*/bin/*
+rm -f %{name}-${version}*/bin/*
 
 
 %install
 %mvn_install
 
-maven_home=$(realpath $(dirname $(realpath $(which mvn)))/..)
+version=4.0.0-SNAPSHOT
+maven_home=$(realpath $(dirname $(realpath $(%{?jpb_env} which mvn)))/..)
 
 install -d -m 755 %{buildroot}%{_datadir}/%{name}
-cp -r %{name}-%{version}*/* %{buildroot}%{_datadir}/%{name}/
+cp -r%{?mbi:L} %{name}-${version}*/* %{buildroot}%{_datadir}/%{name}/
 
 for cmd in mvn mvnDebug; do
     cat <<EOF >%{buildroot}%{_datadir}/%{name}/bin/$cmd
 #!/bin/sh -e
 export _FEDORA_MAVEN_HOME="%{_datadir}/%{name}"
-exec ${maven_home}/bin/$cmd "\${@}"
+exec %{_datadir}/maven/bin/$cmd "\${@}"
 EOF
     chmod 755 %{buildroot}%{_datadir}/%{name}/bin/$cmd
 done
 
 # helper scripts
-%jpackage_script org.fedoraproject.xmvn.tools.bisect.BisectCli "" "-Dxmvn.home=%{_datadir}/%{name}" xmvn/xmvn-bisect:beust-jcommander:maven-invoker:plexus/utils xmvn-bisect
 %jpackage_script org.fedoraproject.xmvn.tools.install.cli.InstallerCli "" "" xmvn/xmvn-install:xmvn/xmvn-api:xmvn/xmvn-core:beust-jcommander:slf4j/api:slf4j/simple:objectweb-asm/asm:commons-compress xmvn-install
 %jpackage_script org.fedoraproject.xmvn.tools.resolve.ResolverCli "" "" xmvn/xmvn-resolve:xmvn/xmvn-api:xmvn/xmvn-core:beust-jcommander xmvn-resolve
 %jpackage_script org.fedoraproject.xmvn.tools.subst.SubstCli "" "" xmvn/xmvn-subst:xmvn/xmvn-api:xmvn/xmvn-core:beust-jcommander xmvn-subst
 
-# copy over maven lib directory
-cp -r ${maven_home}/lib/* %{buildroot}%{_datadir}/%{name}/lib/
+# copy over maven boot and lib directories
+cp -r%{?mbi:L} ${maven_home}/boot/* %{buildroot}%{_datadir}/%{name}/boot/
+cp -r%{?mbi:L} ${maven_home}/lib/* %{buildroot}%{_datadir}/%{name}/lib/
 
 # possibly recreate symlinks that can be automated with xmvn-subst
+%if !0%{?mbi}
 %{name}-subst -s -R %{buildroot} %{buildroot}%{_datadir}/%{name}/
+%endif
 
 # /usr/bin/xmvn
 ln -s %{_datadir}/%{name}/bin/mvn %{buildroot}%{_bindir}/%{name}
@@ -310,6 +283,9 @@ ln -s %{name} %{buildroot}%{_bindir}/mvn-local
 install -d -m 755 %{buildroot}%{_datadir}/%{name}/conf/
 cp -P ${maven_home}/conf/settings.xml %{buildroot}%{_datadir}/%{name}/conf/
 cp -P ${maven_home}/bin/m2.conf %{buildroot}%{_datadir}/%{name}/bin/
+
+# Make sure javapackages config is not bundled
+rm -rf %{buildroot}%{_datadir}/%{name}/{configuration.xml,config.d/,conf/toolchains.xml,maven-metadata/}
 
 %files
 %{_bindir}/mvn-local
@@ -339,21 +315,12 @@ cp -P ${maven_home}/bin/m2.conf %{buildroot}%{_datadir}/%{name}/bin/
 
 %files connector-aether -f .mfiles-xmvn-connector-aether
 
-%if %{with gradle}
-%files connector-gradle -f .mfiles-xmvn-connector-gradle
-%endif
-
-%files connector-ivy -f .mfiles-xmvn-connector-ivy
-
 %files mojo -f .mfiles-xmvn-mojo
 
 %files tools-pom -f .mfiles-xmvn-tools
 
 %files resolve -f .mfiles-xmvn-resolve
 %{_bindir}/%{name}-resolve
-
-%files bisect -f .mfiles-xmvn-bisect
-%{_bindir}/%{name}-bisect
 
 %files subst -f .mfiles-xmvn-subst
 %{_bindir}/%{name}-subst
@@ -383,8 +350,23 @@ cp -P ${maven_home}/bin/m2.conf %{buildroot}%{_datadir}/%{name}/bin/
 * Thu Jun 25 2020 Alexander Kurtakov <akurtako@redhat.com> 3.1.0-3
 - Ignore test failures as they fail when built Java 11.
 
+* Mon Apr 20 2020 Mikolaj Izdebski <mizdebsk@redhat.com> - 4.0.0~20191028.da67577-5
+- Disable Ivy connector
+
+* Wed Feb 19 2020 Mikolaj Izdebski <mizdebsk@redhat.com> - 4.0.0~20191028.da67577-4
+- Require maven-jdk-binding
+
 * Fri Jan 31 2020 Fedora Release Engineering <releng@fedoraproject.org> - 3.1.0-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_32_Mass_Rebuild
+
+* Thu Jan 23 2020 Mikolaj Izdebski <mizdebsk@redhat.com> - 4.0.0~20191028.da67577-3
+- Implement toolchain manager
+
+* Tue Nov 05 2019 Mikolaj Izdebski <mizdebsk@redhat.com> - 4.0.0~20191028.da67577-2
+- Mass rebuild for javapackages-tools 201902
+
+* Mon Oct 28 2019 Mikolaj Izdebski <mizdebsk@redhat.com> - 4.0.0~20191028.da67577-1
+- Update to upstream snapshot of 4.0.0
 
 * Thu Oct 17 2019 Fabio Valentini <decathorpe@gmail.com> - 3.1.0-1
 - Update to version 3.1.0.
@@ -403,6 +385,24 @@ cp -P ${maven_home}/bin/m2.conf %{buildroot}%{_datadir}/%{name}/bin/
 
 * Sat Jul 27 2019 Fedora Release Engineering <releng@fedoraproject.org> - 3.0.0-24
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_31_Mass_Rebuild
+
+* Fri Jun 28 2019 Mikolaj Izdebski <mizdebsk@redhat.com> - 3.1.0-2
+- Prefer namespaced metadata when duplicates are found
+
+* Fri Jun 14 2019 Mikolaj Izdebski <mizdebsk@redhat.com> - 3.1.0-1
+- Update to upstream version 3.1.0
+
+* Thu May 30 2019 Marian Koncek <mkoncek@redhat.com> - 3.0.0-25
+- Update maven-invoker to version 3.0.1
+
+* Fri May 24 2019 Mikolaj Izdebski <mizdebsk@redhat.com> - 3.0.0-24
+- Mass rebuild for javapackages-tools 201901
+
+* Fri Apr 19 2019 Marian Koncek <mkoncek@redhat.com> - 3.0.0-23
+- Port to Xmlunit 2.6.2
+
+* Sat Apr 13 2019 Mikolaj Izdebski <mizdebsk@redhat.com> - 3.0.0-22
+- Switch to Maven 3.6.1 and non-compat Guava
 
 * Sun Feb 03 2019 Fedora Release Engineering <releng@fedoraproject.org> - 3.0.0-23
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_30_Mass_Rebuild
