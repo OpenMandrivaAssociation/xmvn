@@ -4,7 +4,7 @@
 # any additional bundles.
 %global __requires_exclude %{?__requires_exclude:%__requires_exclude|}^osgi\\($
 
-%if "%{_module_name}" == "javapackages-bootstrap"
+%if %{with bootstrap}
 %global mbi 1
 %endif
 
