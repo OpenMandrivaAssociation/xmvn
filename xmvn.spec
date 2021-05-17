@@ -1,4 +1,4 @@
-%bcond_without bootstrap
+%bcond_with bootstrap
 
 # XMvn uses OSGi environment provided by Tycho, it shouldn't require
 # any additional bundles.
@@ -334,6 +334,7 @@ rm -rf %{buildroot}%{_datadir}/%{name}/{configuration.xml,config.d/,conf/toolcha
 %changelog
 * Mon May 17 2021 Mikolaj Izdebski <mizdebsk@redhat.com> - 4.0.0~20191028.da67577-6
 - Bootstrap build
+- Non-bootstrap build
 
 * Thu Jan 28 2021 Fedora Release Engineering <releng@fedoraproject.org> - 3.1.0-8
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_34_Mass_Rebuild
