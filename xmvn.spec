@@ -1,4 +1,4 @@
-%bcond_with bootstrap
+%bcond_without bootstrap
 
 # XMvn uses OSGi environment provided by Tycho, it shouldn't require
 # any additional bundles.
@@ -10,7 +10,7 @@
 
 Name:           xmvn
 Version:        4.0.0~20191028.da67577
-Release:        5%{?dist}
+Release:        6%{?dist}
 Summary:        Local Extensions for Apache Maven
 License:        ASL 2.0
 URL:            https://fedora-java.github.io/xmvn/
@@ -332,6 +332,9 @@ rm -rf %{buildroot}%{_datadir}/%{name}/{configuration.xml,config.d/,conf/toolcha
 %doc LICENSE NOTICE
 
 %changelog
+* Mon May 17 2021 Mikolaj Izdebski <mizdebsk@redhat.com> - 4.0.0~20191028.da67577-6
+- Bootstrap build
+
 * Thu Jan 28 2021 Fedora Release Engineering <releng@fedoraproject.org> - 3.1.0-8
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_34_Mass_Rebuild
 
