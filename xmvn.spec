@@ -4,13 +4,19 @@
 # any additional bundles.
 %global __requires_exclude %{?__requires_exclude:%__requires_exclude|}^osgi\\($
 
+%if 0%{?fedora}
+%bcond_without ivy
+%else
+%bcond_with ivy
+%endif
+
 %if %{with bootstrap}
 %global mbi 1
 %endif
 
 Name:           xmvn
 Version:        4.0.0~20191028.da67577
-Release:        6%{?dist}
+Release:        7%{?dist}
 Summary:        Local Extensions for Apache Maven
 License:        ASL 2.0
 URL:            https://fedora-java.github.io/xmvn/
@@ -50,6 +56,9 @@ BuildRequires:  mvn(org.ow2.asm:asm)
 BuildRequires:  mvn(org.slf4j:slf4j-api)
 BuildRequires:  mvn(org.slf4j:slf4j-simple)
 BuildRequires:  mvn(org.xmlunit:xmlunit-assertj)
+%if %{with ivy}
+BuildRequires:  mvn(org.apache.ivy:ivy)
+%endif
 %endif
 
 # Used to determine location of Maven home
@@ -124,6 +133,16 @@ This package provides XMvn Connector for Maven Resolver, which
 provides integration of Maven Resolver with XMvn.  It provides an
 adapter which allows XMvn resolver to be used as Maven workspace
 reader.
+
+%if %{with ivy}
+%package        connector-ivy
+Summary:        XMvn Connector for Apache Ivy
+
+%description    connector-ivy
+This package provides XMvn Connector for Apache Ivy, which provides
+integration of Apache Ivy with XMvn.  It provides an adapter which
+allows XMvn resolver to be used as Ivy resolver.
+%endif
 
 %package        mojo
 Summary:        XMvn MOJO
@@ -204,7 +223,6 @@ find -name ResolverIntegrationTest.java -delete
 %pom_remove_dep :xmvn-bisect
 %pom_disable_module xmvn-bisect xmvn-tools
 %pom_disable_module xmvn-connector-gradle
-%pom_disable_module xmvn-connector-ivy
 
 # Upstream code quality checks, not relevant when building RPMs
 %pom_remove_plugin -r :apache-rat-plugin
@@ -315,6 +333,10 @@ rm -rf %{buildroot}%{_datadir}/%{name}/{configuration.xml,config.d/,conf/toolcha
 
 %files connector-aether -f .mfiles-xmvn-connector-aether
 
+%if %{with ivy}
+%files connector-ivy -f .mfiles-xmvn-connector-ivy
+%endif
+
 %files mojo -f .mfiles-xmvn-mojo
 
 %files tools-pom -f .mfiles-xmvn-tools
@@ -332,6 +354,9 @@ rm -rf %{buildroot}%{_datadir}/%{name}/{configuration.xml,config.d/,conf/toolcha
 %doc LICENSE NOTICE
 
 %changelog
+* Wed May 26 2021 Mikolaj Izdebski <mizdebsk@redhat.com> - 4.0.0~20191028.da67577-7
+- Conditionally enable Ivy connector
+
 * Mon May 17 2021 Mikolaj Izdebski <mizdebsk@redhat.com> - 4.0.0~20191028.da67577-6
 - Bootstrap build
 - Non-bootstrap build
