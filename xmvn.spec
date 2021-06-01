@@ -16,7 +16,7 @@
 
 Name:           xmvn
 Version:        4.0.0~20191028.da67577
-Release:        7%{?dist}
+Release:        8%{?dist}
 Summary:        Local Extensions for Apache Maven
 License:        ASL 2.0
 URL:            https://fedora-java.github.io/xmvn/
@@ -305,6 +305,23 @@ cp -P ${maven_home}/bin/m2.conf %{buildroot}%{_datadir}/%{name}/bin/
 # Make sure javapackages config is not bundled
 rm -rf %{buildroot}%{_datadir}/%{name}/{configuration.xml,config.d/,conf/toolchains.xml,maven-metadata/}
 
+# Workaround for rpm bug 447156 - rpm fails to change directory to symlink
+# https://docs.fedoraproject.org/en-US/packaging-guidelines/Directory_Replacement/
+%pretrans -p <lua> minimal
+path = "/usr/share/xmvn/conf/logging"
+st = posix.stat(path)
+if st and st.type == "directory" then
+  status = os.rename(path, path .. ".rpmmoved")
+  if not status then
+    suffix = 0
+    while not status do
+      suffix = suffix + 1
+      status = os.rename(path .. ".rpmmoved", path .. ".rpmmoved." .. suffix)
+    end
+    os.rename(path, path .. ".rpmmoved")
+  end
+end
+
 %files
 %{_bindir}/mvn-local
 
@@ -321,6 +338,7 @@ rm -rf %{buildroot}%{_datadir}/%{name}/{configuration.xml,config.d/,conf/toolcha
 %{_datadir}/%{name}/bin/mvnDebug
 %{_datadir}/%{name}/boot
 %{_datadir}/%{name}/conf
+%ghost %{_datadir}/%{name}/conf/logging.rpmmoved
 
 %files parent-pom -f .mfiles-xmvn-parent
 %doc LICENSE NOTICE
@@ -354,6 +372,9 @@ rm -rf %{buildroot}%{_datadir}/%{name}/{configuration.xml,config.d/,conf/toolcha
 %doc LICENSE NOTICE
 
 %changelog
+* Tue Jun 01 2021 Mikolaj Izdebski <mizdebsk@redhat.com> - 4.0.0~20191028.da67577-8
+- Workaround for rpm bug 447156 - rpm fails to change directory to symlink
+
 * Wed May 26 2021 Mikolaj Izdebski <mizdebsk@redhat.com> - 4.0.0~20191028.da67577-7
 - Conditionally enable Ivy connector
 
