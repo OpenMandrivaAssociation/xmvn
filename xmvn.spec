@@ -223,6 +223,9 @@ find -name ResolverIntegrationTest.java -delete
 %pom_remove_dep :xmvn-bisect
 %pom_disable_module xmvn-bisect xmvn-tools
 %pom_disable_module xmvn-connector-gradle
+%if %{without ivy}
+%pom_disable_module xmvn-connector-ivy
+%endif
 
 # Upstream code quality checks, not relevant when building RPMs
 %pom_remove_plugin -r :apache-rat-plugin
