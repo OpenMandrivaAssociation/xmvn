@@ -1,31 +1,19 @@
 %bcond_with bootstrap
 
-# XMvn uses OSGi environment provided by Tycho, it shouldn't require
-# any additional bundles.
-%global __requires_exclude %{?__requires_exclude:%__requires_exclude|}^osgi\\($
-
-%if 0%{?fedora}
-%bcond_without ivy
-%else
-%bcond_with ivy
-%endif
-
 %if %{with bootstrap}
 %global mbi 1
 %endif
 
 Name:           xmvn
-Version:        4.0.0~20191028.da67577
-Release:        8%{?dist}
+Version:        4.0.0~20210708.54026c1
+Release:        9%{?dist}
 Summary:        Local Extensions for Apache Maven
 License:        ASL 2.0
 URL:            https://fedora-java.github.io/xmvn/
 BuildArch:      noarch
 
 #Source0:        https://github.com/fedora-java/xmvn/releases/download/%{version}/xmvn-%{version}.tar.xz
-Source0:        https://github.com/fedora-java/xmvn/archive/da67577.tar.gz
-
-Patch0:         0001-Initial-PoC-of-XMvn-toolchain-manager.patch
+Source0:        https://github.com/fedora-java/xmvn/archive/54026c1.tar.gz
 
 BuildRequires:  maven-local
 %if %{with bootstrap}
@@ -55,15 +43,11 @@ BuildRequires:  mvn(org.junit.jupiter:junit-jupiter)
 BuildRequires:  mvn(org.ow2.asm:asm)
 BuildRequires:  mvn(org.slf4j:slf4j-api)
 BuildRequires:  mvn(org.slf4j:slf4j-simple)
-BuildRequires:  mvn(org.xmlunit:xmlunit-assertj)
-%if %{with ivy}
-BuildRequires:  mvn(org.apache.ivy:ivy)
-%endif
-%endif
-
-# Used to determine location of Maven home
-%if %{without bootstrap}
-BuildRequires:  %{_bindir}/mvn
+BuildRequires:  mvn(org.xmlunit:xmlunit-assertj3)
+# Maven home is used as template for XMvn home
+BuildRequires:  maven
+# Test dependency (for testing compatibility with Java 8)
+BuildRequires:  java-1.8.0-openjdk-devel
 %endif
 
 Requires:       %{name}-minimal = %{version}-%{release}
@@ -77,8 +61,6 @@ creating RPM packages containing Maven artifacts.
 
 %package        minimal
 Summary:        Dependency-reduced version of XMvn
-Requires:       %{name}-api = %{version}-%{release}
-Requires:       %{name}-connector-aether = %{version}-%{release}
 Requires:       %{name}-core = %{version}-%{release}
 Requires:       apache-commons-cli
 Requires:       apache-commons-lang3
@@ -100,49 +82,21 @@ Requires:       maven-lib >= 3.4.0
 Requires:       maven-jdk-binding
 Suggests:       maven-openjdk11
 
+Obsoletes:      xmvn-connector-aether < 4.0.0
+
 %description    minimal
 This package provides minimal version of XMvn, incapable of using
 remote repositories.
 
-%package        parent-pom
-Summary:        XMvn Parent POM
-
-%description    parent-pom
-This package provides XMvn parent POM.
-
-%package        api
-Summary:        XMvn API
-
-%description    api
-This package provides XMvn API module which contains public interface
-for functionality implemented by XMvn Core.
-
 %package        core
-Summary:        XMvn Core
+Summary:        XMvn library
+Obsoletes:      xmvn-parent-pom < 4.0.0
+Obsoletes:      xmvn-api < 4.0.0
 
 %description    core
-This package provides XMvn Core module, which implements the essential
-functionality of XMvn such as resolution of artifacts from system
-repository.
-
-%package        connector-aether
-Summary:        XMvn Connector for Maven Resolver
-
-%description    connector-aether
-This package provides XMvn Connector for Maven Resolver, which
-provides integration of Maven Resolver with XMvn.  It provides an
-adapter which allows XMvn resolver to be used as Maven workspace
-reader.
-
-%if %{with ivy}
-%package        connector-ivy
-Summary:        XMvn Connector for Apache Ivy
-
-%description    connector-ivy
-This package provides XMvn Connector for Apache Ivy, which provides
-integration of Apache Ivy with XMvn.  It provides an adapter which
-allows XMvn resolver to be used as Ivy resolver.
-%endif
+This package provides XMvn API and XMvn Core modules, which implement
+the essential functionality of XMvn such as resolution of artifacts
+from system repository.
 
 %package        mojo
 Summary:        XMvn MOJO
@@ -153,47 +107,29 @@ of several MOJOs.  Some goals of these MOJOs are intended to be
 attached to default Maven lifecycle when building packages, others can
 be called directly from Maven command line.
 
-%package        tools-pom
-Summary:        XMvn Tools POM
-
-%description    tools-pom
-This package provides XMvn Tools parent POM.
-
-%package        resolve
-Summary:        XMvn Resolver
+%package        tools
+Summary:        XMvn tools
 # Explicit javapackages-tools requires since scripts use
 # /usr/share/java-utils/java-functions
 Requires:       javapackages-tools
+Obsoletes:      xmvn-tools-pom < 4.0.0
+Obsoletes:      xmvn-bisect < 4.0.0
+Obsoletes:      xmvn-install < 4.0.0
+Obsoletes:      xmvn-resolve < 4.0.0
+Obsoletes:      xmvn-subst < 4.0.0
 
-%description    resolve
-This package provides XMvn Resolver, which is a very simple
-commald-line tool to resolve Maven artifacts from system repositories.
-Basically it's just an interface to artifact resolution mechanism
-implemented by XMvn Core.  The primary intended use case of XMvn
-Resolver is debugging local artifact repositories.
-
-%package        subst
-Summary:        XMvn Subst
-# Explicit javapackages-tools requires since scripts use
-# /usr/share/java-utils/java-functions
-Requires:       javapackages-tools
-
-%description    subst
-This package provides XMvn Subst, which is a tool that can substitute
-Maven artifact files with symbolic links to corresponding files in
-artifact repository.
-
-%package        install
-Summary:        XMvn Install
-Requires:       apache-commons-compress
-# Explicit javapackages-tools requires since scripts use
-# /usr/share/java-utils/java-functions
-Requires:       javapackages-tools
-
-%description    install
-This package provides XMvn Install, which is a command-line interface
-to XMvn installer.  The installer reads reactor metadata and performs
-artifact installation according to specified configuration.
+%description    tools
+This package provides various XMvn tools:
+* XMvn Install, which is a command-line interface to XMvn installer.
+  The installer reads reactor metadata and performs artifact
+  installation according to specified configuration.
+* XMvn Resolver, which is a very simple commald-line tool to resolve
+  Maven artifacts from system repositories.  Basically it's just an
+  interface to artifact resolution mechanism implemented by XMvn Core.
+  The primary intended use case of XMvn Resolver is debugging local
+  artifact repositories.
+* XMvn Subst, which is a tool that can substitute Maven artifact files
+  with symbolic links to corresponding files in artifact repository.
 
 %package        javadoc
 Summary:        API documentation for %{name}
@@ -202,62 +138,36 @@ Summary:        API documentation for %{name}
 This package provides %{summary}.
 
 %prep
-%setup -q -n xmvn-da67577d9252f0b1fffed546c7c23d97a97dec4b
-%patch0 -p1
+%setup -q -n xmvn-54026c171fe8f4ccb0a22786616ceb5717359b8b
 
-# Port to xmlunit-assertj3
-find -name '*.java' -exec sed -i 's/org\.xmlunit\.assertj/org.xmlunit.assertj3/' {} +
-
-# Bisect IT has no chances of working in local, offline mode, without
-# network access - it needs to access remote repositories.
-find -name BisectIntegrationTest.java -delete
-
-# Resolver IT won't work either - it tries to execute JAR file, which
-# relies on Class-Path in manifest, which is forbidden in Fedora...
-find -name ResolverIntegrationTest.java -delete
-
-%pom_remove_plugin -r :maven-site-plugin
-
-%mvn_package ":xmvn{,-it}" __noinstall
-
-%pom_remove_dep :xmvn-bisect
-%pom_disable_module xmvn-bisect xmvn-tools
-%pom_disable_module xmvn-connector-gradle
-%if %{without ivy}
-%pom_disable_module xmvn-connector-ivy
-%endif
-
-# Upstream code quality checks, not relevant when building RPMs
-%pom_remove_plugin -r :apache-rat-plugin
-%pom_remove_plugin -r :maven-checkstyle-plugin
-%pom_remove_plugin -r :jacoco-maven-plugin
-# FIXME pom macros don't seem to support submodules in profile
-%pom_remove_plugin :jacoco-maven-plugin xmvn-it
-
-# remove dependency plugin maven-binaries execution
-# we provide apache-maven by symlink
-%pom_xpath_remove "pom:executions/pom:execution[pom:id[text()='maven-binaries']]"
+%mvn_package ::tar.gz: __noinstall
+%mvn_package ":{xmvn,xmvn-connector}" xmvn
+%mvn_package ":xmvn-{api,core,parent}" core
+%mvn_package ":xmvn-mojo" mojo
+%mvn_package ":xmvn-{install,resolve,subst,tools}" tools
 
 # Don't put Class-Path attributes in manifests
 %pom_remove_plugin :maven-jar-plugin xmvn-tools
 
-# get mavenVersion that is expected
+# Copy Maven home packaged as RPM instead of unpacking Maven binary
+# tarball with maven-dependency-plugin
+%pom_remove_plugin :maven-dependency-plugin
 maven_home=$(realpath $(dirname $(realpath $(%{?jpb_env} which mvn)))/..)
 mver=$(sed -n '/<mavenVersion>/{s/.*>\(.*\)<.*/\1/;p}' \
            xmvn-parent/pom.xml)
 mkdir -p target/dependency/
-cp -a ${maven_home} target/dependency/apache-maven-$mver
+cp -a "${maven_home}" target/dependency/apache-maven-$mver
 
 %build
-%mvn_build -s -j
+%mvn_build -j -- -P\\!quality
 
 version=4.0.0-SNAPSHOT
-tar --delay-directory-restore -xvf target/*tar.bz2
+tar --delay-directory-restore -xvf target/xmvn-*-bin.tar.gz
 chmod -R +rwX %{name}-${version}*
 # These are installed as doc
 rm -f %{name}-${version}*/{AUTHORS-XMVN,README-XMVN.md,LICENSE,NOTICE,NOTICE-XMVN}
 # Not needed - we use JPackage launcher scripts
-rm -Rf %{name}-${version}*/lib/{installer,resolver,subst,bisect}/
+rm -Rf %{name}-${version}*/lib/{installer,resolver,subst}/
 # Irrelevant Maven launcher scripts
 rm -f %{name}-${version}*/bin/*
 
@@ -328,7 +238,7 @@ end
 %files
 %{_bindir}/mvn-local
 
-%files minimal
+%files minimal -f .mfiles-xmvn
 %{_bindir}/%{name}
 %dir %{_datadir}/%{name}
 %dir %{_datadir}/%{name}/bin
@@ -343,38 +253,24 @@ end
 %{_datadir}/%{name}/conf
 %ghost %{_datadir}/%{name}/conf/logging.rpmmoved
 
-%files parent-pom -f .mfiles-xmvn-parent
-%doc LICENSE NOTICE
-
-%files core -f .mfiles-xmvn-core
-
-%files api -f .mfiles-xmvn-api
-%doc LICENSE NOTICE
+%files core -f .mfiles-core
+%license LICENSE NOTICE
 %doc AUTHORS README.md
 
-%files connector-aether -f .mfiles-xmvn-connector-aether
+%files mojo -f .mfiles-mojo
 
-%if %{with ivy}
-%files connector-ivy -f .mfiles-xmvn-connector-ivy
-%endif
-
-%files mojo -f .mfiles-xmvn-mojo
-
-%files tools-pom -f .mfiles-xmvn-tools
-
-%files resolve -f .mfiles-xmvn-resolve
+%files tools -f .mfiles-tools
+%{_bindir}/%{name}-install
 %{_bindir}/%{name}-resolve
-
-%files subst -f .mfiles-xmvn-subst
 %{_bindir}/%{name}-subst
 
-%files install -f .mfiles-xmvn-install
-%{_bindir}/%{name}-install
-
 %files javadoc
-%doc LICENSE NOTICE
+%license LICENSE NOTICE
 
 %changelog
+* Thu Jul 08 2021 Mikolaj Izdebski <mizdebsk@redhat.com> - 4.0.0~20210708.54026c1-9
+- Update to latest upstream snapshot
+
 * Tue Jun 01 2021 Mikolaj Izdebski <mizdebsk@redhat.com> - 4.0.0~20191028.da67577-8
 - Workaround for rpm bug 447156 - rpm fails to change directory to symlink
 
