@@ -5,15 +5,15 @@
 %endif
 
 Name:           xmvn
-Version:        4.0.0~20210708.43c7e67
-Release:        10%{?dist}
+Version:        4.0.0~20210709.3b84c99
+Release:        11%{?dist}
 Summary:        Local Extensions for Apache Maven
 License:        ASL 2.0
 URL:            https://fedora-java.github.io/xmvn/
 BuildArch:      noarch
 
 #Source0:        https://github.com/fedora-java/xmvn/releases/download/%{version}/xmvn-%{version}.tar.xz
-Source0:        https://github.com/fedora-java/xmvn/archive/43c7e67.tar.gz
+Source0:        https://github.com/fedora-java/xmvn/archive/3b84c99.tar.gz
 
 BuildRequires:  maven-local
 %if %{with bootstrap}
@@ -138,7 +138,7 @@ Summary:        API documentation for %{name}
 This package provides %{summary}.
 
 %prep
-%setup -q -n xmvn-43c7e679a29b8a3b4fdb6afb4754ead43c8a8a36
+%setup -q -n xmvn-3b84c99ca0eee39b376d9e543801893f49ecb51c
 
 %mvn_package ::tar.gz: __noinstall
 %mvn_package ":{xmvn,xmvn-connector}" xmvn
@@ -268,6 +268,9 @@ end
 %license LICENSE NOTICE
 
 %changelog
+* Fri Jul 09 2021 Mikolaj Izdebski <mizdebsk@redhat.com> - 4.0.0~20210709.3b84c99-11
+- Change logic for JPMS detection by Javadoc MOJO
+
 * Thu Jul 08 2021 Mikolaj Izdebski <mizdebsk@redhat.com> - 4.0.0~20210708.43c7e67-10
 - Fix Javadoc generation for non-JPMS project with JDK 11
 
