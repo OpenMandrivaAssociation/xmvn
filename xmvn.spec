@@ -5,15 +5,14 @@
 %endif
 
 Name:           xmvn
-Version:        4.0.0~20210709.3b84c99
-Release:        12%{?dist}
+Version:        4.0.0
+Release:        1%{?dist}
 Summary:        Local Extensions for Apache Maven
 License:        ASL 2.0
 URL:            https://fedora-java.github.io/xmvn/
 BuildArch:      noarch
 
-#Source0:        https://github.com/fedora-java/xmvn/releases/download/%{version}/xmvn-%{version}.tar.xz
-Source0:        https://github.com/fedora-java/xmvn/archive/3b84c99.tar.gz
+Source0:        https://github.com/fedora-java/xmvn/releases/download/%{version}/xmvn-%{version}.tar.xz
 
 BuildRequires:  maven-local
 %if %{with bootstrap}
@@ -138,7 +137,7 @@ Summary:        API documentation for %{name}
 This package provides %{summary}.
 
 %prep
-%setup -q -n xmvn-3b84c99ca0eee39b376d9e543801893f49ecb51c
+%setup -q
 
 %mvn_package ::tar.gz: __noinstall
 %mvn_package ":{xmvn,xmvn-connector}" xmvn
@@ -161,7 +160,7 @@ cp -a "${maven_home}" target/dependency/apache-maven-$mver
 %build
 %mvn_build -j -- -P\\!quality
 
-version=4.0.0-SNAPSHOT
+version=4.0.0
 tar --delay-directory-restore -xvf target/xmvn-*-bin.tar.gz
 chmod -R +rwX %{name}-${version}*
 # These are installed as doc
@@ -175,7 +174,7 @@ rm -f %{name}-${version}*/bin/*
 %install
 %mvn_install
 
-version=4.0.0-SNAPSHOT
+version=4.0.0
 maven_home=$(realpath $(dirname $(realpath $(%{?jpb_env} which mvn)))/..)
 
 install -d -m 755 %{buildroot}%{_datadir}/%{name}
@@ -268,6 +267,9 @@ end
 %license LICENSE NOTICE
 
 %changelog
+* Mon Jul 26 2021 Mikolaj Izdebski <mizdebsk@redhat.com> - 4.0.0-1
+- Update to upstream version 4.0.0
+
 * Fri Jul 23 2021 Fedora Release Engineering <releng@fedoraproject.org> - 4.0.0~20210709.3b84c99-12
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_35_Mass_Rebuild
 
