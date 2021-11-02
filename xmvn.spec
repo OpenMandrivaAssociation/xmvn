@@ -45,8 +45,6 @@ BuildRequires:  mvn(org.slf4j:slf4j-simple)
 BuildRequires:  mvn(org.xmlunit:xmlunit-assertj3)
 # Maven home is used as template for XMvn home
 BuildRequires:  maven
-# Test dependency (for testing compatibility with Java 8)
-BuildRequires:  java-1.8.0-openjdk-devel
 %endif
 
 Requires:       %{name}-minimal = %{version}-%{release}
