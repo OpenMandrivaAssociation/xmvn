@@ -6,7 +6,7 @@
 
 Name:           xmvn
 Version:        4.0.0
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary:        Local Extensions for Apache Maven
 License:        ASL 2.0
 URL:            https://fedora-java.github.io/xmvn/
@@ -77,7 +77,7 @@ Requires:       slf4j
 
 Requires:       maven-lib >= 3.4.0
 Requires:       maven-jdk-binding
-Suggests:       maven-openjdk11
+Suggests:       maven-openjdk17
 
 Obsoletes:      xmvn-connector-aether < 4.0.0
 
@@ -154,6 +154,13 @@ mver=$(sed -n '/<mavenVersion>/{s/.*>\(.*\)<.*/\1/;p}' \
            xmvn-parent/pom.xml)
 mkdir -p target/dependency/
 cp -a "${maven_home}" target/dependency/apache-maven-$mver
+
+# Workaround easymock incompatibility with Java 17that should be fixed
+# in easymock 4.4: https://github.com/easymock/easymock/issues/274
+%pom_add_plugin :maven-surefire-plugin xmvn-connector "<configuration>
+    <argLine>--add-opens=java.base/java.lang=ALL-UNNAMED</argLine></configuration>"
+%pom_add_plugin :maven-surefire-plugin xmvn-tools/xmvn-install "<configuration>
+    <argLine>--add-opens=java.base/java.lang=ALL-UNNAMED</argLine></configuration>"
 
 %build
 %mvn_build -j -- -P\\!quality
@@ -265,6 +272,10 @@ end
 %license LICENSE NOTICE
 
 %changelog
+* Wed Nov 03 2021 Mikolaj Izdebski <mizdebsk@redhat.com> - 4.0.0-3
+- Workaround build issue with OpenJDK 17
+- Suggest OpenJDK 17 as default Maven binding
+
 * Sun Sep 26 2021 Mikolaj Izdebski <mizdebsk@redhat.com> - 4.0.0-2
 - Rebuild to update libjansi.so symlink
 
