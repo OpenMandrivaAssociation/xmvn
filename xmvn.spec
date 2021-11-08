@@ -6,7 +6,7 @@
 
 Name:           xmvn
 Version:        4.0.0
-Release:        6%{?dist}
+Release:        7%{?dist}
 Summary:        Local Extensions for Apache Maven
 License:        ASL 2.0
 URL:            https://fedora-java.github.io/xmvn/
@@ -77,7 +77,7 @@ Requires:       slf4j
 
 Requires:       maven-lib >= 3.4.0
 Requires:       maven-jdk-binding
-Suggests:       maven-openjdk11
+Suggests:       maven-openjdk17
 
 Obsoletes:      xmvn-connector-aether < 4.0.0
 
@@ -272,6 +272,9 @@ end
 %license LICENSE NOTICE
 
 %changelog
+* Mon Nov 08 2021 Mikolaj Izdebski <mizdebsk@redhat.com> - 4.0.0-7
+- Suggest OpenJDK 17 as default Maven binding
+
 * Sat Jan 22 2022 Fedora Release Engineering <releng@fedoraproject.org> - 4.0.0-6
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_36_Mass_Rebuild
 
