@@ -138,10 +138,7 @@ This package provides %{summary}.
 
 %prep
 %setup -q
-%if %{without bootstrap}
-# XXX modello in javapackages-bootstrap is stil at version 1.11
 %patch0 -p1
-%endif
 
 %mvn_package ::tar.gz: __noinstall
 %mvn_package ":{xmvn,xmvn-connector}" xmvn
