@@ -6,13 +6,15 @@
 
 Name:           xmvn
 Version:        4.0.0
-Release:        8%{?dist}
+Release:        9%{?dist}
 Summary:        Local Extensions for Apache Maven
 License:        ASL 2.0
 URL:            https://fedora-java.github.io/xmvn/
 BuildArch:      noarch
 
 Source0:        https://github.com/fedora-java/xmvn/releases/download/%{version}/xmvn-%{version}.tar.xz
+
+Patch0:         0001-Port-to-Modello-2.0.0.patch
 
 BuildRequires:  maven-local
 %if %{with bootstrap}
@@ -30,7 +32,7 @@ BuildRequires:  mvn(org.apache.maven:maven-core)
 BuildRequires:  mvn(org.apache.maven:maven-model)
 BuildRequires:  mvn(org.apache.maven:maven-model-builder)
 BuildRequires:  mvn(org.apache.maven:maven-plugin-api)
-BuildRequires:  mvn(org.codehaus.modello:modello-maven-plugin)
+BuildRequires:  mvn(org.codehaus.modello:modello-maven-plugin) >= 2.0.0
 BuildRequires:  mvn(org.codehaus.mojo:build-helper-maven-plugin)
 BuildRequires:  mvn(org.codehaus.plexus:plexus-classworlds)
 BuildRequires:  mvn(org.codehaus.plexus:plexus-component-annotations)
@@ -136,6 +138,10 @@ This package provides %{summary}.
 
 %prep
 %setup -q
+%if %{without bootstrap}
+# XXX modello in javapackages-bootstrap is stil at version 1.11
+%patch0 -p1
+%endif
 
 %mvn_package ::tar.gz: __noinstall
 %mvn_package ":{xmvn,xmvn-connector}" xmvn
@@ -272,6 +278,9 @@ end
 %license LICENSE NOTICE
 
 %changelog
+* Fri Apr 22 2022 Mikolaj Izdebski <mizdebsk@redhat.com> - 4.0.0-9
+- Port to Modello 2.0.0
+
 * Sat Feb 05 2022 Jiri Vanek <jvanek@redhat.com> - 4.0.0-8
 - Rebuilt for java-17-openjdk as system jdk
 
