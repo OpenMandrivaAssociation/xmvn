@@ -11,6 +11,7 @@ Summary:        Local Extensions for Apache Maven
 License:        ASL 2.0
 URL:            https://fedora-java.github.io/xmvn/
 BuildArch:      noarch
+ExclusiveArch:  %{java_arches} noarch
 
 Source0:        https://github.com/fedora-java/xmvn/releases/download/%{version}/xmvn-%{version}.tar.xz
 
