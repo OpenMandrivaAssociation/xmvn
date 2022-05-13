@@ -82,16 +82,12 @@ Requires:       maven-lib >= 3.4.0
 Requires:       maven-jdk-binding
 Suggests:       maven-openjdk17
 
-Obsoletes:      xmvn-connector-aether < 4.0.0
-
 %description    minimal
 This package provides minimal version of XMvn, incapable of using
 remote repositories.
 
 %package        core
 Summary:        XMvn library
-Obsoletes:      xmvn-parent-pom < 4.0.0
-Obsoletes:      xmvn-api < 4.0.0
 
 %description    core
 This package provides XMvn API and XMvn Core modules, which implement
@@ -112,11 +108,6 @@ Summary:        XMvn tools
 # Explicit javapackages-tools requires since scripts use
 # /usr/share/java-utils/java-functions
 Requires:       javapackages-tools
-Obsoletes:      xmvn-tools-pom < 4.0.0
-Obsoletes:      xmvn-bisect < 4.0.0
-Obsoletes:      xmvn-install < 4.0.0
-Obsoletes:      xmvn-resolve < 4.0.0
-Obsoletes:      xmvn-subst < 4.0.0
 
 %description    tools
 This package provides various XMvn tools:
