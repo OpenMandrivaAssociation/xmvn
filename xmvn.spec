@@ -17,10 +17,10 @@ Source0:        https://github.com/fedora-java/xmvn/releases/download/%{version}
 
 Patch0:         0001-Port-to-Modello-2.0.0.patch
 
-BuildRequires:  maven-local
 %if %{with bootstrap}
 BuildRequires:  javapackages-bootstrap
 %else
+BuildRequires:  maven-local
 BuildRequires:  mvn(com.beust:jcommander)
 BuildRequires:  mvn(org.apache.commons:commons-compress)
 BuildRequires:  mvn(org.apache.maven.plugin-tools:maven-plugin-annotations)
