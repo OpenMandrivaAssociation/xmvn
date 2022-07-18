@@ -273,7 +273,7 @@ end
 * Sat Feb 05 2022 Jiri Vanek <jvanek@redhat.com> - 4.0.0-8
 - Rebuilt for java-17-openjdk as system jdk
 
-* Mon Nov 08 2021 Mikolaj Izdebski <mizdebsk@redhat.com> - 4.0.0-7
+* Thu Jan 27 2022 Mikolaj Izdebski <mizdebsk@redhat.com> - 4.0.0-7
 - Suggest OpenJDK 17 as default Maven binding
 
 * Sat Jan 22 2022 Fedora Release Engineering <releng@fedoraproject.org> - 4.0.0-6
