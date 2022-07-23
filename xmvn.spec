@@ -6,7 +6,7 @@
 
 Name:           xmvn
 Version:        4.0.0
-Release:        9%{?dist}
+Release:        10%{?dist}
 Summary:        Local Extensions for Apache Maven
 License:        ASL 2.0
 URL:            https://fedora-java.github.io/xmvn/
@@ -267,6 +267,9 @@ end
 %license LICENSE NOTICE
 
 %changelog
+* Sat Jul 23 2022 Fedora Release Engineering <releng@fedoraproject.org> - 4.0.0-10
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_37_Mass_Rebuild
+
 * Fri Apr 22 2022 Mikolaj Izdebski <mizdebsk@redhat.com> - 4.0.0-9
 - Port to Modello 2.0.0
 
