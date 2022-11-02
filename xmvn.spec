@@ -1,4 +1,4 @@
-%bcond_without bootstrap
+%bcond_with bootstrap
 
 %if %{with bootstrap}
 %global mbi 1
