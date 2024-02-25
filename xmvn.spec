@@ -4,49 +4,50 @@
 %global mbi 1
 %endif
 
-Name:           xmvn
-Version:        4.2.0
-Release:        1
-Summary:        Local Extensions for Apache Maven
-License:        Apache-2.0
-URL:            https://fedora-java.github.io/xmvn/
-BuildArch:      noarch
-Source0:        https://github.com/fedora-java/xmvn/releases/download/%{version}/xmvn-%{version}.tar.xz
+Name:		xmvn
+Version:	4.2.0
+Release:	1
+Summary:	Local Extensions for Apache Maven
+License:	Apache-2.0
+Group:		Development/Java
+URL:		https://fedora-java.github.io/xmvn/
+BuildArch:	noarch
+Source0:	https://github.com/fedora-java/xmvn/releases/download/%{version}/xmvn-%{version}.tar.xz
 
 %if %{with bootstrap}
-BuildRequires:  javapackages-bootstrap
+BuildRequires:	javapackages-bootstrap
 %else
-BuildRequires:  maven-local
-BuildRequires:  mvn(com.beust:jcommander)
-BuildRequires:  mvn(javax.inject:javax.inject)
-BuildRequires:  mvn(org.apache.commons:commons-compress)
-BuildRequires:  mvn(org.apache.maven.plugin-tools:maven-plugin-annotations)
-BuildRequires:  mvn(org.apache.maven.plugins:maven-assembly-plugin)
-BuildRequires:  mvn(org.apache.maven.plugins:maven-plugin-plugin)
-BuildRequires:  mvn(org.apache.maven.resolver:maven-resolver-api)
-BuildRequires:  mvn(org.apache.maven.resolver:maven-resolver-util)
-BuildRequires:  mvn(org.apache.maven:maven-artifact)
-BuildRequires:  mvn(org.apache.maven:maven-core)
-BuildRequires:  mvn(org.apache.maven:maven-model)
-BuildRequires:  mvn(org.apache.maven:maven-model-builder)
-BuildRequires:  mvn(org.apache.maven:maven-plugin-api)
-BuildRequires:  mvn(org.codehaus.modello:modello-maven-plugin)
-BuildRequires:  mvn(org.easymock:easymock)
-BuildRequires:  mvn(org.eclipse.sisu:org.eclipse.sisu.inject)
-BuildRequires:  mvn(org.eclipse.sisu:org.eclipse.sisu.plexus)
-BuildRequires:  mvn(org.eclipse.sisu:sisu-maven-plugin)
-BuildRequires:  mvn(org.junit.jupiter:junit-jupiter-api)
-BuildRequires:  mvn(org.ow2.asm:asm)
-BuildRequires:  mvn(org.slf4j:slf4j-api)
-BuildRequires:  mvn(org.slf4j:slf4j-simple)
-BuildRequires:  mvn(org.xmlunit:xmlunit-assertj3)
+BuildRequires:	maven-local
+BuildRequires:	mvn(com.beust:jcommander)
+BuildRequires:	mvn(javax.inject:javax.inject)
+BuildRequires:	mvn(org.apache.commons:commons-compress)
+BuildRequires:	mvn(org.apache.maven.plugin-tools:maven-plugin-annotations)
+BuildRequires:	mvn(org.apache.maven.plugins:maven-assembly-plugin)
+BuildRequires:	mvn(org.apache.maven.plugins:maven-plugin-plugin)
+BuildRequires:	mvn(org.apache.maven.resolver:maven-resolver-api)
+BuildRequires:	mvn(org.apache.maven.resolver:maven-resolver-util)
+BuildRequires:	mvn(org.apache.maven:maven-artifact)
+BuildRequires:	mvn(org.apache.maven:maven-core)
+BuildRequires:	mvn(org.apache.maven:maven-model)
+BuildRequires:	mvn(org.apache.maven:maven-model-builder)
+BuildRequires:	mvn(org.apache.maven:maven-plugin-api)
+BuildRequires:	mvn(org.codehaus.modello:modello-maven-plugin)
+BuildRequires:	mvn(org.easymock:easymock)
+BuildRequires:	mvn(org.eclipse.sisu:org.eclipse.sisu.inject)
+BuildRequires:	mvn(org.eclipse.sisu:org.eclipse.sisu.plexus)
+BuildRequires:	mvn(org.eclipse.sisu:sisu-maven-plugin)
+BuildRequires:	mvn(org.junit.jupiter:junit-jupiter-api)
+BuildRequires:	mvn(org.ow2.asm:asm)
+BuildRequires:	mvn(org.slf4j:slf4j-api)
+BuildRequires:	mvn(org.slf4j:slf4j-simple)
+BuildRequires:	mvn(org.xmlunit:xmlunit-assertj3)
 # Maven home is used as template for XMvn home
-BuildRequires:  maven
+BuildRequires:	maven
 %endif
 BuildRequires:	gnutar
 
-Requires:       %{name}-minimal = %{version}-%{release}
-Requires:       maven
+Requires:	%{name}-minimal = %{version}-%{release}
+Requires:	maven
 
 %description
 This package provides extensions for Apache Maven that can be used to
@@ -54,77 +55,77 @@ manage system artifact repository and use it to resolve Maven
 artifacts in offline mode, as well as Maven plugins to help with
 creating RPM packages containing Maven artifacts.
 
-%package        minimal
-Summary:        Dependency-reduced version of XMvn
-Requires:       %{name}-core = %{version}-%{release}
-Requires:       apache-commons-cli
-Requires:       apache-commons-lang3
-Requires:       atinject
-Requires:       google-guice
-Requires:       guava
-Requires:       maven-resolver
-Requires:       maven-wagon
-Requires:       plexus-cipher
-Requires:       plexus-classworlds
-Requires:       plexus-containers-component-annotations
-Requires:       plexus-interpolation
-Requires:       plexus-sec-dispatcher
-Requires:       plexus-utils
-Requires:       sisu
-Requires:       slf4j
+%package	minimal
+Summary:	Dependency-reduced version of XMvn
+Requires:	%{name}-core = %{version}-%{release}
+Requires:	apache-commons-cli
+Requires:	apache-commons-lang3
+Requires:	atinject
+Requires:	google-guice
+Requires:	guava
+Requires:	maven-resolver
+Requires:	maven-wagon
+Requires:	plexus-cipher
+Requires:	plexus-classworlds
+Requires:	plexus-containers-component-annotations
+Requires:	plexus-interpolation
+Requires:	plexus-sec-dispatcher
+Requires:	plexus-utils
+Requires:	sisu
+Requires:	slf4j
 
-Requires:       maven-lib
-Requires:       maven-jdk-binding
-Suggests:       maven-openjdk17
+Requires:	maven-lib
+Requires:	maven-jdk-binding
+Suggests:	maven-openjdk17
 
-%description    minimal
+%description		minimal
 This package provides minimal version of XMvn, incapable of using
 remote repositories.
 
-%package        core
-Summary:        XMvn library
+%package	core
+Summary:	XMvn library
 
-%description    core
+%description		core
 This package provides XMvn API and XMvn Core modules, which implement
 the essential functionality of XMvn such as resolution of artifacts
 from system repository.
 
-%package        mojo
-Summary:        XMvn MOJO
+%package	mojo
+Summary:	XMvn MOJO
 
-%description    mojo
+%description		mojo
 This package provides XMvn MOJO, which is a Maven plugin that consists
-of several MOJOs.  Some goals of these MOJOs are intended to be
+of several MOJOs.	Some goals of these MOJOs are intended to be
 attached to default Maven lifecycle when building packages, others can
 be called directly from Maven command line.
 
-%package        tools
-Summary:        XMvn tools
+%package	tools
+Summary:	XMvn tools
 # Explicit javapackages-tools requires since scripts use
 # /usr/share/java-utils/java-functions
-Requires:       javapackages-tools
+Requires:			 javapackages-tools
 
-%description    tools
+%description		tools
 This package provides various XMvn tools:
 * XMvn Install, which is a command-line interface to XMvn installer.
-  The installer reads reactor metadata and performs artifact
-  installation according to specified configuration.
+	The installer reads reactor metadata and performs artifact
+	installation according to specified configuration.
 * XMvn Resolver, which is a very simple commald-line tool to resolve
-  Maven artifacts from system repositories.  Basically it's just an
-  interface to artifact resolution mechanism implemented by XMvn Core.
-  The primary intended use case of XMvn Resolver is debugging local
-  artifact repositories.
+	Maven artifacts from system repositories.	Basically it's just an
+	interface to artifact resolution mechanism implemented by XMvn Core.
+	The primary intended use case of XMvn Resolver is debugging local
+	artifact repositories.
 * XMvn Subst, which is a tool that can substitute Maven artifact files
-  with symbolic links to corresponding files in artifact repository.
+	with symbolic links to corresponding files in artifact repository.
 
-%package        javadoc
-Summary:        API documentation for %{name}
+%package	javadoc
+Summary:	API documentation for %{name}
 
-%description    javadoc
+%description	javadoc
 This package provides %{summary}.
 
 %prep
-%setup -q
+%autosetup -p1
 
 %mvn_package ::tar.gz: __noinstall
 %mvn_package ":{xmvn,xmvn-connector}" xmvn
@@ -140,16 +141,16 @@ This package provides %{summary}.
 %pom_remove_plugin :maven-dependency-plugin
 maven_home=$(realpath $(dirname $(realpath $(%{?jpb_env} which mvn)))/..)
 mver=$(sed -n '/<mavenVersion>/{s/.*>\(.*\)<.*/\1/;p}' \
-           xmvn-parent/pom.xml)
+		 xmvn-parent/pom.xml)
 mkdir -p target/dependency/
 cp -a "${maven_home}" target/dependency/apache-maven-$mver
 
 # Workaround easymock incompatibility with Java 17that should be fixed
 # in easymock 4.4: https://github.com/easymock/easymock/issues/274
 %pom_add_plugin :maven-surefire-plugin xmvn-connector "<configuration>
-    <argLine>--add-opens=java.base/java.lang=ALL-UNNAMED</argLine></configuration>"
+		<argLine>--add-opens=java.base/java.lang=ALL-UNNAMED</argLine></configuration>"
 %pom_add_plugin :maven-surefire-plugin xmvn-tools/xmvn-install "<configuration>
-    <argLine>--add-opens=java.base/java.lang=ALL-UNNAMED</argLine></configuration>"
+		<argLine>--add-opens=java.base/java.lang=ALL-UNNAMED</argLine></configuration>"
 
 %build
 %mvn_build -j -- -P\\!quality
@@ -175,12 +176,12 @@ install -d -m 755 %{buildroot}%{_datadir}/%{name}
 cp -r%{?mbi:L} %{name}-${version}/* %{buildroot}%{_datadir}/%{name}/
 
 for cmd in mvn mvnDebug; do
-    cat <<EOF >%{buildroot}%{_datadir}/%{name}/bin/$cmd
+		cat <<EOF >%{buildroot}%{_datadir}/%{name}/bin/$cmd
 #!/bin/sh -e
 export _FEDORA_MAVEN_HOME="%{_datadir}/%{name}"
 exec %{_datadir}/maven%{?maven_version_suffix}/bin/$cmd "\${@}"
 EOF
-    chmod 755 %{buildroot}%{_datadir}/%{name}/bin/$cmd
+		chmod 755 %{buildroot}%{_datadir}/%{name}/bin/$cmd
 done
 
 # helper scripts
@@ -217,15 +218,15 @@ rm -rf %{buildroot}%{_datadir}/%{name}/{configuration.xml,config.d/,conf/toolcha
 path = "/usr/share/xmvn/conf/logging"
 st = posix.stat(path)
 if st and st.type == "directory" then
-  status = os.rename(path, path .. ".rpmmoved")
-  if not status then
-    suffix = 0
-    while not status do
-      suffix = suffix + 1
-      status = os.rename(path .. ".rpmmoved", path .. ".rpmmoved." .. suffix)
-    end
-    os.rename(path, path .. ".rpmmoved")
-  end
+	status = os.rename(path, path .. ".rpmmoved")
+	if not status then
+		suffix = 0
+		while not status do
+			suffix = suffix + 1
+			status = os.rename(path .. ".rpmmoved", path .. ".rpmmoved." .. suffix)
+		end
+		os.rename(path, path .. ".rpmmoved")
+	end
 end
 
 %files
